@@ -4,10 +4,11 @@ Usage: python3 -I tools/replace_images.py [--apply] IMAGE [IMAGE ...]
 
 Each new image is matched to the embedded image(s) it replaces by visual similarity
 (not filename), so originals can be supplied under any name. Without --apply it only
-reports matches. Embedded images live either as manifest entries or as data: URIs
-inside gzip'd script assets; both are rewritten in place.
+reports matches. Images live either as manifest entries, as data: URIs inside gzip'd
+script assets, or (after tools/externalize_images.py) as /img/<hash> files referenced
+from those assets; all three are rewritten in place.
 """
-import base64, gzip, io, json, re, sys
+import base64, gzip, hashlib, io, json, os, re, sys
 from PIL import Image
 
 PAGE = "index.html"
@@ -44,6 +45,9 @@ def main(argv):
                 assets[uid] = text
                 for d in set(re.findall(r'data:image/(?:webp|jpeg|png);base64,[A-Za-z0-9+/=]{200,}', text)):
                     found.append(("asset", uid, d, base64.b64decode(d.split(",", 1)[1])))
+            for ref in set(re.findall(r'/img/[0-9a-f]{16}\.(?:webp|jpg|png|gif)', text)):
+                assets[uid] = text
+                found.append(("asset", uid, ref, open(ref[1:], "rb").read()))
 
     index = []
     for where, uid, uri, b in found:
@@ -83,7 +87,13 @@ def main(argv):
             manifest[uid]["data"] = base64.b64encode(new).decode()
             manifest[uid]["mime"] = mime[fmt]
         else:
-            assets[uid] = assets[uid].replace(uri, f"data:{mime[fmt]};base64," + base64.b64encode(new).decode())
+            if uri.startswith("/img/"):
+                ext = {"WEBP": "webp", "JPEG": "jpg", "PNG": "png"}[fmt]
+                ref = f"/img/{hashlib.sha1(new).hexdigest()[:16]}.{ext}"
+                open(ref[1:], "wb").write(new)
+                assets[uid] = assets[uid].replace(uri, ref)
+            else:
+                assets[uid] = assets[uid].replace(uri, f"data:{mime[fmt]};base64," + base64.b64encode(new).decode())
     for uid, text in assets.items():
         e = manifest[uid]
         raw = text.encode("utf-8")
