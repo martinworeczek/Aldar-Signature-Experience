@@ -58,7 +58,7 @@ Directly under the hero, full width inside the body padding: `display:flex; gap:
 `modal.narrative` directly below the hero, before the first chapter: Poppins 300 (not italic), 18px / 1.6, `rgba(255,255,255,.9)`, `max-width:62ch`, `text-wrap:pretty`, `margin-top:14px`. No box.
 
 ## 4 · Lifecycle stage (`modal.life`)
-A ruled strip, not a box: `display:grid; grid-template-columns:repeat(N,minmax(0,1fr)); border-top + border-bottom 1px rgba(255,255,255,.14); padding:18px 0; margin-top:28px`. Each step is an 8px dot + 12px label:
+A panel (shell in §5): `display:grid; grid-template-columns:repeat(N,minmax(0,1fr)); gap:12px`. Each step is an 8px dot + 12px label:
 - current: dot `#F5CD85` (or the stage's status colour) with halo `0 0 0 4px rgba(245,205,133,.2)`, label in the same colour, weight 500;
 - done: filled `rgba(255,255,255,.75)`, label `.75`;
 - upcoming: hollow `1px solid rgba(255,255,255,.45)`, label `.5`.
@@ -66,14 +66,23 @@ A ruled strip, not a box: `display:grid; grid-template-columns:repeat(N,minmax(0
 Drop the old connector lines.
 
 ## 5 · Chapters
-Every remaining block becomes a chapter with one shared shell:
+Every remaining block becomes a chapter. **Each chapter is its own raised panel**, not a hairline-divided run — the earlier 1px dividers were too faint to read as separations:
 ```
-display:grid; grid-template-columns:150px minmax(0,1fr); gap:28px;
-padding:30px 0; border-bottom:1px solid rgba(255,255,255,.14)   (last chapter: no border, padding-bottom 0)
-left:  numeral  Poppins 300 28px #E8B96A line-height 1, letter-spacing -.02em
-       label    11px / 500 / .12em uppercase rgba(255,255,255,.7), margin-top 9px
+display:grid; grid-template-columns:170px minmax(0,1fr); gap:32px;
+padding:28px 32px; background:#161616; border:1px solid rgba(255,255,255,.08);
+border-radius:14px; margin-top:16px
+left:  numeral  Poppins 300 34px #E8B96A line-height 1, letter-spacing -.02em
+       label    Poppins 500 15px #FFFFFF, margin-top 10px, line-height 1.3 (sentence case, not uppercase)
 right: the block's content
 ```
+The body padding is `6px 32px 36px`. The lifecycle strip (§4) uses the same panel shell (`padding:20px 32px; gap:12px; margin-top:28px`), without a numeral.
+
+### No duplicated information
+Each fact appears once in the detail view:
+- **Pillar and journey stage** live in the hero eyebrow only — remove them from Scope & attributes.
+- **Status** lives in the hero eyebrow (dot + label) and the lifecycle strip only — the Deployment chapter does **not** repeat it (no status tag, no status dot in its header).
+- **Target go-live** lives in Scope & attributes only — the Deployment header does **not** show "rollout …". `modal.deployRollout` is no longer rendered.
+- The deployment header line is just `modal.deploySummary` (14px white, worded "N of M assets in scope are live") with the percentage live on the right (12px `.6`).
 **Numbers are computed, not hard-coded.** Count only the chapters that actually render for this record, in display order, so the numbers never skip. Compute this in the view-model (for example `modal.chapters` or a `n` per block).
 
 Chapter order is the current order, minus the removed Progress log: Scope & attributes → Deployment → Progress summary → Why it matters → Touchpoints → Audit intelligence → Assets → Implementation photos.
@@ -81,11 +90,10 @@ Chapter order is the current order, minus the removed Progress log: Scope & attr
 Below 720px panel width, the chapter grid collapses to one column, with the numeral and label in a row above the content.
 
 ### Scope & attributes
-3-column grid (`repeat(3,minmax(0,1fr))`, gap `20px 24px`). Label 11px `rgba(255,255,255,.55)`; value 14px white, `margin-top:4px`. "—" / TBC values use `rgba(255,255,255,.5)`. Target go-live uses its status colour (gold-amber when committed). The Estates vertical cell, when present, is the first cell.
+3-column grid (`repeat(3,minmax(0,1fr))`, gap `20px 24px`). Cells, in order: **Target go-live** (first), **Scope** (the record's `group`, e.g. "Yas Plaza, Al Dhafra & Saadiyat BC"), then User segment, Tier, Cadence and any line-specific cells (Estates vertical, Development project type…). **No Pillar or Journey stage cell.** Label 11px / 500 / `.06em` uppercase `rgba(255,255,255,.5)`; value 14px white, `margin-top:5px`. "—" / TBC values use `rgba(255,255,255,.5)`. Target go-live uses its status colour (gold-amber when committed). The Estates vertical cell, when present, is the first cell.
 
 ### Deployment (`modal.showDeploy`)
-- Header line: on the left (a nowrap, `flex-shrink:0` group, gap 14), the **experience status as a tinted tag, not a dot** (see the rule below), then "Rollout **`modal.deployRollout`**" (12px `.7`, value white 500). On the right, `modal.deploySummary` in `.7` (12px).
-- **One symbol, one meaning.** In the Deployment chapter, **dots mean assets only**. The experience-level status (`modal.deployStatusLabel`) is a square-cornered tag: 11px / 600 / `.06em` uppercase, text in the status colour, background = that colour at 12% alpha, `1px solid` the colour at 40%, `border-radius:4px`, padding `5px 10px`, nowrap. For example, In implementation is `#F5CD85` text on `rgba(245,205,133,.12)` with a `rgba(245,205,133,.4)` border. The tag is never a pill and never a dot, so the experience's status can't be mistaken for an asset row.
+- Header line: `modal.deploySummary` on the left (14px white), the live percentage on the right (12px `.6`). **No status tag, no status dot, no rollout date here** — see "No duplicated information" above. Dots in this chapter mean assets only.
 - Progress bar: 3px tall, track `rgba(255,255,255,.14)`, live segment `#B5EBBE`, square ends, margin `12px 0 20px`.
 - Live-date row (`modal.hasLiveDate`): plain 12px `.7` text, values white; audit-gap chip = dot + label in its status colour.
 - Asset groups: group label 10px / 500 / `.12em` uppercase `.5`. Rows: `padding:10px 0; border-bottom:1px solid rgba(255,255,255,.1)`, 8px dot + name (13px white) + state (11px in the state colour, right). Live = `#B5EBBE`, in scope/pending = `#F5CD85`.
@@ -122,6 +130,7 @@ Poppins only (300, 400, 500, 600). Remove every Fraunces `font-family` from the 
 ## Done when
 - Every record opens in the dark detail view, with and without a photograph.
 - Every section that showed before still shows, in the same order, with the same content and working controls: Save/Compare/Adapt, close, audit record/edit/save, asset links. The Implementation progress block no longer appears for any line.
+- No fact is shown twice (pillar/journey only in the hero, status only in hero + lifecycle, target date only in Scope).
 - Chapter numbers run 01, 02, 03… with no gaps for every line (check one Hospitality, one Development, one Estates and one Education record).
 - No light-theme colour leaks onto the dark ground. Check the lifecycle, asset state colours and the RAG strip.
 - Title and button labels never wrap mid-word at 1280px and at a 720px-wide window.
