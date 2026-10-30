@@ -6,7 +6,16 @@
 import Anthropic from "@anthropic-ai/sdk";
 
 const MODEL = "claude-sonnet-5-5";
+const MIN_TOKENS = 2048; // Echo asks for 900, which can cut a structured JSON answer mid-object
 const MAX_TOKENS = 4096;
+const WANTS_JSON = /respond with only a raw json object/i;
+
+// The page parses the first "{" to the last "}" as JSON; check the reply will survive that.
+const parsesAsJson = (text) => {
+  const a = text.indexOf("{"), b = text.lastIndexOf("}");
+  if (a < 0 || b <= a) return false;
+  try { JSON.parse(text.slice(a, b + 1)); return true; } catch { return false; }
+};
 
 export default async (req) => {
   if (!process.env.ANTHROPIC_BASE_URL) {
@@ -27,17 +36,43 @@ export default async (req) => {
     return Response.json({ error: { message: "No messages supplied." } }, { status: 400 });
   }
 
-  try {
-    const msg = await new Anthropic().messages.create({
+  const system = body.system ? String(body.system) : "";
+  const wantsJson = WANTS_JSON.test(system);
+  const maxTokens = Math.min(Math.max(Number(body.max_tokens) || 1024, MIN_TOKENS), MAX_TOKENS);
+  const client = new Anthropic();
+
+  const ask = async (msgs) => {
+    const t0 = Date.now();
+    const msg = await client.messages.create({
       model: MODEL,
-      max_tokens: Math.min(Number(body.max_tokens) || 1024, MAX_TOKENS),
-      ...(body.system ? { system: String(body.system) } : {}),
-      messages,
+      max_tokens: maxTokens,
+      // Echo resends ~25k tokens of repository data every turn; cache it between turns.
+      ...(system ? { system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }] } : {}),
+      messages: msgs,
     });
     const text = msg.content.filter((p) => p.type === "text").map((p) => p.text).join("").trim();
-    return Response.json({ text });
+    const ok = !wantsJson || parsesAsJson(text);
+    console.log(JSON.stringify({
+      ai: "reply", ms: Date.now() - t0, stop: msg.stop_reason, json: wantsJson ? ok : null,
+      in: msg.usage?.input_tokens, cached: msg.usage?.cache_read_input_tokens, out: msg.usage?.output_tokens,
+      head: text.slice(0, 160),
+    }));
+    return { text, ok, stop: msg.stop_reason };
+  };
+
+  try {
+    let r = await ask(messages);
+    if (wantsJson && !r.ok) {
+      // one corrective retry: same conversation, with the reply that broke the contract shown back
+      r = await ask(messages.concat(
+        { role: "assistant", content: r.text || "(empty)" },
+        { role: "user", content: "That reply was not a single valid JSON object. Reply again with ONLY the raw JSON object in the required shape: no prose, no markdown fences, and keep every string short." }
+      ));
+    }
+    return Response.json({ text: r.text });
   } catch (e) {
     const status = e?.status && e.status >= 400 ? e.status : 502;
+    console.log(JSON.stringify({ ai: "error", status, message: String(e?.message || e).slice(0, 300) }));
     return Response.json({ error: { message: e?.message || "AI request failed." } }, { status });
   }
 };
