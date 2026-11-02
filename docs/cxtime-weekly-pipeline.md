@@ -56,13 +56,14 @@ the benchmark is withheld, but the story can still run.
 Trend round-ups, surveys, opinion, vendor products and multi-brand pieces never become
 benchmarks; the review page says why each story wasn't benchmarked.
 
-The drafts appear in a **"For the Benchmark Repository"** section of the review. On `/approve`
-they are appended to the hub's repository:
+The drafts appear in a **"Benchmark drafts"** section of the review. **Nothing is added to the
+repository unless you ask:** reply `/bench <id>` for each draft you want. On `/approve` only those
+are appended to the hub's repository:
 - with the **✦ From Aldar Times** badge, showing the edition, date and source, and a link back;
 - in the Newly added carousel;
 - counted in the repository totals and searchable from the hub.
 
-The story's photo is reused. `/nobench e3-s2` keeps one out.
+The story's photo is reused. `/nobench e3-s2` withdraws a `/bench` you gave earlier.
 
 Benchmarks are append-only too. `data/benchmarks-from-times.json` records each one added, and
 `check` confirms every one is still in the hub. This is also how the Development and Estates
@@ -125,7 +126,7 @@ lines, which have no benchmarks yet, start filling up from the news.
      `data/aldar-times.xlsx` is regenerated across the whole archive.
    - Every source link is checked: a dead link (404) blocks publishing, and bot refusals are
      listed for you to check by hand.
-   - Approved benchmark drafts are appended to the hub's Benchmark Repository.
+   - Benchmark drafts you selected with `/bench` are appended to the hub's Benchmark Repository.
    - The pull request is merged and both sites are deployed.
 
 ## Review commands
@@ -140,8 +141,8 @@ Reply on the edition's pull request, one command per line:
 | `/add k:ab12cd34` | Bring a bench story in (keys are in the bench table) |
 | `/lead e3-w1` | Make it the Signal of the Week |
 | `/rerun e3-l2 lean on the arrival ritual` | Re-read and rewrite one story, with your note |
-| `/nobench e3-s2` | Publish the story, but do not add its benchmark to the repository |
-| `/bench e3-s2` | Put a removed benchmark back |
+| `/bench e3-s2` | Add this story's benchmark draft to the repository on publish (nothing is added without it) |
+| `/nobench e3-s2` | Withdraw a `/bench` given earlier |
 
 Only the repository owner and collaborators can run commands. A published edition is
 permanent: correct it in a later edition, never by editing the archive.

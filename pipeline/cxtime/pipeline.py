@@ -125,13 +125,15 @@ def build_edition(st, conf, archive):
                "items": [{k: it[k] for k in PUBLIC_ORDER if k in it} for it in items]}
     keymap = {it["id"]: it["_key"] for it in items}
     by_key = {r["key"]: r for r in st["records"]}
-    nob = set(st["overrides"].setdefault("nobench", []))
-    bench_ids = [it["id"] for it in items if by_key[it["_key"]].get("_bench") and it["_key"] not in nob]
+    # Benchmarks are opt-in: a draft joins the repository only when the reviewer writes /bench <id>.
+    yes = set(st["overrides"].setdefault("bench", []))
+    drafts = [it["id"] for it in items if by_key[it["_key"]].get("_bench")]
+    bench_ids = [i for i in drafts if keymap[i] in yes]
     st["proposal"] = {"edition": edition, "keys": keymap, "notes": notes,
                       "bench": [b["key"] for b in bench],
                       "benchReasons": {b["key"]: b.get("_benchReason", "") for b in bench},
                       "hold": any(n.startswith("HOLD") for n in notes),
-                      "benchmarks": bench_ids}
+                      "benchDrafts": drafts, "benchmarks": bench_ids}
     return st
 
 
@@ -225,7 +227,7 @@ def propose(date=None, only_sources=None):
 
     st = {"date": date, "created": datetime.now(timezone.utc).isoformat(timespec="seconds"), "sources": statuses,
           "ledger": ledger, "records": records, "candidates": {c["key"]: _cand_meta(c) for c in cands},
-          "overrides": {"drop": [], "add": [], "lead": None, "nobench": []}, "history": []}
+          "overrides": {"drop": [], "add": [], "lead": None, "bench": []}, "history": []}
     build_edition(st, conf, archive)
     for c in cands:  # remember everything screened, so it is never re-offered
         seen.setdefault(canon_url(c["sourceUrl"]), {"first": date, "title": c["titleRaw"][:120]})
@@ -265,8 +267,8 @@ HELP = """Reply on this pull request with one command per line:
 | `/add k:ab12cd34` | Bring a bench story into the edition (key shown in the bench table). |
 | `/lead e3-w1` | Make this story the Signal of the Week. |
 | `/rerun e3-l2 focus on the arrival ritual` | Rewrite one story; the note is passed to the editor. |
-| `/nobench e3-s2` | Publish the story but do not add its benchmark to the Benchmark Repository. |
-| `/bench e3-s2` | Put a benchmark you removed back. |
+| `/bench e3-s2` | Add this story's benchmark draft to the Benchmark Repository on publish. Nothing is added without it. |
+| `/nobench e3-s2` | Withdraw a `/bench` you gave earlier. |
 """
 
 
@@ -311,12 +313,12 @@ def revise(text, date=None):
                 ov["drop"] = [x for x in ov["drop"] if x != k]
             elif cmd == "/nobench":
                 k = resolve(st, args.split()[0])
-                ov["nobench"] = sorted(set(ov.get("nobench", [])) | {k})
+                ov["bench"] = [x for x in ov.get("bench", []) if x != k]
             elif cmd == "/bench":
                 k = resolve(st, args.split()[0])
                 if not next(r for r in st["records"] if r["key"] == k).get("_bench"):
                     raise ValueError("this story has no benchmark draft")
-                ov["nobench"] = [x for x in ov.get("nobench", []) if x != k]
+                ov["bench"] = sorted(set(ov.get("bench", [])) | {k})
             elif cmd == "/rerun":
                 ref, _, note = args.partition(" ")
                 rerun(st, resolve(st, ref), note.strip(), conf)
@@ -423,27 +425,29 @@ def write_review(d, st, conf):
                 L.append(f"\n> ⚠️ {fl}")
             L.append("")
 
-    bms = [(i, recs[p["keys"][i["id"]]]["_bench"]) for i in ed["items"] if i["id"] in p.get("benchmarks", [])]
-    L.append(f"## For the Benchmark Repository ({len(bms)})\n")
+    chosen = set(p.get("benchmarks", []))
+    bms = [(i, recs[p["keys"][i["id"]]]["_bench"]) for i in ed["items"] if i["id"] in p.get("benchDrafts", [])]
+    L.append(f"## Benchmark drafts ({len(bms)}) · {len(chosen)} selected for the repository\n")
     if not bms:
         L.append("_No story this week describes a single organisation's practice clearly enough to benchmark._\n")
     else:
-        L.append("On `/approve` these join the Benchmark Repository on the Signature Experience hub, marked "
-                 "**✦ From Aldar Times** with a link back to the edition and source. `/nobench <id>` keeps one out.\n")
+        L.append("**Nothing is added to the Benchmark Repository unless you ask.** Reply `/bench <id>` for each draft "
+                 "you want; on `/approve` those join the repository on the Signature Experience hub, marked "
+                 "**✦ From Aldar Times** with a link back to the edition and source.\n")
     from .benchmarks import STAGES, LINE_LABEL, PILLARS
     for it, bm in bms:
-        L.append(f"#### from `{it['id']}` · **{bm['title']}** · {bm['brand']}")
+        state = "✅ selected: will be added on /approve" if it["id"] in chosen else f"not selected: reply `/bench {it['id']}` to add"
+        L.append(f"#### from `{it['id']}` · **{bm['title']}** · {bm['brand']}  \n<sub>{state}</sub>")
         L.append(f"{bm['industry']} · {LINE_LABEL[bm['line']]} Plus · {STAGES[bm['line']][bm['moment']]} · "
                  f"pillar: {PILLARS[bm['pillar']].split(' (')[0]} · {', '.join(bm['themes'])}  ")
         L.append(f"*{bm['short']}* {bm['lead']}\n")
         for w in bm["why"]:
             L.append(f"- **{w['head']}** {w['body']}")
         L.append("\n**Travels to:** " + " · ".join(f"*{t['line']}:* {t['how']}" for t in bm["transfer"]) + "\n")
-    skipped = [(i["id"], recs[p["keys"][i["id"]]]) for i in ed["items"] if i["id"] not in p.get("benchmarks", [])]
+    skipped = [(i["id"], recs[p["keys"][i["id"]]]) for i in ed["items"] if i["id"] not in p.get("benchDrafts", [])]
     if skipped:
-        L.append("<sub>Not benchmarked: " + "; ".join(
-            f"`{i}` {('removed by reviewer' if r.get('_bench') else (r.get('_benchWhyNot') or 'not a single-organisation practice'))}"
-            for i, r in skipped) + "</sub>\n")
+        L.append("<sub>No benchmark draft: " + "; ".join(
+            f"`{i}` {r.get('_benchWhyNot') or 'not a single-organisation practice'}" for i, r in skipped) + "</sub>\n")
 
     bench = [recs[k] for k in p["bench"] if k in recs]
     if bench:

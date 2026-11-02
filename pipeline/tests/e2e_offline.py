@@ -132,8 +132,11 @@ def main():
     # reviewer: drop one, choose another lead, then approve
     drop_id = ed["items"][1]["id"]
     lead_id = next(i["id"] for i in ed["items"] if i["format"] == "watch")
-    bench_off = next((i for i in st["proposal"]["benchmarks"] if i != drop_id), None)
-    (tmp / "c1.txt").write_text(f"Looks good.\n/drop {drop_id}\n/lead {lead_id}\n" + (f"/nobench {bench_off}\n" if bench_off else ""))
+    assert st["proposal"]["benchmarks"] == [], "benchmarks are opt-in: none selected by default"
+    drafts = [i for i in st["proposal"]["benchDrafts"] if i != drop_id]
+    bench_on, bench_off = drafts[0], (drafts[1] if len(drafts) > 1 else None)
+    (tmp / "c1.txt").write_text(f"Looks good.\n/drop {drop_id}\n/lead {lead_id}\n/bench {bench_on}\n"
+                                + (f"/bench {bench_off}\n/nobench {bench_off}\n" if bench_off else ""))
     run(py + ["revise", str(tmp / "c1.txt")], repo, env)
     st2 = json.loads((rd / "state.json").read_text())
     ed2 = st2["proposal"]["edition"]
@@ -152,8 +155,8 @@ def main():
     r = run(py + ["check"], repo, env)
     assert (repo / "data" / "aldar-times.xlsx").exists()
     reg = json.loads((repo / "data" / "benchmarks-from-times.json").read_text())["benchmarks"]
-    assert reg and all(b["edition"] == 3 for b in reg), "benchmarks added with provenance"
-    assert all(b["story"] != bench_off for b in reg), "/nobench respected"
+    assert len(reg) == 1 and reg[0]["edition"] == 3, "only the /bench-selected draft is added, with provenance"
+    assert all(b["story"] != bench_off for b in reg), "/nobench withdraws a /bench"
     sys.path.insert(0, str(repo / "pipeline"))
     from cxtime import benchmarks as B
     ids = B.existing_ids(repo / "index.html")

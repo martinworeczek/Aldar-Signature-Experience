@@ -1,6 +1,6 @@
 # Aldar CX Time - weekly edition, step 2 of 2: review and publish.
 # Reply on the edition's pull request with commands, one per line:
-#   /drop <id>   /add k:<key>   /lead <id>   /rerun <id> <note>   /approve   /approve anyway
+#   /drop <id>   /add k:<key>   /lead <id>   /rerun <id> <note>   /bench <id>   /nobench <id>   /approve   /approve anyway
 # Edits re-curate the edition and update the pull request. /approve appends the edition to the
 # archive (earlier editions are locked and can never change), rebuilds both sites, merges, and
 # deploys aldar-signature-experience.netlify.app and aldar-cx-time.netlify.app.
@@ -46,7 +46,7 @@ jobs:
           BODY: ${{ github.event.comment.body }}
         run: |
           printf '%s\n' "$BODY" > "$RUNNER_TEMP/comment.txt"
-          if grep -qE '^[[:space:]]*/(approve|drop|add|lead|rerun)\b' "$RUNNER_TEMP/comment.txt"; then echo "go=true" >> "$GITHUB_OUTPUT"; fi
+          if grep -qE '^[[:space:]]*/(approve|drop|add|lead|rerun|bench|nobench)\b' "$RUNNER_TEMP/comment.txt"; then echo "go=true" >> "$GITHUB_OUTPUT"; fi
 
       - name: Find the edition branch
         if: steps.cmd.outputs.go == 'true'
