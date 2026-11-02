@@ -24,7 +24,7 @@ BRAND = """<div class="cxt-bar">
     <img src="{logo}" alt="Aldar">
     <span><b>Aldar CX Time</b><i>Curated by Group CX</i></span>
   </a>
-  <a class="cxt-hub" href="{hub}" target="_blank" rel="noopener">Signature Experience Hub ↗</a>
+  <a class="cxt-hub" href="{hub}" target="_blank" rel="noopener"><span class="cxt-long">Signature Experience </span>Hub ↗</a>
 </div>
 <div class="cxt-page">
 """
@@ -42,7 +42,89 @@ body{margin:0;background:#F3EFE7;font-family:'Poppins',sans-serif;-webkit-font-s
 .cxt-page{max-width:1440px;margin:0 auto;overflow-x:clip}
 html,body{overflow-x:clip}
 @media (max-width:640px){.cxt-bar{padding:10px 16px}.cxt-brand i{display:none}.cxt-hub{padding:7px 11px}}
+@media (max-width:400px){.cxt-long{display:none}.cxt-brand img{width:34px;height:34px}}
+""" + """
+/* Phones and small tablets. The module is laid out with inline styles for the desktop hub,
+   so these rules reach it through the data-m hooks that MOBILE_HOOKS adds at build time. */
+@media (max-width:900px){
+ [data-m=rail]{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media (max-width:700px){
+ .atl{border-radius:0!important;min-height:0!important}
+ [data-m=pad]{padding:12px 12px 40px!important}
+ [data-atl-masthead]{border-radius:16px!important;margin-bottom:18px!important}
+ [data-m=mh]{padding:58px 18px 20px!important;min-height:0!important}
+ [data-m=mh] [data-atl-edpill] > div > div[style*="absolute"]{right:auto!important;left:50%!important;transform:translateX(-50%);width:min(280px,calc(100vw - 48px))!important}
+ [data-m=stats]{gap:10px 22px!important}
+ [data-m=strip]{flex-direction:column!important;margin-top:18px!important}
+ [data-m=strip] > div{border-right:0!important;border-bottom:1px solid rgba(247,242,233,.12);padding:11px 16px 12px!important}
+ [data-m=strip] > div:last-child{border-bottom:0}
+ [data-m=shelf]{padding:16px 12px 22px!important;border-radius:16px!important}
+ [data-atl-lead]{aspect-ratio:auto!important;min-height:440px!important;display:flex;flex-direction:column;justify-content:flex-end;margin-top:4px!important}
+ [data-m=leadchips]{left:14px!important;right:14px!important;top:14px!important;flex-wrap:wrap!important}
+ [data-m=leadtx]{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;padding:84px 18px 20px}
+ [data-m=leadtx] > div:last-child{flex-wrap:wrap}
+ [data-m=grid]{grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
+ [data-m=grid] [data-atl-card]{aspect-ratio:4/5!important}
+ [data-atl-row]{grid-template-columns:92px minmax(0,1fr)!important;gap:14px!important;padding:14px 0!important}
+ [data-atl-row] > span:last-child{display:none!important}
+ [data-atl-row] > div:nth-child(2) > div:nth-child(2){font-size:16px!important}
+ [data-atl-reader]{border-radius:12px!important}
+ [data-m=rhero]{height:auto!important;min-height:520px!important;display:flex;flex-direction:column;justify-content:flex-end}
+ [data-m=rtop]{left:14px!important;right:14px!important;top:14px!important;align-items:flex-start!important}
+ [data-m=rchips]{flex-wrap:wrap!important;flex-shrink:1!important;min-width:0}
+ [data-m=rbot]{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;padding:96px 18px 22px}
+ [data-m=rbot] > div:nth-child(2){font-size:28px!important;line-height:1.12!important}
+ [data-m=rbody]{padding:4px 12px 28px!important}
+ [data-m=panel]{padding:20px 18px!important;gap:14px!important}
+ [data-m=panel] > div:first-child{flex:1 1 100%!important}
+ [data-m=panel] > div:last-child{flex:1 1 100%!important}
+ [data-m=panel] > div:last-child[style*="grid"]{grid-template-columns:minmax(0,1fr)!important}
+ [data-m=rbody] > div[style*="36ch"]{margin:26px auto!important}
+ [data-m=rbody] > div[style*="36ch"] > div:first-child{font-size:21px!important}
+ [data-m=railhead]{flex-wrap:wrap;gap:6px 12px!important;margin-top:26px!important}
+ [data-m=railhead] > span:nth-child(3){flex:1 1 100%;order:3}
+ [data-m=railhead] > button{order:2}
+ [data-m=rail]{gap:10px!important}
+ [data-m=rail] [data-atl-card] > div:last-child{padding:0 12px 12px!important}
+ [data-m=rail] [data-atl-card] > div:last-child > div:last-child{font-size:15px!important;line-height:1.25!important}
+ [data-m=rail] [data-atl-card] > div:nth-child(3){top:10px!important;left:10px!important;right:10px!important}
+ [data-m=rail] [data-atl-card] > div:nth-child(3) > span:nth-child(2){display:none}
+}
 """
+
+# Elements the phone CSS needs to reach, tagged by a unique prefix of their opening tag.
+# Each hook must match exactly the expected number of times, so a redesign of the module
+# fails the build loudly instead of silently losing the mobile layout.
+MOBILE_HOOKS = [
+    ('<div style="position:relative;z-index:1;max-width:none;margin:0;padding:26px 28px 80px', "pad", 1),
+    ('<div style="position:relative;min-height:400px;display:flex;flex-direction:column', "mh", 1),
+    ('<div style="display:flex;justify-content:center;gap:28px;flex-wrap:wrap;margin-top:18px', "stats", 1),
+    ('<div style="display:flex;width:100%;max-width:760px', "strip", 1),
+    ('<div style="background:radial-gradient(1100px 480px', "shelf", 1),
+    ('<div style="position:absolute;top:18px;left:18px;display:flex;gap:8px;flex-wrap:nowrap', "leadchips", 1),
+    ('<div style="position:absolute;left:28px;right:28px;bottom:26px', "leadtx", 1),
+    ('<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px', "grid", 1),
+    ('<div style="position:relative;height:min(520px,62vh);min-height:420px', "rhero", 1),
+    ('<div style="position:absolute;top:22px;left:28px;right:28px', "rtop", 1),
+    ('<div style="display:flex;gap:8px;align-items:center;flex-wrap:nowrap;flex-shrink:0', "rchips", 1),
+    ('<div style="position:absolute;left:40px;right:40px;bottom:30px', "rbot", 1),
+    ('<div style="padding:6px 32px 36px', "rbody", 1),
+    ('<div style="display:flex;flex-wrap:wrap;gap:20px 32px;padding:28px 32px', "panel", 1),
+    ('<div data-atl-why="1" style=', "panel", 1),
+    ('<div data-atl-se="1" style=', "panel", 1),
+    ('<div style="margin-top:16px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px', "rail", 1),
+    ('<div style="margin-top:32px;display:flex;align-items:baseline;gap:14px', "railhead", 1),
+]
+
+
+def add_mobile_hooks(mod):
+    for needle, name, count in MOBILE_HOOKS:
+        found = mod.count(needle)
+        assert found == count, "mobile hook %r: expected %d, found %d" % (name, count, found)
+        mod = mod.replace(needle, '<div data-m="%s" ' % name + needle[len("<div "):])
+    return mod
+
 
 def main():
     html = open(HUB, encoding="utf-8").read()
@@ -59,6 +141,7 @@ def main():
                       '\n'.join('<script src="%s"></script>' % ids[k] for k in ("cxb", "at_data", "at_img", "img_loader")), 1)
     assert ids["runtime"] in mod and ids["at_data"] in mod
     mod = mod.replace("<style>\n.atl a{", "<style>" + BRAND_CSS + "\n.atl a{", 1)
+    mod = add_mobile_hooks(mod)
     # brand bar and page wrapper around the module's own root
     head_end = mod.index("</helmet>") + len("</helmet>")
     body_end = mod.index("</x-dc>")
