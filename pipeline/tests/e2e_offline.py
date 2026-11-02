@@ -111,13 +111,14 @@ def main():
     env = {**os.environ, "CXTIME_MOCK_LLM": "1", "NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost"}
     py = [sys.executable, "pipeline/run.py"]
     before = json.loads((repo / "data" / "aldar-times.json").read_text())
+    N = max(e["n"] for e in before["editions"]) + 1  # the edition this test proposes
 
     run(py + ["propose", "--date", RUN_DATE], repo, env)
     rd = repo / "data" / "cxtime-runs" / RUN_DATE
     st = json.loads((rd / "state.json").read_text())
     ed = st["proposal"]["edition"]
     print("proposed:", [(i["id"], i["title"][:40], i["lead"]) for i in ed["items"]])
-    assert ed["n"] == 3 and ed["items"], "edition 3 proposed"
+    assert ed["n"] == N and ed["items"], "next edition proposed"
     assert sum(i["lead"] for i in ed["items"]) == 1
     assert all(i["format"] in ("read", "watch", "listen") for i in ed["items"])
     assert sum(i["format"] == "read" for i in ed["items"]) <= 6
@@ -150,12 +151,15 @@ def main():
 
     run(py + ["publish", "--skip-url-check"], repo, env)
     after = json.loads((repo / "data" / "aldar-times.json").read_text())
-    assert [e["n"] for e in after["editions"]] == [3, 2, 1]
-    assert after["editions"][1:] == before["editions"], "editions 1-2 untouched"
+    assert [e["n"] for e in after["editions"]] == [N] + [e["n"] for e in before["editions"]]
+    assert after["editions"][1:] == before["editions"], "earlier editions untouched"
     r = run(py + ["check"], repo, env)
     assert (repo / "data" / "aldar-times.xlsx").exists()
     reg = json.loads((repo / "data" / "benchmarks-from-times.json").read_text())["benchmarks"]
-    assert len(reg) == 1 and reg[0]["edition"] == 3, "only the /bench-selected draft is added, with provenance"
+    box = json.loads((repo / "data" / "cxtime-outbox.json").read_text())["emails"]
+    assert len([m for m in box if m["edition"] == N]) == 1 and box[-1]["edition"] == N and box[-1]["status"] == "pending", "edition email queued once"
+    assert "Read the edition" in box[-1]["html"] and "mock newsletter intro" in box[-1]["html"]
+    assert len(reg) == 1 and reg[0]["edition"] == N, "only the /bench-selected draft is added, with provenance"
     assert all(b["story"] != bench_off for b in reg), "/nobench withdraws a /bench"
     sys.path.insert(0, str(repo / "pipeline"))
     from cxtime import benchmarks as B

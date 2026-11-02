@@ -11,6 +11,8 @@ def answer(system, user, schema):
     props = schema["properties"]
     if "issues" in props:
         return {"issues": []}
+    if list(props) == ["intro"]:
+        return {"intro": "A mock newsletter intro for the edition."}
     if "items" in props and "keep" not in props:
         keys = re.findall(r'"key": "([0-9a-f]{8})"', user)
         return {"items": [{"key": k, "experiential": 3 + _h(k, 3), "reason": "mock screen"} for k in keys]}

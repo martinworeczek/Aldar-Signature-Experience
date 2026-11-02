@@ -129,7 +129,21 @@ def build_edition(st, conf, archive):
     yes = set(st["overrides"].setdefault("bench", []))
     drafts = [it["id"] for it in items if by_key[it["_key"]].get("_bench")]
     bench_ids = [i for i in drafts if keymap[i] in yes]
-    st["proposal"] = {"edition": edition, "keys": keymap, "notes": notes,
+    # the email intro: the reviewer's own text if given; else kept while the stories are unchanged
+    prev = st.get("proposal") or {}
+    sig = [i["title"] for i in edition["items"]]
+    intro = st["overrides"].get("intro")
+    if not intro:
+        intro = prev.get("intro") if prev.get("introFor") == sig else None
+    if not intro and edition["items"]:
+        from . import newsletter
+        from .llm import LLMError
+        try:
+            intro = newsletter.write_intro(edition, conf)
+        except LLMError:
+            intro = (f"This week's edition brings {len(edition['items'])} experiential CX stories from around "
+                     "the world, each with what it could mean for Aldar.")
+    st["proposal"] = {"edition": edition, "keys": keymap, "notes": notes, "intro": intro or "", "introFor": sig,
                       "bench": [b["key"] for b in bench],
                       "benchReasons": {b["key"]: b.get("_benchReason", "") for b in bench},
                       "hold": any(n.startswith("HOLD") for n in notes),
@@ -269,6 +283,7 @@ HELP = """Reply on this pull request with one command per line:
 | `/rerun e3-l2 focus on the arrival ritual` | Rewrite one story; the note is passed to the editor. |
 | `/bench e3-s2` | Add this story's benchmark draft to the Benchmark Repository on publish. Nothing is added without it. |
 | `/nobench e3-s2` | Withdraw a `/bench` you gave earlier. |
+| `/intro Your own opening paragraph…` | Replace the email intro (one line). |
 """
 
 
@@ -319,6 +334,10 @@ def revise(text, date=None):
                 if not next(r for r in st["records"] if r["key"] == k).get("_bench"):
                     raise ValueError("this story has no benchmark draft")
                 ov["bench"] = sorted(set(ov.get("bench", [])) | {k})
+            elif cmd == "/intro":
+                if not args:
+                    raise ValueError("write the intro text after /intro")
+                ov["intro"] = args
             elif cmd == "/rerun":
                 ref, _, note = args.partition(" ")
                 rerun(st, resolve(st, ref), note.strip(), conf)
@@ -385,6 +404,10 @@ def write_review(d, st, conf):
              f"bar: relevance ≥ {conf['edition']['min_relevance']}, experiential ≥ {conf['edition']['min_experiential']}.\n")
     if os.environ.get("CXTIME_PREVIEW_URL"):
         L.append(f"**Preview the page:** {os.environ['CXTIME_PREVIEW_URL']}\n")
+    nl = conf.get("newsletter", {})
+    if nl.get("to"):
+        L.append(f"**Email on publish** to {', '.join(nl['to'])}. Intro (replace with `/intro <text>`):\n")
+        L.append("> " + (p.get("intro") or "_none_") + "\n")
     for n in p["notes"]:
         L.append(f"> {'⚠️ ' if n.startswith('HOLD') else ''}{n}")
     if p["notes"]:
@@ -588,6 +611,8 @@ def publish(date=None, force=False, skip_url_check=False):
     store.check_hub_matches(new)
     write_xlsx(new)
     n_bm = publish_benchmarks(st, new)
+    from . import newsletter
+    mailed = newsletter.queue(new["editions"][0], st["proposal"].get("intro", ""), conf)
     subprocess.run([sys.executable, "-I", str(ROOT / "tools" / "build_cx_time.py")], cwd=ROOT, check=True)
 
     # tidy: photos staged this run but not used in the edition
@@ -606,6 +631,8 @@ def publish(date=None, force=False, skip_url_check=False):
     report = (f"Published Edition {ed['n']} · {ed['date']}: {len(ed['items'])} stories; "
               f"{n_bm} added to the Benchmark Repository. "
               f"Archive now holds {len(new['editions'])} editions; hub page {hub_mb:.1f} MiB.")
+    if mailed:
+        report += f"\nEmail queued for {', '.join(conf['newsletter']['to'])}: \"{mailed}\" (sent from Group CX's Outlook by the scheduled sender)."
     if soft:
         report += "\nLinks to check by hand:\n- " + "\n- ".join(soft)
     (d / "published.md").write_text(report + "\n")

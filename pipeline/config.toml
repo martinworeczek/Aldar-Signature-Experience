@@ -17,6 +17,13 @@ max_ai_tech = 2              # AI stories only when applied to an experience, an
 shortlist = { read = 18, watch = 6, listen = 6 }   # stories actually read in full and enriched; headroom above the caps
 shortlist_per_source = 4     # no source takes more than this many shortlist places
 
+[newsletter]
+# Each published edition is emailed once to these addresses, with the intro approved on the review page.
+to = ["atoplisek@aldar.com"]
+cc = []
+site_url = "https://aldar-cx-time.netlify.app"
+hub_url = "https://aldar-signature-experience.netlify.app"
+
 [models]
 # One model for every step by default; change here if cost needs tuning.
 screen = "claude-opus-5-5"
