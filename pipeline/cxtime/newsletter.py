@@ -1,13 +1,14 @@
-"""The edition announcement email (EDM design "2c Photo-ready", docs/edm/README.md).
+"""The edition announcement email (EDM design "4b Sadu Thread", docs/edm/README.md).
 
-write_copy()  drafts the email's words for a proposed edition: subject, preheader, headline, intro
-              and, for the three featured stories (the lead, then the next two in edition order),
-              who / title / what / For Aldar. Shown on the review page and approved with the edition;
-              /subject, /headline, /intro and /pick override it.
+write_copy()  drafts the email's words for a proposed edition: preheader, headline, intro and, for
+              the three featured stories (the lead, then the next two in edition order), who / kind /
+              title / what. The subject is "Edition N · <headline>". Shown on the review page and
+              approved with the edition; /subject, /headline, /intro and /pick override it. The email
+              deliberately carries no "For Aldar" lines, so readers click through to the edition.
 publish_edm() on publish, crops the photographs to JPEG, renders the designed email and writes it to
-              sites/cx-time/email/edition-N/index.html, so it is hosted with the CX Time site. Group CX
-              then sends it from Outlook (Insert > Attach File > Insert as Text), because the mail
-              connector available to the pipeline cannot send images or styling.
+              sites/cx-time/email/edition-N/index.html, so it is hosted with the CX Time site. The
+              file is then dropped into OneDrive "CX Times/Outbox", where a Power Automate flow sends
+              it as the email body (the pipeline's own mail connector strips images and styling).
 """
 import json
 from datetime import datetime, timezone
@@ -18,28 +19,26 @@ from .store import ROOT
 
 LOG = ROOT / "data" / "cxtime-outbox.json"
 
-PICK = {"type": "object", "additionalProperties": False, "required": ["id", "who", "title", "what", "forAldar"],
-        "properties": {k: {"type": "string"} for k in ("id", "who", "title", "what", "forAldar")}}
+PICK = {"type": "object", "additionalProperties": False, "required": ["id", "who", "kind", "title", "what"],
+        "properties": {k: {"type": "string"} for k in ("id", "who", "kind", "title", "what")}}
 COPY_SCHEMA = {"type": "object", "additionalProperties": False,
-               "required": ["subject", "preheader", "headline", "intro", "picks"],
-               "properties": {"subject": {"type": "string"}, "preheader": {"type": "string"},
+               "required": ["preheader", "headline", "intro", "picks"],
+               "properties": {"preheader": {"type": "string"},
                               "headline": {"type": "string"}, "intro": {"type": "string"},
                               "picks": {"type": "array", "items": PICK}}}
 
 TASK = """Write the announcement email for this week's Aldar CX Time edition, sent to Aldar colleagues.
 It features the three stories marked FEATURE, in that order. Use only facts in the material below.
 
-- subject: "New in CX Time: " plus the edition's idea in a few words; at most 60 characters.
 - preheader: one line naming the three featured stories concretely; at most 100 characters.
 - headline: the edition's idea in 2-5 words, ending with a full stop (e.g. "Worth leaving home for.").
 - intro: 30-45 words. Start "This week's edition is about", name the idea, and end with
   "Three stories lead it, and each comes with what it could mean for Aldar."
 - picks: one per FEATURE story, same order, with its id and:
   - who: the brand, venue or place at the heart of it, 1-4 words (not the publication).
+  - kind: what kind of place or experience it is, 1-2 words (e.g. "Cinema domes", "Museum", "Showroom").
   - title: a fresh, concrete headline, at most 9 words.
-  - what: one sentence, at most 25 words, saying what happens.
-  - forAldar: one sentence, at most 20 words, taken from the story's "why it matters to Aldar";
-    name the Aldar moment or place (mall, sales gallery, school open day...). Do not start with "For".
+  - what: one sentence, at most 25 words, saying what happens. Do not say what it means for Aldar.
 Executive, warm, UK spelling, no hype, no exclamation marks, no emoji.
 
 STORIES
@@ -66,17 +65,21 @@ def write_copy(edition, conf, picks=None):
                    TASK + "\n".join(lines), COPY_SCHEMA, max_tokens=6000)
     by = {p["id"]: p for p in out["picks"]}
     out["picks"] = [by.get(i["id"]) or fallback_pick(i) for i in feat]
+    out["subject"] = subject_for(edition["n"], out["headline"])
     return out
 
 
+def subject_for(n, headline):
+    return f"Edition {n} · {' '.join(headline.split()).rstrip('.')}"
+
+
 def fallback_pick(i):
-    first = i["why"].split(". ")[0].rstrip(".") + "."
-    return {"id": i["id"], "who": i["sourceShort"], "title": i["title"], "what": i["dek"], "forAldar": first}
+    return {"id": i["id"], "who": i["sourceShort"], "kind": i.get("tag", ""), "title": i["title"], "what": i["dek"]}
 
 
 def fallback_copy(edition):
     feat = featured(edition)
-    return {"subject": f"New in CX Time: Edition {edition['n']}",
+    return {"subject": subject_for(edition["n"], "This week in CX Time."),
             "preheader": " · ".join(i["title"] for i in feat)[:100],
             "headline": "This week in CX Time.",
             "intro": ("This week's edition is about experiences people choose to come back for. "
@@ -94,12 +97,16 @@ def publish_edm(edition, archive, copy, conf):
     srcs = [ROOT / imgs[p["id"]].lstrip("/") if imgs.get(p["id"]) else None for p in picks]
     hero_url, thumb_urls = None, [None] * len(picks)
     if any(srcs):
-        hero_src = next(s for s in srcs if s)
+        # the hero is the edition's mood: a photograph from a story the email doesn't feature, so
+        # the lead's photo isn't shown twice in a row; the lead's own if there is no other
+        picked = {p["id"] for p in picks}
+        others = [ROOT / imgs[i["id"]].lstrip("/") for i in edition["items"] if i["id"] not in picked and imgs.get(i["id"])]
+        hero_src = others[0] if others else next(s for s in srcs if s)
         hero_url, made = edm.make_images(edition["n"], hero_src, [s or hero_src for s in srcs], base)
         thumb_urls = [u if s else None for u, s in zip(made, srcs)]
     html = edm.render({
         "number": edition["n"], "date": edition["date"], "headline": copy["headline"], "intro": copy["intro"],
-        "preheader": copy["preheader"], "editionUrl": base, "heroImage": hero_url,
+        "preheader": copy["preheader"], "editionUrl": base, "heroImage": hero_url, "assetsUrl": f"{base}/email/assets",
         "stories": [dict(p, image=u) for p, u in zip(picks, thumb_urls)],
     })
     out = ROOT / "sites" / "cx-time" / "email" / f"edition-{edition['n']}"
@@ -110,7 +117,7 @@ def publish_edm(edition, archive, copy, conf):
     if not any(m["edition"] == edition["n"] for m in log["emails"]):
         log["emails"].append({"edition": edition["n"], "date": edition["date"], "subject": copy["subject"],
                               "to": nl.get("to", []), "page": url, "file": f"sites/cx-time/email/edition-{edition['n']}/index.html",
-                              "status": "ready to send from Outlook",
+                              "status": "ready: drop into OneDrive CX Times/Outbox to send",
                               "builtAt": datetime.now(timezone.utc).isoformat(timespec="seconds")})
         LOG.write_text(json.dumps(log, ensure_ascii=False, indent=1) + "\n")
     return url, copy["subject"]

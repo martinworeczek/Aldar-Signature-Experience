@@ -13,9 +13,9 @@ def answer(system, user, schema):
         return {"issues": []}
     if "picks" in props:
         ids = re.findall(r'"id": "(e\d+-[swl]\d+)", "role": "FEATURE', user)
-        return {"subject": "New in CX Time: mock", "preheader": "Mock preheader", "headline": "Mock headline.",
+        return {"preheader": "Mock preheader", "headline": "Mock headline.",
                 "intro": "This week's edition is about a mock idea. Three stories lead it, and each comes with what it could mean for Aldar.",
-                "picks": [{"id": i, "who": "Mock Brand", "title": "Mock title", "what": "Mock what.", "forAldar": "Mock for Aldar."} for i in ids]}
+                "picks": [{"id": i, "who": "Mock Brand", "kind": "Mock kind", "title": "Mock title", "what": "Mock what."} for i in ids]}
     if "items" in props and "keep" not in props:
         keys = re.findall(r'"key": "([0-9a-f]{8})"', user)
         return {"items": [{"key": k, "experiential": 3 + _h(k, 3), "reason": "mock screen"} for k in keys]}

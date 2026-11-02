@@ -157,8 +157,12 @@ def main():
     assert (repo / "data" / "aldar-times.xlsx").exists()
     reg = json.loads((repo / "data" / "benchmarks-from-times.json").read_text())["benchmarks"]
     page = repo / "sites" / "cx-time" / "email" / f"edition-{N}" / "index.html"
-    assert page.exists() and "Read the edition" in page.read_text() and "Mock headline." in page.read_text(), "EDM built"
-    assert (page.parent / "hero.jpg").exists() and (page.parent / "01.jpg").exists(), "EDM photos cropped"
+    em = page.read_text() if page.exists() else ""
+    assert "Read the edition" in em and "Mock<br>headline." in em and "For Aldar" not in em, "EDM built (4b, no For Aldar lines)"
+    assert 'max-width:600px' in em and 'display:inline-block' in em, "EDM is fluid: fits the reading window"
+    from PIL import Image as _I
+    assert _I.open(page.parent / "hero.jpg").size == (1200, 1120) and _I.open(page.parent / "01.jpg").size == (528, 660), "EDM photos cropped"
+    assert (page.parents[1] / "assets" / "pat-sadu-band.png").exists(), "Sadu patterns written"
     box = json.loads((repo / "data" / "cxtime-outbox.json").read_text())["emails"]
     assert len([m for m in box if m["edition"] == N]) == 1
     assert len(reg) == 1 and reg[0]["edition"] == N, "only the /bench-selected draft is added, with provenance"

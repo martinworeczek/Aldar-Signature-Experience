@@ -143,6 +143,9 @@ def build_edition(st, conf, archive):
             email = newsletter.fallback_copy(edition)
     if email:
         email = dict(email, **{k: ov[k] for k in ("subject", "headline", "intro") if ov.get(k)})
+        if ov.get("headline") and not ov.get("subject"):
+            from . import newsletter
+            email["subject"] = newsletter.subject_for(edition["n"], email["headline"])
     st["proposal"] = {"edition": edition, "keys": keymap, "notes": notes, "email": email, "emailFor": sig,
                       "bench": [b["key"] for b in bench],
                       "benchReasons": {b["key"]: b.get("_benchReason", "") for b in bench},
@@ -419,7 +422,7 @@ def write_review(d, st, conf):
         L.append(f"**Subject:** {em['subject']}  \n**Preview line:** {em['preheader']}\n")
         L.append(f"**{em['headline']}** {em['intro']}\n")
         for k, s in enumerate(em["picks"], 1):
-            L.append(f"{k:02d} · {s['who']} (`{s['id']}`): **{s['title']}**. {s['what']} *For Aldar ·* {s['forAldar']}  ")
+            L.append(f"{k:02d} · {s['who']}{' · ' + s['kind'] if s.get('kind') else ''} (`{s['id']}`): **{s['title']}**. {s['what']}  ")
         L.append("\n</details>\n")
     for n in p["notes"]:
         L.append(f"> {'⚠️ ' if n.startswith('HOLD') else ''}{n}")
@@ -650,8 +653,8 @@ def publish(date=None, force=False, skip_url_check=False):
         n = ed["n"]
         report += (f"\n\n**Announcement email is ready** (live once both sites are deployed): {edm_url}\n"
                    f"Subject: {edm_subject}" + (f" · To: {to}" if to else "") + "\n"
-                   f"To send: open the link, File → Save Page As → *Web Page, HTML only* (`cx-time-edition-{n}.html`); "
-                   "then in Outlook: New Email → Insert → Attach File → choose it → arrow next to Insert → **Insert as Text**.")
+                   f"To send: save `sites/cx-time/email/edition-{n}/index.html` as `{edm_subject}.html` into OneDrive "
+                   "**CX Times/Outbox**; the Power Automate flow sends it with the design as the email body.")
     if soft:
         report += "\nLinks to check by hand:\n- " + "\n- ".join(soft)
     (d / "published.md").write_text(report + "\n")

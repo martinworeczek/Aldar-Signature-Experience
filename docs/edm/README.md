@@ -1,149 +1,206 @@
-# Handoff: Aldar CX Time — Edition announcement EDM ("2c Photo-ready")
+# Handoff: Aldar CX Time — Edition announcement EDM "4b Sadu Thread"
 
 ## Overview
-This is the email that tells colleagues a new edition of **Aldar CX Time** is out. CX Time is the weekly curated-stories feature in the Signature Experience Hub. The email holds:
-- one headline and a short intro;
-- the edition's **three lead stories**, each with a photo, a one-line description and a "For Aldar" line;
-- one **Read the edition** button.
+This is the email that tells colleagues a new edition of **Aldar CX Time** is live. CX Time is the weekly curated-stories feature in the Signature Experience Hub. The email has five parts:
+- a full-bleed photographic hero with a centred masthead;
+- the edition headline and intro;
+- three lead stories, shown as alternating photo/text spreads;
+- a call-to-action panel;
+- a one-line sign-off.
 
-It is short on purpose: about one and a half screens. The reference is Edition 3 (2 November 2026), and the template must render every future edition the same way.
+The email teases the stories. It deliberately does not include the "For Aldar" takeaways, so that readers click through to the edition. The reference content is Edition 3 (2 November 2026). The template must render every future edition the same way.
 
 ## About the design file
-`edm-e3-2c-photo-ready.html` is **already send-ready email HTML**: nested `role="presentation"` tables, inline styles, no JavaScript, no web fonts, Outlook conditionals. Treat it as the exact target output.
+`edm-e3-4b-sadu-thread.html` is **send-ready email HTML**. It uses nested `role="presentation"` tables, inline styles, no JavaScript, and Outlook conditionals and VML. Treat it as the exact target output.
 
-The job is **to turn it into a template that renders any edition from data and real photographs.** Any of these works, as long as the compiled HTML keeps the rules below:
-- a small build script (Node plus a template literal or Handlebars);
-- React Email or MJML;
-- your email platform's own template language.
-
-Do **not** rebuild it as normal web HTML. Flex, grid, CSS classes for layout and web fonts all break in Gmail and Outlook.
+The job is **to turn it into a template that renders any edition from data and real photographs.** That template can be a small Node build (template literal or Handlebars), React Email or MJML, or your email platform's own template language. Whichever you choose, the compiled HTML must keep the rules below. Do **not** rebuild it as web HTML: flex, grid, CSS-class layout and external stylesheets all break in Gmail and Outlook.
 
 ## Fidelity
-**High-fidelity.** The colours, sizes, line-heights, padding and copy below are final.
+**High-fidelity and approved by the client.** The colours, sizes, line-heights, padding and copy below are final.
 
-## Email engineering rules (non-negotiable)
-- One centred **600px** card table (`class="w"`, `width="600"`, `style="width:600px;max-width:600px"`) sits inside a 100%-wide outer table. The outer cell padding is `28px 0 40px`. Outlook gets a `<!--[if mso]>` 600px wrapper table.
-- **Every style is inline.** The `<style>` block holds only resets and the mobile media query. Several clients drop it, so the email must read correctly without it.
-- Fonts are email-safe stacks only. Serif: `Georgia,'Times New Roman',Times,serif`. Sans: `Arial,Helvetica,sans-serif`.
-- `mso-line-height-rule:exactly` goes on every text style. Every table and cell has explicit widths.
-- Buttons are bulletproof: a `<td bgcolor>` with `border-radius:999px` and padding, wrapping an `<a style="display:block">`. Never an image, never a `<button>`.
-- Spacers are `<div style="height:Npx;line-height:Npx;font-size:0;mso-line-height-rule:exactly">&nbsp;</div>`. Never use margins for spacing.
-- `<meta name="color-scheme" content="light dark">` and `supported-color-schemes`. No pure `#000` or `#fff` grounds.
-- The first element in `<body>` is the hidden preheader (`display:none;max-height:0;opacity:0;mso-hide:all`). Its text is followed by 70 repetitions of `&#847;&zwnj;&nbsp;` so that body text does not leak into the inbox preview.
-- `<html lang="en">`. Every image has alt text. Every link is a real `href`.
-- Stay well under Gmail's **~102 KB** clip. The reference is 17 KB.
+## Client decisions (do not undo)
+- **Poppins throughout.** No serif.
+- **No "For Aldar" lines** on the stories.
+- **No pills** in the hero. "Edition 3" sits on the date line instead.
+- **No unsubscribe link, preferences link or postal address.** This is an internal send. If your platform injects a compliance footer, check with the client before letting it ship. Add an unsubscribe link only if the list will ever include external recipients.
+- The pattern is the **Sadu lozenge** (see "Pattern assets"). It is used as `<img>` dividers, not as a background, so it shows in every email client.
 
-### Mobile media query (`@media screen and (max-width:620px)`)
+## Email engineering rules
+- The layout is one centred **600px** card (`class="w"`, `#141414`) inside a 100% outer table (`#0C0C0C`). The outer cell padding is `32px 0 48px`. Outlook gets a `<!--[if mso]>` 600px wrapper.
+- Every style is inline. The `<style>` block holds only resets and the mobile media query.
+- **Fonts:**
+  - Poppins loads with a `<link>` and an `@import`, both inside `<!--[if !mso]><!-->` (weights 200, 300, 400 and 600).
+  - Outlook on Windows is forced to Arial via an `mso` style.
+  - The stack everywhere is `'Poppins','Helvetica Neue',Helvetica,Arial,sans-serif`.
+  - Gmail and Outlook Windows show the fallback. That is expected.
+- `mso-line-height-rule:exactly` goes on all text. Every table and cell has explicit widths.
+- Spacers are `<div style="height:N;line-height:N;font-size:0">&nbsp;</div>`. Never use margins.
+- Use `color-scheme: dark` only. The design is dark by intent, so clients won't invert it.
+- The hidden preheader comes first in `<body>`, followed by 70 repetitions of `&#847;&zwnj;&nbsp;`.
+- Keep the email under Gmail's ~102 KB clip. It is currently 18 KB.
+
+### Mobile (`@media screen and (max-width:620px)`)
 | class | effect |
 |---|---|
-| `.w` | card goes to 100% |
-| `.st` | the cell stacks (`display:block;width:100%;box-sizing:border-box`) |
-| `.px` | side padding becomes 22px |
-| `.hs` | hidden (the 20px gutter between thumbnail and text) |
-| `.pb0` | thumbnail cell loses its bottom padding when stacked |
-| `.pt12` | text cell gets a 12px top padding when stacked |
-| `.h1` | headline drops to 36/40 |
-| `.ph` | image and slot tables go to 100% width |
-| `.phh` | hero placeholder cell drops to 190px tall |
-| `.fi` | a real image goes to 100% width with auto height |
+| `.w` | card 100% |
+| `.st` | stack the cell (`display:block;width:100%;box-sizing:border-box`) |
+| `.px` | side padding becomes 24px |
+| `.hs` | hide (story gutters, and the desktop-only `<br>` in the CTA sub-line) |
+| `.fi` | image goes to 100% width, auto height |
+| `.pt16` | stacked story text gets 16px top padding |
+| `.phh` | hero spacer drops from 150px to 96px |
+| `.mast` | "CX Time" drops from 54/56 to 44/46 |
+| `.h1` | hero headline drops from 56/60 to 42/46 |
 
-**Preview gotcha:** the breakpoint is 620px, so a 600px-wide preview iframe shows the *mobile* layout. Preview desktop at 680px or wider.
+**Preview gotcha:** a 600px iframe triggers the mobile layout. Preview the desktop layout at 680px or wider.
 
-## Layout (top to bottom)
+**Known behaviour to fix in the build:** story 02 has its image on the **right**, so it comes after the text in source order. On phones it therefore stacks text-first, while 01 and 03 stack image-first. To make all three stack image-first, use the `dir="rtl"` swap. Put the image cell first in the source, set `dir="rtl"` on 02's row table, and set `dir="ltr"` on each cell.
 
-**Palette:** outer `#E6E1D7` · card `#FDFCF8` · ink `#1B2730` · body `#44505A` · muted `#66707A` · gold `#8A6524` · rule `#E2DCCF` · moss `#2F5A43` · gold fill `#E8B96A` · CTA text on ink `#F6F1E6` · placeholder `#E4DCCD` / `#6B6455`.
+## Layout, top to bottom
 
-1. **Header.** Padding `28px 40px 18px`. A two-cell table:
-   - Left: "Aldar CX Time", Georgia 22/26, ink, bottom-aligned.
-   - Right: "Edition 3 · 2 November 2026", Arial 10/14 bold uppercase, letter-spacing 1.8px, gold.
-2. **Hero image.** Full-bleed, 600×300 with no side padding (2× asset 1200×600). No radius. The whole image links to the edition.
-3. **Headline and intro.** Padding `32px 40px 4px`.
-   - Headline: Georgia 38/44, ink (mobile 36/40).
-   - 14px gap.
-   - Intro: Arial 15/24, body.
-4. **Three story rows.** Each row sits in a `0 40px` cell and has `border-bottom:1px solid #E2DCCF`, except the last. Each row has three cells:
-   - **Thumbnail cell:** 168px wide, padding `24px 0`. The image is 168×126 (2× asset 336×252) with radius 6 and links to the edition.
-   - **Gutter cell:** 20px, class `hs`.
-   - **Text cell:** padding `22px 0 24px`, holding:
-     - `NN · who`: Arial 10/14 bold uppercase, letter-spacing 1.4px, gold.
-     - 7px gap, then the **title**: Georgia 19/25, ink, linked to the edition, no underline.
-     - 8px gap, then the **what** line: Arial 13/20, body.
-     - 9px gap, then the **For Aldar** line: Arial 13/19, moss, with "For Aldar ·" in bold.
-   - On mobile the thumbnail and text cells stack (`st pb0` / `st pt12`) and the thumbnail goes full width.
-5. **CTA band.** Padding `30px 40px 0`. A table with `bgcolor="#1B2730"`, `border-radius:8px` and `border-collapse:separate`, holding two cells that stack on mobile:
-   - Left: "The full stories, and a Signature Experience to explore for each." Georgia 17/25 `#F6F1E6`. Padding `26px 10px 26px 28px`.
-   - Right: the button, right-aligned. Padding `26px 28px 26px 10px`. Fill `#E8B96A`, text ink `#1B2730`, Arial 13/16 bold, padding `12px 22px`, radius 999, nowrap, label **"Read the edition →"**.
-6. **Footer.** Padding `40px 40px 32px`. A 1px `#E2DCCF` hairline, a 22px gap, then three Arial 11/18 muted lines:
-   - *Aldar CX Time is curated by Aldar Group Customer Experience for colleagues across every business line.*
-   - *Aldar Properties PJSC · Aldar HQ, Al Raha Beach · P.O. Box 51133 · Abu Dhabi, UAE*
-   - **Unsubscribe · Manage preferences**, as ink-coloured underlined links.
+**Palette:**
+- Grounds: outer `#0C0C0C` · card `#141414`
+- Text: ivory `#F3EFE6` · body `#C4BFB5` · muted `#8E897F`
+- Gold: rule `#D9B46A` · highlight `#E6C47F` · button ink `#0E0E0E`
+- CTA panel: gradient `#24211B`→`#16140F` · border `#3A3226`
 
-### Image slots
-The reference file has no photographs yet. Each of the four images is a **placeholder cell**: `#E4DCCD` fill, centred 9px caps label in `#6B6455`, and "W×H · swap before sending" at 10px. The hero cell has no radius; the thumbnails have radius 6.
+### 1 · Hero
+The hero is one table with the photograph as its background:
+- `bgcolor="#141414"` and `background="img/e3-hero-mast.jpg"`;
+- `style="background:#141414 url(…) center top / cover no-repeat"`;
+- for Outlook, a VML `<v:rect>` of 600×560 with `<v:fill type="frame">` wrapping the content.
 
-An HTML comment above each slot holds the exact `<img>` tag to paste in. The template should:
-- render a real `<img src="https://…" width="600" height="300" class="fi" alt="…" style="display:block;width:600px;max-width:100%;height:auto;border:0">` when a URL exists (thumbnails: 168×126, add `border-radius:6px`);
-- fall back to the placeholder cell when it does not.
+Top to bottom inside it:
+- **Masthead,** centred, with padding `36px 40px 0`:
+  - "ALDAR": 13/17, ivory, letter-spacing 11px, uppercase, `padding-left:11px`. The padding balances the trailing tracking so the word centres optically.
+  - Gap of 10px.
+  - "**CX** Time": 54/56, weight 200, letter-spacing 1px, ivory. "CX" is `#E6C47F` at weight 400. Class `mast`.
+  - Gap of 14px.
+  - Ornament row: a 56×1 gold rule, then `pat-sadu-mini-clear.png` at 92×25 with 10px padding each side, then a 56×1 gold rule.
+- **Spacer:** 150px (96px on mobile). This is where the photograph shows.
+- **Text block,** padding `0 40px`, left-aligned:
+  - A 40×1 gold rule `#D9B46A`.
+  - Gap of 20px.
+  - Date line: 10/14, `#C4BFB5`, letter-spacing 2.6px, uppercase. It reads **`Edition 3`** (in `#E6C47F`) `  ·  2 November 2026`.
+  - Gap of 16px.
+  - Headline: "Worth leaving<br>home for.", 56/60, weight 300, letter-spacing −.8px, ivory. Class `h1`.
+  - Gap of 24px.
+  - Intro: 15/26, `#C4BFB5`.
+  - An 8px bottom spacer.
 
-Photographs must be on a public https host. Project-relative paths do not exist for recipients.
+### 2 · Sadu band divider
+- Padding `52px 40px 52px`, centred.
+- `pat-sadu-band.png` at 520×28, class `fi`.
 
-## Content and data
+### 3 · Three story spreads
+Row padding: `0 40px` for the first row, `56px 40px 0` after that. Each row is one table with:
+- an **image cell** 264px wide, holding a 264×330 image (2× asset 528×660), `display:block`, no radius, no frame;
+- a **28px gutter** (class `hs`);
+- a **text cell**, vertically centred.
 
-### Edition 3 copy (the reference)
-- **Header date:** Edition 3 · 2 November 2026
+The layout alternates: 01 image-left · 02 image-right · 03 image-left.
+
+The text cell holds, in order:
+- numeral `01`/`02`/`03`: 56/56, weight 200, `#D9B46A`;
+- gap of 14px;
+- `who · kind`: 9/13, `#8E897F`, letter-spacing 2.6px, uppercase;
+- gap of 12px;
+- title: 24/31, weight 300, ivory, linked to the edition, no underline;
+- gap of 12px;
+- what: 13/22, `#C4BFB5`.
+
+### 4 · Second Sadu band
+- Padding `60px 40px 0`, the same band image.
+
+### 5 · Call-to-action panel
+- **Wrapper cell:** padding `48px 24px 0`. The panel is deliberately wider than the text column.
+- **Panel table:**
+  - `bgcolor="#1C1A16"`, plus `background-image:linear-gradient(180deg,#24211B 0%,#16140F 100%)`;
+  - `border:1px solid #3A3226`, `border-radius:4px`, `border-collapse:separate`.
+- **Inner cell:** padding `56px 48px 54px`, centred.
+
+Content, in order:
+- Kicker: "Edition 3 is live in the Hub", 10/14, `#C4BFB5`, letter-spacing 3px, uppercase.
+- Gap of 18px.
+- "Step inside<br>the edition.", 40/46, weight 300, letter-spacing −.5px, ivory. No class, so it stays 40 on mobile.
+- Gap of 18px.
+- "Three stories, and a Signature Experience `<br class="hs">` to explore for each.", 15/24, `#C4BFB5`.
+- Gap of 34px.
+- **Button,** label **READ THE EDITION →**:
+  - **Outlook:** `<v:roundrect>` 340×60, `arcsize="50%"`, `fillcolor="#D9B46A"`, `stroke="f"`, text Arial 14 bold, letter-spacing 3px, `#0E0E0E`. The `xmlns:w` namespace is on `<html>` for `<w:anchorlock/>`.
+  - **Everything else (`<!--[if !mso]><!-->`):** a `<td>` with `bgcolor="#D9B46A"`, `background-image:linear-gradient(180deg,#E6C47F,#C9A257)`, `border-radius:999px` and `box-shadow:0 10px 30px rgba(217,180,106,.28)`. It wraps `<a style="display:block;padding:21px 46px">`, set 14/18, weight 600, letter-spacing 3px, uppercase, `#0E0E0E`, nowrap.
+
+### 6 · Sign-off
+- Padding `48px 40px 44px`, centred.
+- `pat-sadu-mini.png` at 104×28.
+- Gap of 22px.
+- "Curated by Aldar Group Customer Experience": 9/13, `#8E897F`, letter-spacing 2.4px, uppercase.
+
+## Content (Edition 3 reference)
+- **Preheader:** Cosm's in-seat menus, a museum you navigate by mood, and a showroom that starts with lunch.
+- **Suggested subject:** Edition 3 · Worth leaving home for
+- **Date line:** Edition 3 · 2 November 2026
 - **Headline:** Worth leaving home for.
 - **Intro:** This week's edition is about the moment a visit stops being a transaction and becomes an experience worth leaving home for. Three stories lead it, and each comes with what it could mean for Aldar.
-- **Preheader:** Cosm's in-seat menus, a museum you navigate by mood, and a showroom that starts with lunch.
-- **Suggested subject:** New in CX Time: when a visit becomes an experience
 
-| # | who | title | what | For Aldar (draft) |
-|---|---|---|---|---|
-| 01 | Cosm | The film's own menu, served to your seat | Cosm's cinema domes pair each film with its own menu and bring it to your seat, so dinner becomes part of the show. | Food as part of the programme rather than a queue in the interval, for cinema and dining nights at Aldar's retail destinations. |
-| 02 | Portland's science museum | A route you choose by mood, not by floor plan | Visitors pick their way through the museum by how they want to feel, rather than following a fixed map. | Wayfinding that starts with how someone wants to feel, for malls, community spaces and school open days. |
-| 03 | Jaguar, London | A showroom that opens with lunch, not a pitch | Jaguar's London showroom welcomes visitors to the table before anyone talks about a car. | Host first, sell second: a sales-gallery welcome built around hospitality rather than the brochure. |
-
-> ⚠ The "For Aldar" lines were **drafted from the client's summary**. Edition 3 is not yet in the project data. Replace them with the edition's own `why` text before sending.
+| # | who · kind | title | what |
+|---|---|---|---|
+| 01 | Cosm · Cinema domes | The film's own menu, served to your seat | Cosm's cinema domes pair each film with its own menu and bring it to your seat, so dinner becomes part of the show. |
+| 02 | Portland's science museum · Museum | A route you choose by mood, not by floor plan | Visitors pick their way through the museum by how they want to feel, rather than following a fixed map. |
+| 03 | Jaguar, London · Showroom | A showroom that opens with lunch, not a pitch | Jaguar's London showroom welcomes visitors to the table before anyone talks about a car. |
 
 ### Template variables
-| variable | source when driven by CX Time data (`window.AT_DATA.editions[0]`, also `data/aldar-times.json`) |
+| variable | notes |
 |---|---|
-| `edition.number`, `edition.date` | `n`, `date` |
-| `headline`, `intro`, `preheader`, `subject` | **editorial input per send.** The data has no field for them, so expose them as form fields or front-matter. |
-| `stories[0..2]` | the lead (`lead:true`) first, then the next two items in edition order. Allow an editor override, because Edition 3's three were hand-picked. |
-| `story.who` | `sourceShort`, or an editor-supplied subject (the brand or venue, as in Edition 3) |
-| `story.title` | `title` |
-| `story.what` | `dek` |
-| `story.forAldar` | the **first sentence** of `why`. Keep it to one line of thought, roughly 20 words or fewer. |
-| `story.image` | hosted URL of the story photograph: a 2× cover crop at 336×252, cropped 40% from the top |
-| `hero.image` | hosted URL, 1200×600 (usually the lead story's photograph) |
-| `editionUrl` | the edition's page in the Hub. Every link in the email points here. |
-| `unsubscribeUrl`, `preferencesUrl` | your email platform's merge tags |
+| `edition.number`, `edition.date` | From CX Time data (`window.AT_DATA.editions[0]`: `n`, `date`) or editor input. Used in the date line, the CTA kicker and `<title>`. |
+| `headline` (with a manual line break), `intro`, `preheader`, `subject` | Editorial input per send. The data has no field for these. |
+| `stories[0..2]` → `who`, `kind`, `title`, `what`, `image` | Editor-picked. The defaults are the lead item plus the next two; `title` is from `title` and `what` is from `dek`. |
+| `heroImage` | Must go through the hero pipeline below. |
+| `editionUrl` | Every link in the email. The current value is a placeholder: `https://hub.aldar.com/cx-time/edition-03`. |
 
-## Interactions and behaviour
-- This is static email: there are no hover states and no JavaScript.
-- **Every link** (hero, thumbnails, titles, button) opens `editionUrl` in a new tab.
-- Responsive: one breakpoint at 620px. Below it, story rows stack (full-width thumbnail first), the CTA band stacks, the hero placeholder shrinks to 190px, and the side padding drops to 22px.
-- Dark mode: the light palette is designed to survive automatic inversion. Do not add `prefers-color-scheme` overrides unless testing shows a problem.
+## Image pipeline
+All images are JPEG cover crops. Host them on a public https server. Relative `img/` paths only work in this folder.
+
+- **Hero** (`e3-hero-mast.jpg`):
+  - Size and crop: 1200×1120, q≈.74, cover crop with its horizontal anchor at 35% and vertical at 50%.
+  - Two fades are **baked into the pixels**, so clients that drop CSS gradients still read correctly:
+    1. **Top darkening** behind the masthead, over the top 44% of the height: `rgba(14,13,12,.86)` at 0 → `.72` at 45% of the band → `.35` at 75% → `0` at the end.
+    2. **Foot fade** into the card: clear until 40%, `rgba(20,20,20,.6)` at 62%, `.92` at 84%, solid `#141414` at 100%.
+  - Check that the masthead zone stays dark: average luminance ≈ 68/255, peak ≤ ~125. Over bright skies, deepen the top fade.
+- **Story images** (`e3-01..03.jpg`): 528×660 (4:5), q≈.74, cover crop. Tune the anchor per image to keep faces in frame.
+- **Dummies:** all four current photographs are placeholders from the Hub's own photo library:
+  - hero: Hospitality *golden-hour beach gathering*;
+  - 01: *arcade dining*;
+  - 02: *secret door*;
+  - 03: Development *welcome lounge*.
+
+  Replace them with Edition 3 imagery.
+
+## Pattern assets (Sadu lozenge)
+These are gold `#E6C47F` line work, drawn at 2× and faded horizontally with an alpha mask. Regenerate them from this recipe if you need other sizes:
+- **`pat-sadu-band.png`:** 1040×56 drawn on opaque `#141414`, shown at 520×28.
+  - It has 20 units (unit width u = 52), plus 1.6px rules at y = 3.5 and y = H − 3.5.
+  - Each unit has: an outer diamond outline (half-width .42u, half-height .36H); an inner filled diamond at half that size; a 2.2px dot at each unit boundary; and small filled tick diamonds above and below each boundary.
+  - Mask: 0 → .5 → 0 across the width.
+- **`pat-sadu-mini.png`:** 208×56, 4 units, mask peak .6, on opaque `#141414`. Used at the sign-off.
+- **`pat-sadu-mini-clear.png`:** the same motif on a **transparent** ground, mask peak .75. Used over the hero photograph. **Do not swap in the opaque version there**, because it shows as a dark box on the photo.
 
 ## Before every send
-1. Host the photographs and fill the four image URLs.
-2. Replace the placeholder `https://hub.aldar.com/cx-time/edition-03` with the real edition URL.
-3. Swap the `mailto:groupcx@aldar.com…` Unsubscribe / Preferences links for your email platform's merge tags. That address is a placeholder too.
-4. Set the subject line and confirm the preheader in your email platform.
-5. Test in Gmail (web and app), Outlook 365 and desktop, Apple Mail (iOS and macOS) and Samsung Mail, in light and dark mode.
-
-## Design tokens
-- **Colours:** listed in the palette under Layout.
-- **Type scale:**
-  - Georgia: 38/44 headline · 22/26 wordmark · 19/25 story title · 17/25 CTA line.
-  - Arial: 15/24 intro · 13/20 what · 13/19 For Aldar · 13/16 button · 11/18 footer · 10/14 caps labels.
-- **Spacing:**
-  - Side padding: 40, or 22 on mobile.
-  - Section padding tops: 28 / 32 / 22–24 / 30 / 40.
-  - Text gaps: 7 / 8 / 9 / 14 / 22.
-- **Radii:** 999 (button) · 8 (CTA band) · 6 (thumbnails) · 0 (hero).
-- **Widths:** card 600 · thumbnail 168 · gutter 20 · text cell fluid (332 at desktop).
+1. Fill in the hosted image URLs. Re-export the hero with its baked fades.
+2. Set `editionUrl` to the real edition page.
+3. Set the subject line and confirm the preheader.
+4. Test in Gmail (web and app), Outlook 365 and Windows desktop, Apple Mail (iOS and macOS) and Samsung Mail.
 
 ## Files
-- `edm-e3-2c-photo-ready.html`: the reference email, send-ready apart from the placeholders above.
-- In the project root (not in this folder): `CX Time EDM Options.dc.html`, the review canvas with an inbox preview and a 375px mobile toggle (option 2c).
+- `edm-e3-4b-sadu-thread.html`: the approved email (18 KB).
+- `img/`: `e3-hero-mast.jpg`, `e3-01.jpg`–`e3-03.jpg` (dummy photography), `pat-sadu-band.png`, `pat-sadu-mini.png` and `pat-sadu-mini-clear.png`.
+- In the project root (not in this folder): `CX Time EDM Options.dc.html` is the review canvas. 4b is under Turn 4, and the Tweaks panel has a 375px mobile toggle.
+
+## How the pipeline builds it (`pipeline/cxtime/edm.py`)
+- **Fits the reading window.** The card is fluid: `width:100%; max-width:600px`, not a fixed 600px, so it shrinks to a narrow reading pane or phone even in mail apps that ignore the media query. The story spreads are fluid-hybrid inline-blocks (264px photo + 256px text with the 28px gutter inside it). They sit side by side at 520px and stack, photo first, below that. Outlook for Windows gets 600px ghost tables. The CTA button may wrap, so it never forces the email wider than the window.
+- **Story 02** uses the `dir="rtl"` swap, so every row stacks photo first on phones.
+- **Hero photo** is a story from the edition that the email does not feature, so the lead's photo isn't shown twice in a row. Over bright photographs both baked fades deepen automatically: the masthead zone, and the zone behind the date line and headline.
+- **Headline** is set on two lines, split where the lines come out most even, unless the editor gives an explicit line break.
+- **Subject** is `Edition N · <headline without the full stop>`.
+- **Sadu patterns** are drawn from the recipe above into `sites/cx-time/email/assets/` and shared by every edition.
+- **Images** are hosted at `https://aldar-cx-time.netlify.app/email/edition-N/`, and every link goes to `https://aldar-cx-time.netlify.app`.

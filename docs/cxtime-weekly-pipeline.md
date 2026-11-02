@@ -152,22 +152,24 @@ reminder. Close the pull request to discard an edition.
 
 ## The announcement email
 
-Every edition gets a designed announcement email (design "2c Photo-ready", spec in `docs/edm/README.md`):
-a hero photo, a headline and short intro, the three featured stories (the lead, then the next two) with a
-photo, a one-line description and a "For Aldar" line each, and a **Read the edition** button.
+Every edition gets a designed announcement email (design "4b Sadu Thread", spec in `docs/edm/README.md`). It has:
+- a photographic hero with the CX Time masthead, the headline and a short intro;
+- the three featured stories (the lead, then the next two) as alternating photo and text spreads;
+- a **Read the edition** panel.
+
+It carries no "For Aldar" lines, so readers click through. It is fluid, so it fits any reading pane or phone.
 
 - **Words.** Written with the proposal and shown on the review page under *Announcement email*. Change
   them with `/subject`, `/headline` or `/intro` followed by your text. Choose the two stories after the
-  lead with `/pick e3-s4 e3-s5`. The email is approved together with the edition.
-- **Build.** On publish, the photos are cropped to JPEG (Outlook desktop does not show WebP), and the
+  lead with `/pick e3-s4 e3-s5`. The subject is `Edition N · <headline>` unless you set one. The email
+  is approved together with the edition.
+- **Build.** On publish, the photographs are cropped to JPEG (Outlook desktop does not show WebP), and the
   email is written to `sites/cx-time/email/edition-N/`. It goes live at
   `https://aldar-cx-time.netlify.app/email/edition-N/` with the site deploy.
-- **Send.** The publish comment on the pull request gives the link. Open it, File → Save Page As →
-  *Web Page, HTML only*. Then in Outlook: New Email → Insert → Attach File → choose the file → arrow
-  next to Insert → **Insert as Text**. Address it to the recipients in `[newsletter]` in `config.toml`.
-
-  The pipeline cannot send it itself: the available mail connector strips images and styling. An
-  email platform or an SMTP-enabled Group CX mailbox would let it send automatically.
+- **Send.** Save that `index.html` as `<subject>.html` into OneDrive **CX Times/Outbox**. A Power
+  Automate flow (*When a file is created* → *Send an email (V2)*, with the file content as the body)
+  sends it with the design in the email body. The file must be a new upload: copies don't trigger the
+  flow. The pipeline's own mail connector strips images and styling, so it can't send the email itself.
 
 ## One-time setup
 
