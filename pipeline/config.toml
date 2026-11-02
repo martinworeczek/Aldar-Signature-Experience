@@ -1,0 +1,367 @@
+# Aldar CX Time - weekly edition pipeline settings.
+# The editorial rules live here so they can be changed without touching the code.
+# Sources are a curated, global allow-list. Nothing outside this file is ever fetched.
+
+[edition]
+name = "Aldar CX Time"
+window_days = 7              # harvest window: what each source published in the last 7 days
+fallback_items = 3           # a source with nothing new offers its newest items instead...
+fallback_max_age_days = 30   # ...but never older than this
+caps = { read = 6, watch = 3, listen = 3 }   # ceilings, not quotas
+min_items = 5                # below this the edition is held, not padded
+min_relevance = 4            # 1-5, strategic relevance to Aldar
+min_experiential = 4         # 1-5, how squarely the story is about a lived customer experience
+lead_min_relevance = 5
+max_per_source = 2           # no single masthead dominates an edition
+max_ai_tech = 2              # AI stories only when applied to an experience, and at most this many
+shortlist = { read = 12, watch = 6, listen = 6 }   # handed to enrichment; headroom above the caps
+
+[models]
+# One model for every step by default; change here if cost needs tuning.
+screen = "claude-opus-5-5"
+enrich = "claude-opus-5-5"
+verify = "claude-opus-5-5"
+screen_effort = "low"
+enrich_effort = "high"
+verify_effort = "high"
+
+[fetch]
+user_agent = "AldarCXTimeBot/1.0 (+https://aldar-cx-time.netlify.app; Group CX editorial digest)"
+timeout = 25
+delay_seconds = 1.5          # politeness gap between requests to the same host
+min_read_words = 250         # less accessible text than this = paywalled or a stub: dropped
+max_source_chars = 60000
+
+[images]
+max_long_edge = 1200
+max_kb = 180
+min_width = 600              # smaller originals look soft behind the scrims: fall back to the gradient
+aspect = 1.7778              # 16:9 crop
+
+# ---------------------------------------------------------------------------------------
+# Tag palette. tag = the subject; colours as already used by Editions 1-2.
+[tags]
+"Hospitality" = { ink = "#9A7530", chip = "#E8B96A", a = "#9A7530", b = "#5E4518" }
+"Retail"      = { ink = "#A65A5A", chip = "#D89A9A", a = "#844747", b = "#472626" }
+"Education"   = { ink = "#4E7C6A", chip = "#9FC2B4", a = "#4E7C6A", b = "#2C4A3E" }
+"Development" = { ink = "#8A6D4B", chip = "#D8C3A0", a = "#6E5638", b = "#3E301F" }
+"Workplace"   = { ink = "#4A5A6E", chip = "#C7CFD8", a = "#4A5A6E", b = "#2E3A48" }
+"AI & Tech"   = { ink = "#2E6F9E", chip = "#8FC0DE", a = "#1F3A4D", b = "#12222E" }
+"Design"      = { ink = "#A8663F", chip = "#E0B090", a = "#8A5533", b = "#4E301C" }
+"Foresight"   = { ink = "#5D5A8C", chip = "#B6B3D8", a = "#4A4770", b = "#2A2842" }
+"Portfolio"   = { ink = "#B0863F", chip = "#E8B96A", a = "#8A6730", b = "#4E3A1B" }
+
+# ---------------------------------------------------------------------------------------
+# SOURCES - global only. kind: rss (feed or site to auto-discover a feed from),
+# podcast (Apple Podcasts search term -> the show's own RSS feed), youtube (channel handle).
+# weight = source credibility for experiential CX (0-3), a tie-breaker in ranking.
+# A source that fails (moved feed, blocked) is reported on the review page; it never stops the run.
+
+# -- Experience design & experiential brands
+[[sources]]
+name = "Blooloop"
+short = "Blooloop"
+kind = "rss"
+format = "read"
+url = "https://blooloop.com/feed/"
+tag = "Portfolio"
+lines = ["Community", "Retail", "Hospitality"]
+weight = 3
+
+[[sources]]
+name = "TrendWatching"
+short = "TrendWatching"
+kind = "rss"
+format = "read"
+url = "https://www.trendwatching.com/"
+tag = "Foresight"
+lines = ["All lines"]
+weight = 3
+
+[[sources]]
+name = "PSFK"
+short = "PSFK"
+kind = "rss"
+format = "read"
+url = "https://www.psfk.com/feed"
+tag = "Foresight"
+lines = ["Retail", "Hospitality"]
+weight = 2
+
+[[sources]]
+name = "Event Marketer"
+short = "Event Mktr"
+kind = "rss"
+format = "read"
+url = "https://www.eventmarketer.com/feed/"
+tag = "Design"
+lines = ["Retail", "Community"]
+weight = 2
+
+[[sources]]
+name = "Hospitality Design"
+short = "HD"
+kind = "rss"
+format = "read"
+url = "https://hospitalitydesign.com/"
+tag = "Design"
+lines = ["Hospitality", "Development"]
+weight = 3
+
+[[sources]]
+name = "Dezeen"
+short = "Dezeen"
+kind = "rss"
+format = "read"
+max_items = 15
+url = "https://www.dezeen.com/interiors/feed/"
+tag = "Design"
+lines = ["Development", "Hospitality", "Retail"]
+weight = 2
+
+# -- Customer experience practice
+[[sources]]
+name = "CX Network"
+short = "CX Network"
+kind = "rss"
+format = "read"
+url = "https://www.cxnetwork.com/"
+tag = "Portfolio"
+lines = ["All lines"]
+weight = 3
+
+[[sources]]
+name = "CX Dive"
+short = "CX Dive"
+kind = "rss"
+format = "read"
+url = "https://www.customerexperiencedive.com/feeds/news/"
+tag = "Portfolio"
+lines = ["All lines"]
+weight = 2
+
+[[sources]]
+name = "CMSWire"
+short = "CMSWire"
+kind = "rss"
+format = "read"
+url = "https://www.cmswire.com/customer-experience/"
+tag = "Portfolio"
+lines = ["All lines"]
+weight = 2
+
+# -- Hospitality
+[[sources]]
+name = "Skift"
+short = "Skift"
+kind = "rss"
+format = "read"
+url = "https://skift.com/feed/"
+tag = "Hospitality"
+lines = ["Hospitality"]
+weight = 3
+
+[[sources]]
+name = "Hospitality Net"
+short = "Hosp. Net"
+kind = "rss"
+format = "read"
+url = "https://www.hospitalitynet.org/"
+tag = "Hospitality"
+lines = ["Hospitality"]
+weight = 2
+
+# -- Retail
+[[sources]]
+name = "Retail TouchPoints"
+short = "Retail TP"
+kind = "rss"
+format = "read"
+url = "https://www.retailtouchpoints.com/feed"
+tag = "Retail"
+lines = ["Retail"]
+weight = 3
+
+[[sources]]
+name = "Retail Dive"
+short = "Retail Dive"
+kind = "rss"
+format = "read"
+url = "https://www.retaildive.com/feeds/news/"
+tag = "Retail"
+lines = ["Retail"]
+weight = 2
+
+# -- Places, communities, development
+[[sources]]
+name = "Urban Land (ULI)"
+short = "Urban Land"
+kind = "rss"
+format = "read"
+url = "https://urbanland.uli.org/"
+tag = "Development"
+lines = ["Development", "Community"]
+weight = 3
+
+[[sources]]
+name = "Project for Public Spaces"
+short = "PPS"
+kind = "rss"
+format = "read"
+url = "https://www.pps.org/"
+tag = "Development"
+lines = ["Community", "Development"]
+weight = 2
+
+# -- Education and workplace experience
+[[sources]]
+name = "EdSurge"
+short = "EdSurge"
+kind = "rss"
+format = "read"
+url = "https://www.edsurge.com/articles_rss"
+tag = "Education"
+lines = ["Education"]
+weight = 2
+
+[[sources]]
+name = "Work Design Magazine"
+short = "Work Design"
+kind = "rss"
+format = "read"
+url = "https://www.workdesign.com/feed/"
+tag = "Workplace"
+lines = ["Corporate"]
+weight = 2
+
+# -- Podcasts (Listen). Searched on Apple Podcasts; the show's own feed is then read.
+[[sources]]
+name = "Good Morning Hospitality (Skift)"
+short = "GMH Skift"
+kind = "podcast"
+format = "listen"
+search = "Good Morning Hospitality Skift"
+tag = "Hospitality"
+lines = ["Hospitality"]
+weight = 3
+
+[[sources]]
+name = "Skift Podcast"
+short = "Skift"
+kind = "podcast"
+format = "listen"
+search = "Skift Podcast"
+tag = "Hospitality"
+lines = ["Hospitality"]
+weight = 3
+
+[[sources]]
+name = "CX Decoded (CMSWire)"
+short = "CX Decoded"
+kind = "podcast"
+format = "listen"
+search = "CX Decoded CMSWire"
+tag = "Portfolio"
+lines = ["All lines"]
+weight = 2
+
+[[sources]]
+name = "Experience This!"
+short = "Exp. This!"
+kind = "podcast"
+format = "listen"
+search = "Experience This! Show Joseph Michelli Dan Gingiss"
+tag = "Portfolio"
+lines = ["All lines"]
+weight = 3
+
+[[sources]]
+name = "Remarkable Retail"
+short = "Rem. Retail"
+kind = "podcast"
+format = "listen"
+search = "Remarkable Retail Steve Dennis"
+tag = "Retail"
+lines = ["Retail"]
+weight = 2
+
+[[sources]]
+name = "Amazing Business Radio"
+short = "Amazing Biz"
+kind = "podcast"
+format = "listen"
+search = "Amazing Business Radio Shep Hyken"
+tag = "Portfolio"
+lines = ["All lines"]
+weight = 2
+
+[[sources]]
+name = "The CX Leader Podcast"
+short = "CX Leader"
+kind = "podcast"
+format = "listen"
+search = "The CX Leader Podcast"
+tag = "Portfolio"
+lines = ["All lines"]
+weight = 2
+
+[[sources]]
+name = "EdSurge Podcast"
+short = "EdSurge"
+kind = "podcast"
+format = "listen"
+search = "EdSurge Podcast"
+tag = "Education"
+lines = ["Education"]
+weight = 1
+
+# -- Video (Watch). Each channel's public YouTube feed.
+[[sources]]
+name = "Skift"
+short = "Skift"
+kind = "youtube"
+format = "watch"
+handle = "@Skift"
+tag = "Hospitality"
+lines = ["Hospitality"]
+weight = 3
+
+[[sources]]
+name = "Blooloop"
+short = "Blooloop"
+kind = "youtube"
+format = "watch"
+handle = "@blooloop"
+tag = "Portfolio"
+lines = ["Community", "Hospitality"]
+weight = 3
+
+[[sources]]
+name = "TrendWatching"
+short = "TrendWatching"
+kind = "youtube"
+format = "watch"
+handle = "@trendwatching"
+tag = "Foresight"
+lines = ["All lines"]
+weight = 2
+
+[[sources]]
+name = "Shep Hyken"
+short = "Shep Hyken"
+kind = "youtube"
+format = "watch"
+handle = "@ShepHyken"
+tag = "Portfolio"
+lines = ["All lines"]
+weight = 2
+
+[[sources]]
+name = "CX Today"
+short = "CX Today"
+kind = "youtube"
+format = "watch"
+handle = "@CXToday"
+tag = "Portfolio"
+lines = ["All lines"]
+weight = 1

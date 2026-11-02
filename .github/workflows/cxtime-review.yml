@@ -1,0 +1,169 @@
+# Aldar CX Time - weekly edition, step 2 of 2: review and publish.
+# Reply on the edition's pull request with commands, one per line:
+#   /drop <id>   /add k:<key>   /lead <id>   /rerun <id> <note>   /approve   /approve anyway
+# Edits re-curate the edition and update the pull request. /approve appends the edition to the
+# archive (earlier editions are locked and can never change), rebuilds both sites, merges, and
+# deploys aldar-signature-experience.netlify.app and aldar-cx-time.netlify.app.
+#
+# Only the repository owner, members and collaborators can drive this.
+# Secrets: ANTHROPIC_API_KEY (for /rerun), NETLIFY_AUTH_TOKEN (to deploy).
+name: "CX Time · review & publish"
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: cxtime-edition
+  cancel-in-progress: false
+
+env:
+  HUB_SITE_ID: c9c5f040-90ca-4c7c-befb-d0f1482ab2cf
+  CX_SITE_ID: 10f3e254-e662-4a56-834f-8186e584a2d8
+
+defaults:
+  run:
+    shell: bash   # adds pipefail, so a failing step behind `| tee` still fails
+
+jobs:
+  review:
+    if: >-
+      github.event.issue.pull_request &&
+      github.event.issue.state == 'open' &&
+      contains(github.event.issue.labels.*.name, 'cxtime-edition') &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Is this a command?
+        id: cmd
+        env:
+          BODY: ${{ github.event.comment.body }}
+        run: |
+          printf '%s\n' "$BODY" > "$RUNNER_TEMP/comment.txt"
+          if grep -qE '^[[:space:]]*/(approve|drop|add|lead|rerun)\b' "$RUNNER_TEMP/comment.txt"; then echo "go=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Find the edition branch
+        if: steps.cmd.outputs.go == 'true'
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.issue.number }}
+        run: echo "branch=$(gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json headRefName --jq .headRefName)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.cmd.outputs.go == 'true'
+        with:
+          ref: ${{ steps.pr.outputs.branch }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        if: steps.cmd.outputs.go == 'true'
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pipeline/requirements.txt
+
+      - name: Apply the review commands
+        if: steps.cmd.outputs.go == 'true'
+        id: revise
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CXTIME_IMG_BASE: https://github.com/${{ github.repository }}/blob/${{ steps.pr.outputs.branch }}
+        run: |
+          pip install -r pipeline/requirements.txt
+          git config user.name "Aldar CX Time bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python pipeline/run.py revise "$RUNNER_TEMP/comment.txt" | tee "$RUNNER_TEMP/revise.log"
+          git add data img
+          git diff --cached --quiet || git commit -m "CX Time: review edits on the proposed edition
+
+          Applied the reviewer's commands from pull request comment ${{ github.event.comment.id }}."
+
+      # ----- edits only: refresh the pull request and the preview -----
+      - name: Update the proposal
+        if: steps.cmd.outputs.go == 'true' && steps.revise.outputs.approve == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          PR: ${{ github.event.issue.number }}
+          CXTIME_IMG_BASE: https://github.com/${{ github.repository }}/blob/${{ steps.pr.outputs.branch }}
+        run: |
+          run_dir=$(ls -d data/cxtime-runs/*/ | sort | tail -1)
+          if [ -n "$NETLIFY_AUTH_TOKEN" ]; then
+            n=$(python -c "import json,sys;print(json.load(open('${run_dir}state.json'))['proposal']['edition']['n'])")
+            python pipeline/run.py preview "$RUNNER_TEMP/preview"
+            url=$(npx -y netlify-cli@17 deploy --dir "$RUNNER_TEMP/preview" --site "$CX_SITE_ID" --alias "edition-$n" --json | jq -r '.deploy_url')
+            CXTIME_PREVIEW_URL="$url" python pipeline/run.py review
+            git add data; git diff --cached --quiet || git commit -m "CX Time: refresh review page"
+          fi
+          git push
+          gh pr edit "$PR" --body-file "${run_dir}pr-body.md"
+          gh pr comment "$PR" --body "Updated the proposal: $(tail -1 "$RUNNER_TEMP/revise.log"). The description above shows the edition as it now stands."
+
+      # ----- approve: publish, merge, deploy both sites -----
+      - name: Publish
+        if: steps.cmd.outputs.go == 'true' && steps.revise.outputs.approve != ''
+        id: publish
+        run: |
+          flag=""; [ "${{ steps.revise.outputs.approve }}" = "approve-anyway" ] && flag="--anyway"
+          python pipeline/run.py publish $flag 2>&1 | tee "$RUNNER_TEMP/publish.log"
+          python pipeline/run.py check
+          git add -A data img index.html sites/cx-time
+          git commit -m "CX Time: publish the approved edition
+
+          Appended to data/aldar-times.json (earlier editions locked and verified unchanged),
+          written into the hub page, standalone site rebuilt, spreadsheet mirror regenerated."
+          git push
+
+      - name: Merge
+        if: steps.publish.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.issue.number }}
+        run: gh pr merge "$PR" --merge --delete-branch
+
+      - name: Deploy both sites
+        if: steps.publish.outcome == 'success'
+        id: deploy
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          [ -n "$NETLIFY_AUTH_TOKEN" ] || { echo "deployed=no" >> "$GITHUB_OUTPUT"; exit 0; }
+          npm ci
+          mkdir -p "$RUNNER_TEMP/hub" && cp index.html netlify.toml "$RUNNER_TEMP/hub/" && cp -r img "$RUNNER_TEMP/hub/img"
+          npx -y netlify-cli@17 deploy --prod --dir "$RUNNER_TEMP/hub" --functions netlify/functions --site "$HUB_SITE_ID" --message "CX Time edition"
+          npx -y netlify-cli@17 deploy --prod --dir sites/cx-time --site "$CX_SITE_ID" --message "CX Time edition"
+          echo "deployed=yes" >> "$GITHUB_OUTPUT"
+
+      - name: Report
+        if: always() && steps.cmd.outputs.go == 'true' && steps.revise.outputs.approve != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.issue.number }}
+        run: |
+          if [ "${{ steps.publish.outcome }}" = "success" ]; then
+            run_dir=$(ls -d data/cxtime-runs/*/ | sort | tail -1)
+            msg="$(cat "${run_dir}published.md")"
+            if [ "${{ steps.deploy.outputs.deployed }}" = "yes" ]; then
+              msg="$msg
+
+          Live: https://aldar-cx-time.netlify.app · https://aldar-signature-experience.netlify.app"
+            else
+              msg="$msg
+
+          ⚠️ Not deployed: add the NETLIFY_AUTH_TOKEN secret, or deploy both sites by hand."
+            fi
+          else
+            msg="Not published.
+
+          \`\`\`
+          $(tail -30 "$RUNNER_TEMP/publish.log" 2>/dev/null)
+          \`\`\`"
+          fi
+          gh pr comment "$PR" --body "$msg" || gh issue comment "$PR" --body "$msg"
