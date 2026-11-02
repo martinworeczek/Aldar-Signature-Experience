@@ -8284,9 +8284,30 @@
   "drop": [],
   "add": [],
   "lead": null,
-  "nobench": []
+  "nobench": [
+   "505e306a",
+   "6ae05274",
+   "8630ae82",
+   "9c87aedb",
+   "b4155466",
+   "d238d408"
+  ]
  },
- "history": [],
+ "history": [
+  {
+   "at": "2026-11-02T13:13:59+00:00",
+   "applied": [
+    "/nobench e3-s1",
+    "/nobench e3-s2",
+    "/nobench e3-s3",
+    "/nobench e3-s4",
+    "/nobench e3-s5",
+    "/nobench e3-s6",
+    "/approve"
+   ],
+   "errors": []
+  }
+ ],
  "proposal": {
   "edition": {
    "n": 3,
@@ -8731,13 +8752,6 @@
    "0a89fb0a": "already 2 from Blooloop"
   },
   "hold": false,
-  "benchmarks": [
-   "e3-s1",
-   "e3-s2",
-   "e3-s3",
-   "e3-s4",
-   "e3-s5",
-   "e3-s6"
-  ]
+  "benchmarks": []
  }
 }

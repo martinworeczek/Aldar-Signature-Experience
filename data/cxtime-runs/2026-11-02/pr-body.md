@@ -2,8 +2,6 @@
 
 **6 stories** · 6 read · 0 watch · 0 listen. Caps 6/3/3; bar: relevance ≥ 3, experiential ≥ 4.
 
-**Preview the page:** https://edition-3--aldar-cx-time.netlify.app
-
 > no story reached relevance 5; the lead is the best available
 
 **Business lines covered:** Retail 5, Hospitality 5, Community 3, Education 1, Development 1
@@ -134,69 +132,11 @@ _Nothing met the bar this week._
 
 _Nothing met the bar this week._
 
-## For the Benchmark Repository (6)
+## For the Benchmark Repository (0)
 
-On `/approve` these join the Benchmark Repository on the Signature Experience hub, marked **✦ From Aldar Times** with a link back to the edition and source. `/nobench <id>` keeps one out.
+_No story this week describes a single organisation's practice clearly enough to benchmark._
 
-#### from `e3-s1` · **The Film You Can Taste** · Cosm
-Entertainment · Retail Plus · During Shopping · pillar: Making important moments magical · Magic Moments, Innovation, Community  
-*Cosm surrounds classic films with dome-wide visuals and serves film-inspired courses to the seat, timed to scenes.* Guests watch an unchanged classic film at the centre of a 12K LED dome while screen extensions carry its world around them, alongside venue lighting, sensory touches and interactive installations. Tasting and cocktail menus written from the film's references arrive at the seat in step with the story, such as butterbeer for Harry Potter or sweets-themed desserts for Willy Wonka.
-
-- **Gives a reason to leave home** A shared, room-scale version of a familiar film offers something streaming at home cannot match.
-- **Every sense joins the story** Visuals, sound, lighting, installations and food all draw from the same film, deepening immersion.
-- **Service moves with the narrative** Courses timed to scenes turn dining into part of the plot rather than a distraction from it.
-
-**Travels to:** *Hospitality Plus:* Resort restaurants could host story-led dinners where each course is drawn from a film and served on cue during a screening. · *Estates Plus:* Community teams could stage themed outdoor screenings with dressed spaces and film-inspired food for residents and families. · *Education Plus:* Schools could run family film evenings where pupils help design installations and snacks inspired by a story they have studied.
-
-#### from `e3-s2` · **A Route for Every Mood** · OMSI · Portland
-Arts & culture · Education Plus · Educate · pillar: Anticipating every need with care · Personalisation, Community, Innovation  
-*OMSI's climate exhibition lets visitors pick one of four paths, from stories to science, according to whether they feel anxious, energised, curious or reflective.* After a hallway of large climate photographs, visitors reach a junction with four clear directions: a theatre of community stories, an immersive interactive room, an art gallery and hands-on science exhibits. Each route suits a different emotional state, so people meet a difficult subject on their own terms and can rest, reflect or experiment as they need.
-
-- **Agency lowers emotional barriers** Letting visitors choose what they are ready to encounter keeps an anxiety-inducing topic approachable rather than overwhelming.
-- **Layout co-designed with community** Local Native American youth shaped the cardinal-direction pathways, so the floor plan itself carries meaning and shared ownership.
-- **Technology rewards presence** A LIDAR-driven environment grows outward from people who stand still, creating calm connection with the space and with other visitors.
-
-**Travels to:** *Retail Plus:* Design mall zones as clearly signposted choices, such as calm, social or active, so visitors can shape a visit to their mood on arrival. · *Estates Plus:* Co-create community centre content with residents and rotate an annual theme so neighbours see their own stories reflected in shared spaces. · *Hospitality Plus:* Offer resort guests a responsive quiet space where light and sound react to stillness, giving a restorative pause between activities.
-
-#### from `e3-s3` · **The Showroom That Serves Lunch First** · Jaguar · Knightsbridge, London
-Consumer brands · Development Plus · Lead to Sale · pillar: Inviting everyone to feel they belong · Welcome, Culture, Innovation  
-*Jaguar's Knightsbridge flagship gives most of its ground floor to a chef-led restaurant, showing two cars, with private sales rooms below.* Visitors walk into Café Eighty-One, a welcoming red-toned restaurant open to anyone, with the Type 01 on display alongside. Those ready to go further move downstairs to private spaces, including a Design Vault, for sales and customisation discussions.
-
-- **Hospitality lowers the threshold** A public restaurant invites people in who would never enter a car showroom to browse.
-- **Space mirrors the product** Travertine, textiles and brass echo the car's interior so the brand is felt before it is explained.
-- **Public above, private below** Separating social space from sales rooms keeps the welcome relaxed and the purchase conversation focused.
-
-**Travels to:** *Retail Plus:* Flagship tenants could be encouraged to dedicate frontage to a café or lounge, with product consultations in quieter back-of-house rooms. · *Hospitality Plus:* Hotel lobbies could use a locally inspired material palette and an open F&B space to draw in non-residents as a neighbourhood destination. · *Estates Plus:* Community clubhouses could lead with a public café, with resident service and leasing conversations held in private rooms behind.
-
-#### from `e3-s4` · **A Lounge Where Every Guest Belongs** · Alaska Airlines · Seattle-Tacoma International Airport
-Transportation · Hospitality Plus · Pre-Arrival & Arrival · pillar: Inviting everyone to feel they belong · Arrival, Welcome, Belonging  
-*Alaska Airlines' SeaTac lounge guides guests through a staged entry into four distinct zones, each offering a different way to rest, eat, work or connect.* Guests glimpse the lounge through a fifty-foot window on the concourse, follow oak frames to a threshold that frames the central fireplace, and are greeted by concierges before the space opens onto views of the runways and mountains. Once inside, they choose between a casual bistro, a quiet low-lit relaxation zone and a convivial bar, each with its own acoustics, lighting and furniture.
-
-- **Welcome replaces exclusivity** The lounge is conceived as a warm refuge for all guests, not a sleek haven for a privileged few.
-- **Choice of atmosphere** Four zones with different acoustics, light and materials let each guest find the setting where they feel at home.
-- **Rooted in its region** Custom pieces by local fabricators and artists, and a barista counter echoing Seattle's coffee culture, connect guests to the place.
-
-**Travels to:** *Retail Plus:* Give a mall visitor lounge a staged entry with a glimpse from the concourse, a personal greeting and separate calm, café and social zones. · *Estates Plus:* Plan residential lobbies and clubhouses as a sequence of distinct zones for quiet rest, casual coffee and socialising, finished by local makers. · *Education Plus:* Design school reception areas with a visible, welcoming threshold and a quiet zone where waiting parents can sit away from the bustle.
-
-#### from `e3-s5` · **Staying With Your Best-Connected Friend** · Blind Tiger by Lark Hotels
-Hospitality · Hospitality Plus · During Stay · pillar: Inviting everyone to feel they belong · Community, Culture, Tourism  
-*Blind Tiger hotels share letters from local tastemakers describing what they would do on a day off and what guests should see.* Rather than a standard concierge list, guests receive a personal letter from a local tastemaker setting out how they would spend a free day in the city. Paired with hyper-local interiors in intimate historic homes, it makes the stay feel like being hosted by an in-the-know friend.
-
-- **Recommendations with a real voice** A named local's personal itinerary feels more trustworthy and intimate than a generic list of attractions.
-- **Connects guests to the place** It turns the hotel into a doorway to the town's people and culture rather than a self-contained stay.
-- **Simple and low cost** A letter from a local requires little infrastructure yet strongly differentiates the experience.
-
-**Travels to:** *Estates Plus:* Welcome new residents with letters from established neighbours describing their favourite places and weekend routines in the community. · *Retail Plus:* Feature short guides from shop owners or local creatives recommending how they would spend a day in the mall and surrounding district. · *Education Plus:* Give new families a letter from a current parent sharing what they wish they had known in their child's first term.
-
-#### from `e3-s6` · **A Forest Shade on 42nd Street** · One Bryant Park · New York
-Food & beverage · Hospitality Plus · During Stay · pillar: Making important moments magical · Attention to Detail, Arrival, Culture  
-*A New York restaurant uses filtered light and preserved shadow across three dining rooms to create a calm retreat near Times Square.* Diners step off a busy stretch of 42nd Street through an oak-slat arch into a main dining room where light filters through an arched oak ceiling while darker pockets are deliberately kept. Each of the three rooms then offers its own mood, from a backlit kumiko lattice at the sushi counter to tea-room plaster and metal slat panels in Kappo Sono.
-
-- **Shadow is designed, not avoided** Preserving darker pockets draws out the irregular textures of wood and plaster and gives the room its calm.
-- **One idea, three moods** A shared light-and-shadow concept links distinct dining experiences while letting each room feel different.
-- **The threshold sets the tone** The arched oak façade reads as Japanese from the street and Western from inside, framing entry as a retreat.
-
-**Travels to:** *Retail Plus:* Design a mall dining zone with a slatted canopy and concealed lighting that keeps shadow, giving shoppers a calm pause away from the concourse. · *Estates Plus:* Light a community clubhouse lounge with filtered, uneven light through timber screens so residents experience it as a quiet retreat in the evening.
+<sub>Not benchmarked: `e3-s1` removed by reviewer; `e3-s2` removed by reviewer; `e3-s3` removed by reviewer; `e3-s4` removed by reviewer; `e3-s5` removed by reviewer; `e3-s6` removed by reviewer</sub>
 
 ## Bench: enriched but not selected
 
@@ -447,6 +387,7 @@ Food & beverage · Hospitality Plus · During Stay · pillar: Making important m
 
 </details>
 
+_Last revision 2026-11-02T13:13:59+00:00: applied 7 command(s)._
 
 ---
 Reply on this pull request with one command per line:
