@@ -60,7 +60,7 @@ jobs:
           d="${INPUT_DATE:-$(date -u +%F)}"
           [[ "$d" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || { echo "bad date: $d"; exit 1; }
           echo "date=$d" >> "$GITHUB_OUTPUT"
-          echo "branch=cxtime/edition-$d" >> "$GITHUB_OUTPUT"
+          echo "branch=cxtime/edition-$d-run$GITHUB_RUN_NUMBER" >> "$GITHUB_OUTPUT"   # unique per run, so a rerun never collides
 
       - uses: actions/setup-python@v5
         if: steps.open.outputs.skip != 'true'
