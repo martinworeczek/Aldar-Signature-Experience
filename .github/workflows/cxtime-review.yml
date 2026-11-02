@@ -123,10 +123,17 @@ jobs:
 
       - name: Merge
         if: steps.publish.outcome == 'success'
+        id: merge
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.issue.number }}
-        run: gh pr merge "$PR" --merge --delete-branch
+        run: |
+          # GitHub needs a moment after a push to work out whether the branch can merge
+          for i in 1 2 3 4 5 6; do
+            sleep 10
+            gh pr merge "$PR" --merge --delete-branch && exit 0
+          done
+          exit 1
 
       - name: Deploy both sites
         if: steps.publish.outcome == 'success'
@@ -147,7 +154,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.issue.number }}
         run: |
-          if [ "${{ steps.publish.outcome }}" = "success" ]; then
+          if [ "${{ steps.publish.outcome }}" = "success" ] && [ "${{ steps.merge.outcome }}" != "success" ]; then
+            msg="Edition published on this branch, but the pull request could not be merged, so the sites were not deployed. Merge this pull request, then deploy both sites."
+          elif [ "${{ steps.publish.outcome }}" = "success" ]; then
             run_dir=$(ls -d data/cxtime-runs/*/ | sort | tail -1)
             msg="$(cat "${run_dir}published.md")"
             if [ "${{ steps.deploy.outputs.deployed }}" = "yes" ]; then
