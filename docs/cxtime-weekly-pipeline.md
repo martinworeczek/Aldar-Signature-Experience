@@ -11,6 +11,7 @@ Monday 07:07 ─► Harvest ─► Screen ─► Deep read ─► Enrich ─► 
                        you reply: /drop  /add  /lead  /rerun  ◄────────────────────────┤
                                                                                        ▼
                                               /approve ─► Append edition ─► Hub + standalone + xlsx ─► Merge ─► Deploy both sites
+                                                         └─► Benchmarks ─► Benchmark Repository (✦ From Aldar Times)
 ```
 
 ## What it selects: experiential CX, globally
@@ -33,6 +34,39 @@ Out of scope:
 - metrics with no lived experience
 - advertising
 - politics
+
+## Feeding the Benchmark Repository
+
+Some stories are more than news. They show **one named organisation doing one concrete thing
+at one moment of its customer's journey**, which is exactly what a benchmark is. For each story,
+Claude decides whether it qualifies and, if it does, drafts a benchmark in the repository's own
+format:
+- brand and industry;
+- the Aldar line it informs (Hospitality, Retail, Education, Corporate, Estates or Development);
+- the journey moment, mapped to that line's own stage, e.g. *Handover* for Estates;
+- the Aldar CX pillar;
+- themes from the repository's vocabulary;
+- a short title in the repository's voice, a one-line summary and a two-sentence lead;
+- three "why it works" points;
+- how it would travel to other Aldar lines.
+
+The benchmark draft goes through the same fact-check as the story. If any part of it fails,
+the benchmark is withheld, but the story can still run.
+
+Trend round-ups, surveys, opinion, vendor products and multi-brand pieces never become
+benchmarks; the review page says why each story wasn't benchmarked.
+
+The drafts appear in a **"For the Benchmark Repository"** section of the review. On `/approve`
+they are appended to the hub's repository:
+- with the **✦ From Aldar Times** badge, showing the edition, date and source, and a link back;
+- in the Newly added carousel;
+- counted in the repository totals and searchable from the hub.
+
+The story's photo is reused. `/nobench e3-s2` keeps one out.
+
+Benchmarks are append-only too. `data/benchmarks-from-times.json` records each one added, and
+`check` confirms every one is still in the hub. This is also how the Development and Estates
+lines, which have no benchmarks yet, start filling up from the news.
 
 ## The rules (all in `pipeline/config.toml`)
 
@@ -91,6 +125,7 @@ Out of scope:
      `data/aldar-times.xlsx` is regenerated across the whole archive.
    - Every source link is checked: a dead link (404) blocks publishing, and bot refusals are
      listed for you to check by hand.
+   - Approved benchmark drafts are appended to the hub's Benchmark Repository.
    - The pull request is merged and both sites are deployed.
 
 ## Review commands
@@ -105,6 +140,8 @@ Reply on the edition's pull request, one command per line:
 | `/add k:ab12cd34` | Bring a bench story in (keys are in the bench table) |
 | `/lead e3-w1` | Make it the Signal of the Week |
 | `/rerun e3-l2 lean on the arrival ritual` | Re-read and rewrite one story, with your note |
+| `/nobench e3-s2` | Publish the story, but do not add its benchmark to the repository |
+| `/bench e3-s2` | Put a removed benchmark back |
 
 Only the repository owner and collaborators can run commands. A published edition is
 permanent: correct it in a later edition, never by editing the archive.

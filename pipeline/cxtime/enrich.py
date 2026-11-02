@@ -9,6 +9,7 @@ import json
 from datetime import datetime
 
 from .llm import ask_json, LLMError
+from . import benchmarks
 
 LINES = ["Hospitality", "Retail", "Education", "Development", "Community", "PM & Leasing", "Corporate", "All lines"]
 INSIGHTS = ["Trend", "Case study", "Benchmark", "Innovation", "Research", "Leadership", ""]
@@ -87,8 +88,10 @@ ENRICH_SCHEMA = {
         "opps": {"type": "array", "items": OPP},
         "keyInsights": {"type": "array", "items": {"type": "string"}},
         "speakers": {"type": "array", "items": {"type": "string"}},
+        "benchmark": benchmarks.SCHEMA,
     },
 }
+ENRICH_SCHEMA["required"].append("benchmark")
 
 VERIFY_SCHEMA = {
     "type": "object", "additionalProperties": False, "required": ["issues"],
@@ -149,7 +152,7 @@ When keep=true, write:
 - themes: 2-4 lowercase keywords. keyInsights: 2-4 transferable takeaway sentences.
 - speakers: for video and podcast, hosts and guests as credited in the source; [] otherwise.
   Never guess a name.
-"""
+""" + benchmarks.TASK
 
 
 def enrich(c, cfg, feedback=None):
@@ -164,7 +167,8 @@ def enrich(c, cfg, feedback=None):
 
 
 VERIFY_TASK = """You are the fact-checker. Compare the DRAFT with the SOURCE.
-List every statement in title, dek, summary, why, excerpt, opps and keyInsights that states a
+List every statement in title, dek, summary, why, excerpt, opps, keyInsights and benchmark
+(name those fields 'benchmark.<field>') that states a
 fact (a number, name, date, claim about what happened, or a quote) not supported by the source,
 and any quote that is verbatim but over 25 words or unattributed. Recommendations and opinions
 about what Aldar could do are fine and are not issues. Return an empty list if all is supported."""
@@ -172,6 +176,8 @@ about what Aldar could do are fine and are not issues. Return an empty list if a
 
 def verify(c, rec, cfg):
     draft = {k: rec[k] for k in ("title", "dek", "summary", "why", "excerpt", "opps", "keyInsights", "speakers")}
+    if rec["benchmark"]["candidate"]:
+        draft["benchmark"] = {k: rec["benchmark"][k] for k in ("brand", "title", "short", "lead", "why", "transfer")}
     user = VERIFY_TASK + "\n\nDRAFT\n" + json.dumps(draft, ensure_ascii=False, indent=1) + "\n\nSOURCE\n" + _source_block(c)
     return ask_json(cfg["models"]["verify"], cfg["models"]["verify_effort"],
                     "You check editorial drafts against their sources, strictly and briefly.", user, VERIFY_SCHEMA)["issues"]
@@ -214,8 +220,14 @@ def enrich_and_check(c, cfg):
         if not rec["keep"]:
             return None, [], rec["dropReason"] or "dropped on rewrite"
         issues = verify(c, rec, cfg)
-    flags = [f"fact-check: {i['field']}: {i['claim']} ({i['problem']})" for i in issues]
+    flags = [f"fact-check: {i['field']}: {i['claim']} ({i['problem']})" for i in issues
+             if not i["field"].startswith("benchmark")]
     problems = validate(rec)
     if problems:
         return None, [], "invalid record: " + "; ".join(problems)
+    bm = rec["benchmark"]
+    if bm["candidate"]:
+        bp = benchmarks.validate(bm)
+        if bp or any(i["field"].startswith("benchmark") for i in issues):
+            bm["candidate"], bm["whyNot"] = False, "benchmark draft failed checks: " + "; ".join(bp or ["fact-check"])
     return rec, flags, None

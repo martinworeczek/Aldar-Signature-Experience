@@ -132,7 +132,8 @@ def main():
     # reviewer: drop one, choose another lead, then approve
     drop_id = ed["items"][1]["id"]
     lead_id = next(i["id"] for i in ed["items"] if i["format"] == "watch")
-    (tmp / "c1.txt").write_text(f"Looks good.\n/drop {drop_id}\n/lead {lead_id}\n")
+    bench_off = next((i for i in st["proposal"]["benchmarks"] if i != drop_id), None)
+    (tmp / "c1.txt").write_text(f"Looks good.\n/drop {drop_id}\n/lead {lead_id}\n" + (f"/nobench {bench_off}\n" if bench_off else ""))
     run(py + ["revise", str(tmp / "c1.txt")], repo, env)
     st2 = json.loads((rd / "state.json").read_text())
     ed2 = st2["proposal"]["edition"]
@@ -148,8 +149,15 @@ def main():
     after = json.loads((repo / "data" / "aldar-times.json").read_text())
     assert [e["n"] for e in after["editions"]] == [3, 2, 1]
     assert after["editions"][1:] == before["editions"], "editions 1-2 untouched"
-    run(py + ["check"], repo, env)
+    r = run(py + ["check"], repo, env)
     assert (repo / "data" / "aldar-times.xlsx").exists()
+    reg = json.loads((repo / "data" / "benchmarks-from-times.json").read_text())["benchmarks"]
+    assert reg and all(b["edition"] == 3 for b in reg), "benchmarks added with provenance"
+    assert all(b["story"] != bench_off for b in reg), "/nobench respected"
+    sys.path.insert(0, str(repo / "pipeline"))
+    from cxtime import benchmarks as B
+    ids = B.existing_ids(repo / "index.html")
+    assert all(b["id"] in ids for b in reg)
     from openpyxl import load_workbook
     rows = list(load_workbook(repo / "data" / "aldar-times.xlsx")["Records"].values)
     assert len(rows) - 1 == sum(len(e["items"]) for e in after["editions"]), "xlsx mirrors whole archive"

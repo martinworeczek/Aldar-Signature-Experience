@@ -90,6 +90,8 @@ def to_record(c, rec, flags, conf):
         "experiential": rec["experiential"], "_flags": flags, "_weight": c["_src"]["weight"],
         "_publishedISO": c["publishedRaw"], "_image": c.get("_image"), "_imageCredit": c.get("imageCredit"),
         "_imageNote": c.get("_imageNote"), "_imageNew": c.get("_imageNew", False),
+        "_bench": rec["benchmark"] if rec["benchmark"]["candidate"] else None,
+        "_benchWhyNot": "" if rec["benchmark"]["candidate"] else rec["benchmark"]["whyNot"],
     }
 
 
@@ -122,10 +124,14 @@ def build_edition(st, conf, archive):
     edition = {"n": n, "date": f"{d.day} {d:%B %Y}", "dateShort": f"{d.day} {d:%b %Y}",
                "items": [{k: it[k] for k in PUBLIC_ORDER if k in it} for it in items]}
     keymap = {it["id"]: it["_key"] for it in items}
+    by_key = {r["key"]: r for r in st["records"]}
+    nob = set(st["overrides"].setdefault("nobench", []))
+    bench_ids = [it["id"] for it in items if by_key[it["_key"]].get("_bench") and it["_key"] not in nob]
     st["proposal"] = {"edition": edition, "keys": keymap, "notes": notes,
                       "bench": [b["key"] for b in bench],
                       "benchReasons": {b["key"]: b.get("_benchReason", "") for b in bench},
-                      "hold": any(n.startswith("HOLD") for n in notes)}
+                      "hold": any(n.startswith("HOLD") for n in notes),
+                      "benchmarks": bench_ids}
     return st
 
 
@@ -205,7 +211,7 @@ def propose(date=None, only_sources=None):
 
     st = {"date": date, "created": datetime.now(timezone.utc).isoformat(timespec="seconds"), "sources": statuses,
           "ledger": ledger, "records": records, "candidates": {c["key"]: _cand_meta(c) for c in cands},
-          "overrides": {"drop": [], "add": [], "lead": None}, "history": []}
+          "overrides": {"drop": [], "add": [], "lead": None, "nobench": []}, "history": []}
     build_edition(st, conf, archive)
     for c in cands:  # remember everything screened, so it is never re-offered
         seen.setdefault(canon_url(c["sourceUrl"]), {"first": date, "title": c["titleRaw"][:120]})
@@ -245,6 +251,8 @@ HELP = """Reply on this pull request with one command per line:
 | `/add k:ab12cd34` | Bring a bench story into the edition (key shown in the bench table). |
 | `/lead e3-w1` | Make this story the Signal of the Week. |
 | `/rerun e3-l2 focus on the arrival ritual` | Rewrite one story; the note is passed to the editor. |
+| `/nobench e3-s2` | Publish the story but do not add its benchmark to the Benchmark Repository. |
+| `/bench e3-s2` | Put a benchmark you removed back. |
 """
 
 
@@ -287,6 +295,14 @@ def revise(text, date=None):
             elif cmd == "/lead":
                 k = resolve(st, args.split()[0]); ov["lead"] = k
                 ov["drop"] = [x for x in ov["drop"] if x != k]
+            elif cmd == "/nobench":
+                k = resolve(st, args.split()[0])
+                ov["nobench"] = sorted(set(ov.get("nobench", [])) | {k})
+            elif cmd == "/bench":
+                k = resolve(st, args.split()[0])
+                if not next(r for r in st["records"] if r["key"] == k).get("_bench"):
+                    raise ValueError("this story has no benchmark draft")
+                ov["nobench"] = [x for x in ov.get("nobench", []) if x != k]
             elif cmd == "/rerun":
                 ref, _, note = args.partition(" ")
                 rerun(st, resolve(st, ref), note.strip(), conf)
@@ -325,6 +341,10 @@ def rerun(st, key, note, conf):
     problems = enrich.validate(rec)
     if problems:
         raise ValueError("rewrite was invalid: " + "; ".join(problems))
+    from . import benchmarks
+    if rec["benchmark"]["candidate"] and (benchmarks.validate(rec["benchmark"]) or any(i["field"].startswith("benchmark") for i in issues)):
+        rec["benchmark"]["candidate"], rec["benchmark"]["whyNot"] = False, "benchmark draft failed checks"
+    issues = [i for i in issues if not i["field"].startswith("benchmark")]
     old = next(r for r in st["records"] if r["key"] == key)
     c["_image"], c["imageCredit"] = old.get("_image"), old.get("_imageCredit")
     c["_imageNote"], c["_imageNew"] = old.get("_imageNote"), old.get("_imageNew", False)
@@ -388,6 +408,28 @@ def write_review(d, st, conf):
             for fl in r["_flags"]:
                 L.append(f"\n> ⚠️ {fl}")
             L.append("")
+
+    bms = [(i, recs[p["keys"][i["id"]]]["_bench"]) for i in ed["items"] if i["id"] in p.get("benchmarks", [])]
+    L.append(f"## For the Benchmark Repository ({len(bms)})\n")
+    if not bms:
+        L.append("_No story this week describes a single organisation's practice clearly enough to benchmark._\n")
+    else:
+        L.append("On `/approve` these join the Benchmark Repository on the Signature Experience hub, marked "
+                 "**✦ From Aldar Times** with a link back to the edition and source. `/nobench <id>` keeps one out.\n")
+    from .benchmarks import STAGES, LINE_LABEL, PILLARS
+    for it, bm in bms:
+        L.append(f"#### from `{it['id']}` · **{bm['title']}** · {bm['brand']}")
+        L.append(f"{bm['industry']} · {LINE_LABEL[bm['line']]} Plus · {STAGES[bm['line']][bm['moment']]} · "
+                 f"pillar: {PILLARS[bm['pillar']].split(' (')[0]} · {', '.join(bm['themes'])}  ")
+        L.append(f"*{bm['short']}* {bm['lead']}\n")
+        for w in bm["why"]:
+            L.append(f"- **{w['head']}** {w['body']}")
+        L.append("\n**Travels to:** " + " · ".join(f"*{t['line']}:* {t['how']}" for t in bm["transfer"]) + "\n")
+    skipped = [(i["id"], recs[p["keys"][i["id"]]]) for i in ed["items"] if i["id"] not in p.get("benchmarks", [])]
+    if skipped:
+        L.append("<sub>Not benchmarked: " + "; ".join(
+            f"`{i}` {('removed by reviewer' if r.get('_bench') else (r.get('_benchWhyNot') or 'not a single-organisation practice'))}"
+            for i, r in skipped) + "</sub>\n")
 
     bench = [recs[k] for k in p["bench"] if k in recs]
     if bench:
@@ -527,6 +569,7 @@ def publish(date=None, force=False, skip_url_check=False):
     store.write_hub(new)
     store.check_hub_matches(new)
     write_xlsx(new)
+    n_bm = publish_benchmarks(st, new)
     subprocess.run([sys.executable, "-I", str(ROOT / "tools" / "build_cx_time.py")], cwd=ROOT, check=True)
 
     # tidy: photos staged this run but not used in the edition
@@ -542,13 +585,43 @@ def publish(date=None, force=False, skip_url_check=False):
     ed = st["proposal"]["edition"]
     st["published"] = {"at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "n": ed["n"], "warnings": soft}
     save_state(d, st)
-    report = (f"Published Edition {ed['n']} · {ed['date']}: {len(ed['items'])} stories. "
+    report = (f"Published Edition {ed['n']} · {ed['date']}: {len(ed['items'])} stories; "
+              f"{n_bm} added to the Benchmark Repository. "
               f"Archive now holds {len(new['editions'])} editions; hub page {hub_mb:.1f} MiB.")
     if soft:
         report += "\nLinks to check by hand:\n- " + "\n- ".join(soft)
     (d / "published.md").write_text(report + "\n")
     say(report)
     return report
+
+
+def publish_benchmarks(st, archive):
+    """Append the approved benchmark drafts to the hub's Benchmark Repository (append-only)."""
+    from . import benchmarks
+    p = st["proposal"]
+    ids = p.get("benchmarks", [])
+    if not ids:
+        return 0
+    benchmarks.check()
+    edition = archive["editions"][0]
+    items = {i["id"]: i for i in edition["items"]}
+    recs = {r["key"]: r for r in st["records"]}
+    taken = benchmarks.existing_ids()
+    month = datetime.fromisoformat(st["date"]).strftime("%Y-%m")
+    out, imgs = [], {}
+    for sid in ids:
+        r = recs[p["keys"][sid]]
+        b = benchmarks.build(r["_bench"], items[sid], edition, taken, month)
+        out.append(b)
+        if archive["images"].get(sid):
+            imgs[b["id"]] = archive["images"][sid]
+    benchmarks.append_to_hub(out, imgs)
+    reg = benchmarks.load_registry()
+    reg["benchmarks"] += [{"id": b["id"], "edition": edition["n"], "story": b["prov"]["story"], "title": b["title"],
+                           "brand": b["brand"], "added": b["added"]} for b in out]
+    benchmarks.save_registry(reg)
+    benchmarks.check()
+    return len(out)
 
 
 def preview(out, date=None):

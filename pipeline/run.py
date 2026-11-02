@@ -61,7 +61,10 @@ def main():
             arc = store.load()
             store.verify_locked(arc)
             store.check_hub_matches(arc)
-            print(f"ok: {len(arc['editions'])} editions, all locked and in step with index.html")
+            from cxtime import benchmarks
+            nb = benchmarks.check()
+            print(f"ok: {len(arc['editions'])} editions, all locked and in step with index.html; "
+                  f"{nb} benchmarks from CX Time present in the repository")
         elif a.cmd == "review":
             d = pipeline.run_dir(a.date) if a.date else pipeline.latest_run()
             pipeline.write_review(d, pipeline.load_state(d), pipeline.cfg())

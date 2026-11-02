@@ -31,4 +31,16 @@ def answer(system, user, schema):
         "opps": [{"line": l, "title": f"{l} Ritual", "text": f"A concrete {l.lower()} moment to build."} for l in lines],
         "keyInsights": ["Mock insight one.", "Mock insight two."],
         "speakers": ["Host Name"] if fmt != "read" else [],
+        "benchmark": {
+            "candidate": k % 2 == 0, "whyNot": "" if k % 2 == 0 else "a trend round-up, not one practice",
+            "brand": "Mock Brand · Lisbon", "industry": "Hospitality",
+            "line": ["hp", "rp", "edu", "est", "cp"][k % 5], "moment": "onb", "pillar": "care",
+            "themes": ["Arrival", "Welcome"], "title": "The Welcome Before the Desk",
+            "short": "Guests are met by a named host before they reach the desk.",
+            "lead": "Arrival starts at the kerb. The host already knows the guest's requests.",
+            "why": [{"head": "The queue disappears", "body": "No one waits."},
+                    {"head": "Recognition is immediate", "body": "Names are used from the first second."},
+                    {"head": "Requests arrive first", "body": "The room is ready."}],
+            "transfer": [{"line": "Estates Plus", "how": "Move-in day met by a named community host."}],
+        },
     }
