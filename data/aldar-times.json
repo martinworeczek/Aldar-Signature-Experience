@@ -1,6 +1,413 @@
 {
  "editions": [
   {
+   "n": 3,
+   "date": "2 November 2026",
+   "dateShort": "2 Nov 2026",
+   "items": [
+    {
+     "id": "e3-s1",
+     "format": "read",
+     "lead": true,
+     "tag": "Retail",
+     "inkTag": "#A65A5A",
+     "chipBg": "#D89A9A",
+     "source": "Blooloop",
+     "sourceShort": "Blooloop",
+     "sourceUrl": "https://blooloop.com/cosm-s-shared-reality-cinematic-experiences/",
+     "published": "01 Nov 2026",
+     "meta": "2 min read",
+     "thumb": "linear-gradient(135deg,#844747,#472626)",
+     "title": "Cosm's Shared Reality cinematic experiences",
+     "dek": "Cosm wraps classic films in 12K LED domes, themed venues and scene-timed menus, giving fans a reason to watch familiar titles together rather than at home.",
+     "summary": [
+      "Cosm plays well-known films unchanged at the centre of 87-foot LED domes, while custom screen extensions carry each film's world around and above the audience as the story moves.",
+      "The experience reaches beyond the screen through lighting, sensory touches, interactive installations, and tasting and cocktail menus drawn from each film, served to the seat and timed to scenes.",
+      "Nearly all initial showings of the first title sold out within two weeks and the run was extended twice, and Universal has since joined Warner Bros. as a second studio partner, with a slate spanning sci-fi, family, horror and animation."
+     ],
+     "why": "For Retail, it shows how a mall entertainment visit can become a destination worth leaving the sofa for, by building a shared, multi-sensory event around content people already love. For Hospitality, scene-timed themed menus point to F&B that is choreographed with the moment rather than simply served alongside it.",
+     "excerpt": "Cosm leaves the original film untouched and instead enlarges the room around it, so the emotional pull of a familiar story grows when it is shared with a crowd.",
+     "oppTitle": "Story-wrapped screening nights",
+     "oppText": "Shoppers book a themed screening at the mall's cinema or event space where lighting, installations and a film-inspired menu turn a classic title into an evening out.",
+     "opps": [
+      {
+       "line": "Retail",
+       "title": "Story-wrapped screening nights",
+       "text": "Shoppers book a themed screening at the mall's cinema or event space where lighting, installations and a film-inspired menu turn a classic title into an evening out."
+      },
+      {
+       "line": "Hospitality",
+       "title": "Scene-timed tasting menus",
+       "text": "Guests at a resort dinner-and-film evening receive courses at their seats timed to key scenes, each dish drawn from the story on screen."
+      },
+      {
+       "line": "Community",
+       "title": "Neighbourhood family film fêtes",
+       "text": "Residents gather for an outdoor family screening where the plaza is dressed in the film's world and local vendors serve treats inspired by it."
+      }
+     ],
+     "lines": [
+      "Retail",
+      "Hospitality",
+      "Community"
+     ],
+     "insight": "Case study",
+     "relevance": 4,
+     "themes": [
+      "immersive entertainment",
+      "themed dining",
+      "destination design",
+      "shared experience"
+     ],
+     "speakers": [],
+     "transcriptUrl": null,
+     "keyInsights": [
+      "Familiar content can be given a second life by changing the setting and the social context rather than the content itself.",
+      "Extending a story into lighting, installations and food turns passive viewing into a full visit with more moments to remember.",
+      "Timing service to emotional beats makes F&B part of the narrative instead of an interruption.",
+      "Programming across genres, from family titles to horror, lets one venue reach very different audiences."
+     ],
+     "related": [
+      "e3-s3",
+      "e3-s2",
+      "e3-s4"
+     ],
+     "imageKey": "e3-s1",
+     "imageCredit": "Blooloop"
+    },
+    {
+     "id": "e3-s2",
+     "format": "read",
+     "lead": false,
+     "tag": "Design",
+     "inkTag": "#A8663F",
+     "chipBg": "#E0B090",
+     "source": "Blooloop",
+     "sourceShort": "Blooloop",
+     "sourceUrl": "https://blooloop.com/climate-of-change-at-omsi/",
+     "published": "01 Nov 2026",
+     "meta": "3 min read",
+     "thumb": "linear-gradient(135deg,#8A5533,#4E301C)",
+     "title": "Climate of Change at OMSI",
+     "dek": "Portland's science museum designed a climate exhibition around how visitors feel, not just what they learn, letting them choose their route by mood and readiness.",
+     "summary": [
+      "The Oregon Museum of Science and Industry built its bilingual Climate of Change exhibition to address the anxiety and hopelessness people bring to the subject, structuring it as an emotional arc from heart to head to hope to hand.",
+      "Instead of a fixed route, the floor plan, shaped with advice from local Native American youth, opens onto four directions so visitors can pick a theatre of community stories, an immersive space, an art gallery or hands-on science according to whether they feel anxious, energised, curious or reflective.",
+      "Signature moments include a LIDAR-driven projection room where the environment grows from visitors who stand still, a quiet sphere space for reflection, and community-authored content that turns participation into co-ownership."
+     ],
+     "why": "For Education, it shows how a school's learning spaces and open days can be designed around a student's or parent's emotional state as much as the content. For Community and Retail, it offers a model for public spaces that let visitors choose a calm or energetic path on each visit.",
+     "excerpt": "OMSI designed the exhibition for the emotional experience of meeting climate change, on the view that feeling shapes a person's willingness to engage.",
+     "oppTitle": "Choose-your-path learning hub",
+     "oppText": "Students entering a school discovery space choose among a quiet reflection corner, a hands-on lab, a story wall of local voices or an art zone, each matched to how ready they feel to engage.",
+     "opps": [
+      {
+       "line": "Education",
+       "title": "Choose-your-path learning hub",
+       "text": "Students entering a school discovery space choose among a quiet reflection corner, a hands-on lab, a story wall of local voices or an art zone, each matched to how ready they feel to engage."
+      },
+      {
+       "line": "Community",
+       "title": "Residents' stories, residents' words",
+       "text": "Residents co-author a rotating community exhibit in a neighbourhood hub, telling local stories of sustainability and resilience in their own voices and seeing themselves reflected in the place."
+      },
+      {
+       "line": "Retail",
+       "title": "Stillness-rewarding installation",
+       "text": "Mall visitors who pause in a responsive projection zone watch landscapes and sound grow outward from where they stand, linking them with others nearby and offering a calm counterpoint to shopping."
+      }
+     ],
+     "lines": [
+      "Education",
+      "Community",
+      "Retail"
+     ],
+     "insight": "Case study",
+     "relevance": 4,
+     "themes": [
+      "emotional design",
+      "visitor agency",
+      "co-creation",
+      "responsive environments"
+     ],
+     "speakers": [],
+     "transcriptUrl": null,
+     "keyInsights": [
+      "Designing for the emotion a visitor arrives with can matter as much as the information you want them to leave with.",
+      "Non-linear layouts that offer clear, named choices give people agency and let each visitor self-select the experience they are ready for.",
+      "Moving communities from consultation to co-ownership of content builds trust and lets people see themselves in a place.",
+      "Responsive technology can reward slowing down rather than activity, creating moments of presence and connection between strangers."
+     ],
+     "related": [
+      "e3-s1",
+      "e3-s4",
+      "e3-s6"
+     ],
+     "imageKey": "e3-s2",
+     "imageCredit": "Blooloop"
+    },
+    {
+     "id": "e3-s3",
+     "format": "read",
+     "lead": false,
+     "tag": "Retail",
+     "inkTag": "#A65A5A",
+     "chipBg": "#D89A9A",
+     "source": "Dezeen",
+     "sourceShort": "Dezeen",
+     "sourceUrl": "https://www.dezeen.com/2026/11/02/jaguar-flagship-store-knightsbridge-london-type-01/",
+     "published": "02 Nov 2026",
+     "meta": "4 min read",
+     "thumb": "linear-gradient(135deg,#844747,#472626)",
+     "title": "Jaguar designs Knightsbridge flagship to be a physical expression of the Type 01 electric car",
+     "dek": "Jaguar has turned its London showroom into a destination led by a chef's restaurant, with interiors that echo its new car and private sales spaces below.",
+     "summary": [
+      "Jaguar has rebuilt its Knightsbridge flagship as a destination rather than a conventional car showroom, and it is currently the only place where the public can see the new Type 01.",
+      "Most of the ground floor is given to Café Eighty-One, a red-upholstered restaurant by a Michelin-starred chef, with the colour drawn from the area's red-brick streets, while only two cars are on display.",
+      "Travertine, tactile textiles, brass and sculptural lighting deliberately mirror the car's interior, and a lower level holds private rooms for sales, meetings and customisation, including a navy Design Vault."
+     ],
+     "why": "For Development sales galleries and Retail flagships, it shows how the discovery visit can lead with hospitality and place, holding the transaction back for a quieter private space once the visitor is engaged.",
+     "excerpt": "Jaguar's spatial design lead framed the space not as a showroom but as a destination where architecture, culture, hospitality and craftsmanship meet.",
+     "oppTitle": "Sales gallery as café",
+     "oppText": "Prospective buyers arrive at a chef-led café open to the public, with model homes nearby and a private lower-level room for finishes selection and contract conversations.",
+     "opps": [
+      {
+       "line": "Development",
+       "title": "Sales gallery as café",
+       "text": "Prospective buyers arrive at a chef-led café open to the public, with model homes nearby and a private lower-level room for finishes selection and contract conversations."
+      },
+      {
+       "line": "Retail",
+       "title": "Brand rooms that host",
+       "text": "Mall flagship units pair product display with a dwell-worthy food or lounge space so shoppers stay, meet friends and return without a purchase motive."
+      },
+      {
+       "line": "Hospitality",
+       "title": "Materials that tell the story",
+       "text": "Lobby and restaurant finishes echo a locally rooted palette so guests sense the setting and the brand from the threshold onward."
+      }
+     ],
+     "lines": [
+      "Retail",
+      "Development",
+      "Hospitality"
+     ],
+     "insight": "Case study",
+     "relevance": 4,
+     "themes": [
+      "experiential retail",
+      "flagship destination",
+      "hospitality-led sales",
+      "material storytelling"
+     ],
+     "speakers": [],
+     "transcriptUrl": null,
+     "keyInsights": [
+      "Giving most of the prime floor to hospitality rather than product turns a sales space into somewhere people choose to spend time.",
+      "Interiors that deliberately echo the product's own materials let visitors feel the brand before any sales conversation.",
+      "Separating a public, social ground floor from private rooms for purchase and customisation protects both the welcome and the decision.",
+      "Anchoring colour and material to the surrounding neighbourhood helps a brand space feel part of its place."
+     ],
+     "related": [
+      "e3-s1",
+      "e3-s4",
+      "e3-s6"
+     ],
+     "imageKey": "e3-s3",
+     "imageCredit": "Dezeen"
+    },
+    {
+     "id": "e3-s4",
+     "format": "read",
+     "lead": false,
+     "tag": "Design",
+     "inkTag": "#A8663F",
+     "chipBg": "#E0B090",
+     "source": "Retail Design Blog",
+     "sourceShort": "Retail Design",
+     "sourceUrl": "https://retaildesignblog.net/2026/11/02/alaska-airlines-flagship-lounge-by-graham-baba-architects/",
+     "published": "02 Nov 2026",
+     "meta": "3 min read",
+     "thumb": "linear-gradient(135deg,#8A5533,#4E301C)",
+     "title": "Alaska Airlines Flagship Lounge by Graham Baba Architects",
+     "dek": "At Seattle-Tacoma airport, Alaska Airlines moves away from the exclusive business lounge, using a staged entry and four distinct zones to offer every guest a refuge.",
+     "summary": [
+      "Graham Baba Architects designed Alaska Airlines' flagship lounge at SeaTac as a warm, welcoming refuge from the concourse, deliberately moving away from the sleek, exclusive model of traditional airport lounges.",
+      "The space is divided into four lightly screened zones (an entry, a casual bistro, a quiet relaxation area and a bar), each with its own furniture, acoustics, materials and lighting so guests can choose the atmosphere that suits them.",
+      "A staged arrival sequence, from a wide concourse window and guiding oak frames to a fireplace view and a concierge desk, is combined with work by local fabricators and artists to root the experience in the Pacific Northwest."
+     ],
+     "why": "For Hospitality and Retail, the lounge shows how an arrival sequence and a choice of distinct moods within one space can make a hotel lobby or a mall visitor lounge feel like a welcoming refuge, rather than a transactional waiting area.",
+     "excerpt": "Alaska Airlines set out to replace the exclusive, business-like lounge with a warm home-away-from-home rooted in the Pacific Northwest, offering a range of spaces so every guest finds one where they feel at home.",
+     "oppTitle": "Lobby of four moods",
+     "oppText": "Guests entering the hotel lobby move from a concierge welcome into lightly screened zones for coffee and conversation, quiet rest with lowered light and soft acoustics, and an evening bar, each with its own materials and seating.",
+     "opps": [
+      {
+       "line": "Hospitality",
+       "title": "Lobby of four moods",
+       "text": "Guests entering the hotel lobby move from a concierge welcome into lightly screened zones for coffee and conversation, quiet rest with lowered light and soft acoustics, and an evening bar, each with its own materials and seating."
+      },
+      {
+       "line": "Retail",
+       "title": "Take-a-breath mall lounge",
+       "text": "Shoppers can step from a busy concourse into a calm, sound-absorbed lounge with views, recliners and a local coffee counter, open to every visitor rather than reserved for a privileged few."
+      }
+     ],
+     "lines": [
+      "Hospitality",
+      "Retail"
+     ],
+     "insight": "Case study",
+     "relevance": 4,
+     "themes": [
+      "arrival sequence",
+      "zoning",
+      "sense of place",
+      "inclusive hospitality"
+     ],
+     "speakers": [],
+     "transcriptUrl": null,
+     "keyInsights": [
+      "Openness can carry more value than exclusivity: a refuge designed for all guests can still feel premium.",
+      "Zoning a single space by atmosphere, with distinct acoustics, lighting and materials, lets guests self-select the experience they need.",
+      "A choreographed threshold, with a glimpse in, guiding elements, a focal view and a personal greeting, turns arrival into an invitation.",
+      "Commissioning local makers gives guests a tangible connection to place and differentiates a space from generic interiors."
+     ],
+     "related": [
+      "e3-s6",
+      "e3-s1",
+      "e3-s3"
+     ],
+     "imageKey": "e3-s4",
+     "imageCredit": "Retail Design Blog"
+    },
+    {
+     "id": "e3-s5",
+     "format": "read",
+     "lead": false,
+     "tag": "Hospitality",
+     "inkTag": "#9A7530",
+     "chipBg": "#E8B96A",
+     "source": "Hospitality Design",
+     "sourceShort": "HD",
+     "sourceUrl": "https://hospitalitydesign.com/projects/lark-hotels-rob-blood-megan-kennedy/642256",
+     "published": "29 Oct 2026",
+     "meta": "7 min read",
+     "thumb": "linear-gradient(135deg,#9A7530,#5E4518)",
+     "title": "Lark Hotels writes its own rules",
+     "dek": "Lark Hotels runs more than 60 small properties across four brands, each designed around its own building, history and town rather than a single house aesthetic.",
+     "summary": [
+      "Founded by a former educator turned innkeeper, Lark Hotels has grown to 63 properties across four brands, each built around the character of its building and destination rather than a uniform look.",
+      "Its creative director draws on a family background in innkeeping and antiques to fill historic homes with curated, one-of-a-kind pieces, while brands such as Blind Tiger add letters from local tastemakers describing how they would spend a day off in the city.",
+      "The portfolio ranges from opulent sea captains' mansions to landscape-led retreats and reinvented roadside motels, showing how a clear experiential philosophy can scale without becoming a commodity."
+     ],
+     "why": "For Hospitality, Lark shows how the arrival and first evening can feel like being welcomed by a well-connected local friend rather than a chain. The same local-tastemaker idea could shape how Community teams welcome new residents in their first weeks in a neighbourhood.",
+     "excerpt": "Lark's ambition is for a Blind Tiger stay to feel like being hosted by your best-connected friend, guided by locals who share how they would spend a day off.",
+     "oppTitle": "Letters from local tastemakers",
+     "oppText": "Guests find a handwritten letter in their room from a local chef, artist or shop owner describing how they would spend a day off nearby, with their personal recommendations.",
+     "opps": [
+      {
+       "line": "Hospitality",
+       "title": "Letters from local tastemakers",
+       "text": "Guests find a handwritten letter in their room from a local chef, artist or shop owner describing how they would spend a day off nearby, with their personal recommendations."
+      },
+      {
+       "line": "Community",
+       "title": "Neighbour's welcome guide",
+       "text": "New residents receive a guide written by long-standing neighbours sharing their favourite cafés, walks and weekend rituals in the community."
+      }
+     ],
+     "lines": [
+      "Hospitality",
+      "Community"
+     ],
+     "insight": "Case study",
+     "relevance": 4,
+     "themes": [
+      "sense of place",
+      "local curation",
+      "boutique hospitality",
+      "adaptive reuse"
+     ],
+     "speakers": [],
+     "transcriptUrl": null,
+     "keyInsights": [
+      "Taking design cues from each building and destination creates stays that feel distinct and hard to commoditise.",
+      "Local voices, such as tastemakers sharing their day-off itinerary, make recommendations feel personal rather than generic concierge advice.",
+      "A portfolio can scale through several clearly differentiated brands that share one philosophy rather than one look.",
+      "Targeted design interventions, such as family-friendly rooms, can give ageing properties new relevance on limited budgets."
+     ],
+     "related": [
+      "e3-s1",
+      "e3-s4",
+      "e3-s2"
+     ]
+    },
+    {
+     "id": "e3-s6",
+     "format": "read",
+     "lead": false,
+     "tag": "Design",
+     "inkTag": "#A8663F",
+     "chipBg": "#E0B090",
+     "source": "Hospitality Design",
+     "sourceShort": "HD",
+     "sourceUrl": "https://hospitalitydesign.com/news/one-bryant-park-new-york/639478",
+     "published": "26 Oct 2026",
+     "meta": "2 min read",
+     "thumb": "linear-gradient(135deg,#8A5533,#4E301C)",
+     "title": "Light and shadow meet at One Bryant Park",
+     "dek": "A new New York restaurant near Times Square uses Japanese ideas of filtered light and preserved shadow to turn three dining rooms into a calm retreat from the street.",
+     "summary": [
+      "One Bryant Park on 42nd Street is a single restaurant offering three distinct dining experiences: a main dining room and bar, an omakase counter in Kumiko Room, and Kappo Sono, which is due to open in November.",
+      "Studio Canall designed each room with its own mood, tied together by the interplay of light and shadow and the meeting of Eastern and Western design.",
+      "Light is handled deliberately throughout, filtered through oak slats, backlit kumiko lattice and concealed fixtures, keeping darker pockets so that wood, plaster and metal textures can be felt."
+     ],
+     "why": "For Hospitality and mall-based F&B in Retail, it shows how the moment a guest steps in from a busy street can be designed as a shift into calm, using lighting that keeps shadow rather than lighting a room evenly.",
+     "excerpt": "The restaurant was conceived as a retreat from the Times Square bustle, meant to feel like standing in the shade of a forest.",
+     "oppTitle": "Dappled light dining",
+     "oppText": "Guests enter a hotel restaurant beneath a slatted timber canopy where light filters through and darker pockets are kept, so the room feels calmer and more intimate after dusk.",
+     "opps": [
+      {
+       "line": "Hospitality",
+       "title": "Dappled light dining",
+       "text": "Guests enter a hotel restaurant beneath a slatted timber canopy where light filters through and darker pockets are kept, so the room feels calmer and more intimate after dusk."
+      },
+      {
+       "line": "Retail",
+       "title": "Shade retreat threshold",
+       "text": "Shoppers leave a busy mall concourse through a timber arch into a dining space lit with filtered, uneven light that signals a slower, quieter pause in their visit."
+      }
+     ],
+     "lines": [
+      "Hospitality",
+      "Retail"
+     ],
+     "insight": "Case study",
+     "relevance": 3,
+     "themes": [
+      "sensory design",
+      "lighting",
+      "restaurant design",
+      "cultural craft"
+     ],
+     "speakers": [],
+     "transcriptUrl": null,
+     "keyInsights": [
+      "Keeping deliberate pockets of shadow can make a space feel calmer and give natural materials more character than even, bright lighting.",
+      "A single venue can offer several distinct moods under one identity when a shared design idea ties the rooms together.",
+      "A façade that reads differently from the street and from inside can frame the arrival as a passage from city noise into retreat.",
+      "Cultural craft traditions, such as kumiko latticework, can be adapted to carry a sensory concept with authenticity."
+     ],
+     "related": [
+      "e3-s4",
+      "e3-s1",
+      "e3-s3"
+     ],
+     "imageKey": "e3-s6",
+     "imageCredit": "Hospitality Design"
+    }
+   ]
+  },
+  {
    "n": 2,
    "date": "3 September 2026",
    "dateShort": "3 Sep 2026",
@@ -845,7 +1252,7 @@
    ]
   }
  ],
- "stamp": "2026-09-03T11:50:49.225Z",
+ "stamp": "2026-11-02T13:14:02.264Z",
  "images": {
   "e2-s1": "/img/41198600c2fa4c68.webp",
   "e2-s2": "/img/24933dd1c53c2e1b.webp",
@@ -862,6 +1269,11 @@
   "s3": "/img/2c58ae9503cf9212.webp",
   "s4": "/img/3d987f26af5bdcb3.webp",
   "s5": "/img/6da1e62cee5d0b7e.webp",
-  "s6": "/img/5e91851bd3ec15c3.webp"
+  "s6": "/img/5e91851bd3ec15c3.webp",
+  "e3-s1": "/img/bcce51712b4de104.webp",
+  "e3-s2": "/img/beb695bbd0aa70b1.webp",
+  "e3-s3": "/img/97db1ac914be8fee.webp",
+  "e3-s4": "/img/d8b972774b1f84b5.webp",
+  "e3-s6": "/img/d4f9efbb9e69cecf.webp"
  }
 }
