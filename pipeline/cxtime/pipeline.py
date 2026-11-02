@@ -129,21 +129,21 @@ def build_edition(st, conf, archive):
     yes = set(st["overrides"].setdefault("bench", []))
     drafts = [it["id"] for it in items if by_key[it["_key"]].get("_bench")]
     bench_ids = [i for i in drafts if keymap[i] in yes]
-    # the email intro: the reviewer's own text if given; else kept while the stories are unchanged
+    # the announcement email's words: kept while the stories and picks are unchanged, reviewer overrides on top
     prev = st.get("proposal") or {}
-    sig = [i["title"] for i in edition["items"]]
-    intro = st["overrides"].get("intro")
-    if not intro:
-        intro = prev.get("intro") if prev.get("introFor") == sig else None
-    if not intro and edition["items"]:
+    ov = st["overrides"]
+    sig = [i["title"] for i in edition["items"]] + ov.get("picks", [])
+    email = prev.get("email") if prev.get("emailFor") == sig else None
+    if not email and edition["items"]:
         from . import newsletter
         from .llm import LLMError
         try:
-            intro = newsletter.write_intro(edition, conf)
+            email = newsletter.write_copy(edition, conf, ov.get("picks"))
         except LLMError:
-            intro = (f"This week's edition brings {len(edition['items'])} experiential CX stories from around "
-                     "the world, each with what it could mean for Aldar.")
-    st["proposal"] = {"edition": edition, "keys": keymap, "notes": notes, "intro": intro or "", "introFor": sig,
+            email = newsletter.fallback_copy(edition)
+    if email:
+        email = dict(email, **{k: ov[k] for k in ("subject", "headline", "intro") if ov.get(k)})
+    st["proposal"] = {"edition": edition, "keys": keymap, "notes": notes, "email": email, "emailFor": sig,
                       "bench": [b["key"] for b in bench],
                       "benchReasons": {b["key"]: b.get("_benchReason", "") for b in bench},
                       "hold": any(n.startswith("HOLD") for n in notes),
@@ -283,7 +283,8 @@ HELP = """Reply on this pull request with one command per line:
 | `/rerun e3-l2 focus on the arrival ritual` | Rewrite one story; the note is passed to the editor. |
 | `/bench e3-s2` | Add this story's benchmark draft to the Benchmark Repository on publish. Nothing is added without it. |
 | `/nobench e3-s2` | Withdraw a `/bench` you gave earlier. |
-| `/intro Your own opening paragraph…` | Replace the email intro (one line). |
+| `/headline Worth leaving home for.` · `/intro …` · `/subject …` | Replace a line of the announcement email. |
+| `/pick e3-s4 e3-s5` | Choose the two stories the email features after the lead. |
 """
 
 
@@ -334,10 +335,16 @@ def revise(text, date=None):
                 if not next(r for r in st["records"] if r["key"] == k).get("_bench"):
                     raise ValueError("this story has no benchmark draft")
                 ov["bench"] = sorted(set(ov.get("bench", [])) | {k})
-            elif cmd == "/intro":
+            elif cmd in ("/intro", "/headline", "/subject"):
                 if not args:
-                    raise ValueError("write the intro text after /intro")
-                ov["intro"] = args
+                    raise ValueError(f"write the text after {cmd}")
+                ov[cmd[1:]] = args
+            elif cmd == "/pick":
+                ids = args.split()
+                known = {i["id"] for i in st["proposal"]["edition"]["items"]}
+                if len(ids) != 2 or not set(ids) <= known:
+                    raise ValueError("give two story ids from this edition, e.g. /pick e3-s4 e3-s5")
+                ov["picks"] = ids
             elif cmd == "/rerun":
                 ref, _, note = args.partition(" ")
                 rerun(st, resolve(st, ref), note.strip(), conf)
@@ -404,10 +411,16 @@ def write_review(d, st, conf):
              f"bar: relevance ≥ {conf['edition']['min_relevance']}, experiential ≥ {conf['edition']['min_experiential']}.\n")
     if os.environ.get("CXTIME_PREVIEW_URL"):
         L.append(f"**Preview the page:** {os.environ['CXTIME_PREVIEW_URL']}\n")
-    nl = conf.get("newsletter", {})
-    if nl.get("to"):
-        L.append(f"**Email on publish** to {', '.join(nl['to'])}. Intro (replace with `/intro <text>`):\n")
-        L.append("> " + (p.get("intro") or "_none_") + "\n")
+    em = p.get("email")
+    if em:
+        nl = conf.get("newsletter", {})
+        L.append(f"<details><summary><b>Announcement email</b> (built on publish for {', '.join(nl.get('to', [])) or 'Group CX'}; "
+                 "change with /subject, /headline, /intro, /pick)</summary>\n")
+        L.append(f"**Subject:** {em['subject']}  \n**Preview line:** {em['preheader']}\n")
+        L.append(f"**{em['headline']}** {em['intro']}\n")
+        for k, s in enumerate(em["picks"], 1):
+            L.append(f"{k:02d} · {s['who']} (`{s['id']}`): **{s['title']}**. {s['what']} *For Aldar ·* {s['forAldar']}  ")
+        L.append("\n</details>\n")
     for n in p["notes"]:
         L.append(f"> {'⚠️ ' if n.startswith('HOLD') else ''}{n}")
     if p["notes"]:
@@ -612,7 +625,8 @@ def publish(date=None, force=False, skip_url_check=False):
     write_xlsx(new)
     n_bm = publish_benchmarks(st, new)
     from . import newsletter
-    mailed = newsletter.queue(new["editions"][0], st["proposal"].get("intro", ""), conf)
+    edm_url, edm_subject = (newsletter.publish_edm(new["editions"][0], new, st["proposal"]["email"], conf)
+                            if st["proposal"].get("email") else (None, None))
     subprocess.run([sys.executable, "-I", str(ROOT / "tools" / "build_cx_time.py")], cwd=ROOT, check=True)
 
     # tidy: photos staged this run but not used in the edition
@@ -631,8 +645,13 @@ def publish(date=None, force=False, skip_url_check=False):
     report = (f"Published Edition {ed['n']} · {ed['date']}: {len(ed['items'])} stories; "
               f"{n_bm} added to the Benchmark Repository. "
               f"Archive now holds {len(new['editions'])} editions; hub page {hub_mb:.1f} MiB.")
-    if mailed:
-        report += f"\nEmail queued for {', '.join(conf['newsletter']['to'])}: \"{mailed}\" (sent from Group CX's Outlook by the scheduled sender)."
+    if edm_url:
+        to = ", ".join(conf.get("newsletter", {}).get("to", []))
+        n = ed["n"]
+        report += (f"\n\n**Announcement email is ready** (live once both sites are deployed): {edm_url}\n"
+                   f"Subject: {edm_subject}" + (f" · To: {to}" if to else "") + "\n"
+                   f"To send: open the link, File → Save Page As → *Web Page, HTML only* (`cx-time-edition-{n}.html`); "
+                   "then in Outlook: New Email → Insert → Attach File → choose it → arrow next to Insert → **Insert as Text**.")
     if soft:
         report += "\nLinks to check by hand:\n- " + "\n- ".join(soft)
     (d / "published.md").write_text(report + "\n")

@@ -150,6 +150,25 @@ permanent: correct it in a later edition, never by editing the archive.
 If an edition is still open the next Monday, that run is skipped and the pull request gets a
 reminder. Close the pull request to discard an edition.
 
+## The announcement email
+
+Every edition gets a designed announcement email (design "2c Photo-ready", spec in `docs/edm/README.md`):
+a hero photo, a headline and short intro, the three featured stories (the lead, then the next two) with a
+photo, a one-line description and a "For Aldar" line each, and a **Read the edition** button.
+
+- **Words.** Written with the proposal and shown on the review page under *Announcement email*. Change
+  them with `/subject`, `/headline` or `/intro` followed by your text. Choose the two stories after the
+  lead with `/pick e3-s4 e3-s5`. The email is approved together with the edition.
+- **Build.** On publish, the photos are cropped to JPEG (Outlook desktop does not show WebP), and the
+  email is written to `sites/cx-time/email/edition-N/`. It goes live at
+  `https://aldar-cx-time.netlify.app/email/edition-N/` with the site deploy.
+- **Send.** The publish comment on the pull request gives the link. Open it, File → Save Page As →
+  *Web Page, HTML only*. Then in Outlook: New Email → Insert → Attach File → choose the file → arrow
+  next to Insert → **Insert as Text**. Address it to the recipients in `[newsletter]` in `config.toml`.
+
+  The pipeline cannot send it itself: the available mail connector strips images and styling. An
+  email platform or an SMTP-enabled Group CX mailbox would let it send automatically.
+
 ## One-time setup
 
 1. **Secrets** (GitHub → Settings → Secrets and variables → Actions):

@@ -1,80 +1,116 @@
-"""The edition email: an intro written for the edition, approved with it, then sent on publish.
+"""The edition announcement email (EDM design "2c Photo-ready", docs/edm/README.md).
 
-write_intro()  drafts a short newsletter introduction for the proposed edition (shown on the
-               review page; the reviewer can replace it with /intro <text>).
-render()       builds the email (subject + HTML using only tags Outlook keeps: p, b, i, a, ul,
-               li, h3, hr, br).
-queue()        on publish, adds the email to data/cxtime-outbox.json. A scheduled Claude task
-               with the Microsoft 365 connector sends anything unsent from Group CX's mailbox
-               and marks it sent, so each edition is emailed exactly once.
+write_copy()  drafts the email's words for a proposed edition: subject, preheader, headline, intro
+              and, for the three featured stories (the lead, then the next two in edition order),
+              who / title / what / For Aldar. Shown on the review page and approved with the edition;
+              /subject, /headline, /intro and /pick override it.
+publish_edm() on publish, crops the photographs to JPEG, renders the designed email and writes it to
+              sites/cx-time/email/edition-N/index.html, so it is hosted with the CX Time site. Group CX
+              then sends it from Outlook (Insert > Attach File > Insert as Text), because the mail
+              connector available to the pipeline cannot send images or styling.
 """
-import html
 import json
 from datetime import datetime, timezone
 
-from .store import ROOT
+from . import edm
 from .llm import ask_json
+from .store import ROOT
 
-OUTBOX = ROOT / "data" / "cxtime-outbox.json"
+LOG = ROOT / "data" / "cxtime-outbox.json"
 
-INTRO_SCHEMA = {"type": "object", "additionalProperties": False, "required": ["intro"],
-                "properties": {"intro": {"type": "string"}}}
+PICK = {"type": "object", "additionalProperties": False, "required": ["id", "who", "title", "what", "forAldar"],
+        "properties": {k: {"type": "string"} for k in ("id", "who", "title", "what", "forAldar")}}
+COPY_SCHEMA = {"type": "object", "additionalProperties": False,
+               "required": ["subject", "preheader", "headline", "intro", "picks"],
+               "properties": {"subject": {"type": "string"}, "preheader": {"type": "string"},
+                              "headline": {"type": "string"}, "intro": {"type": "string"},
+                              "picks": {"type": "array", "items": PICK}}}
 
-INTRO_TASK = """Write the opening paragraph of this week's Aldar CX Time email to Aldar colleagues.
-Start with "This week's edition is about" and name, in a few words, the single idea that connects
-the stories. Then mention two or three of them concretely (what happens, where), and close by
-saying each comes with what it could mean for Aldar. 50-80 words, one paragraph. Executive, warm,
-UK spelling, no hype, no exclamation marks, no emoji, no invented facts: use only the stories below.
+TASK = """Write the announcement email for this week's Aldar CX Time edition, sent to Aldar colleagues.
+It features the three stories marked FEATURE, in that order. Use only facts in the material below.
+
+- subject: "New in CX Time: " plus the edition's idea in a few words; at most 60 characters.
+- preheader: one line naming the three featured stories concretely; at most 100 characters.
+- headline: the edition's idea in 2-5 words, ending with a full stop (e.g. "Worth leaving home for.").
+- intro: 30-45 words. Start "This week's edition is about", name the idea, and end with
+  "Three stories lead it, and each comes with what it could mean for Aldar."
+- picks: one per FEATURE story, same order, with its id and:
+  - who: the brand, venue or place at the heart of it, 1-4 words (not the publication).
+  - title: a fresh, concrete headline, at most 9 words.
+  - what: one sentence, at most 25 words, saying what happens.
+  - forAldar: one sentence, at most 20 words, taken from the story's "why it matters to Aldar";
+    name the Aldar moment or place (mall, sales gallery, school open day...). Do not start with "For".
+Executive, warm, UK spelling, no hype, no exclamation marks, no emoji.
 
 STORIES
 """
 
 
-def write_intro(edition, conf):
-    stories = "\n".join(f"- {'[LEAD] ' if i['lead'] else ''}{i['title']} ({i['source']}): {i['dek']}"
-                        for i in edition["items"])
-    return ask_json(conf["models"]["enrich"], "medium", "You write Aldar Group CX's weekly newsletter.",
-                    INTRO_TASK + stories, INTRO_SCHEMA, max_tokens=4000)["intro"].strip()
+def featured(edition, picks=None):
+    items = {i["id"]: i for i in edition["items"]}
+    lead = next((i for i in edition["items"] if i["lead"]), edition["items"][0])
+    rest = [items[p] for p in (picks or []) if p in items and p != lead["id"]]
+    rest += [i for i in edition["items"] if i is not lead and i not in rest]
+    return [lead] + rest[:2]
 
 
-def _e(s):
-    return html.escape(s or "", quote=True)
+def write_copy(edition, conf, picks=None):
+    feat = featured(edition, picks)
+    ids = {i["id"] for i in feat}
+    lines = []
+    for i in edition["items"]:
+        tag = f"FEATURE {[f['id'] for f in feat].index(i['id']) + 1}" if i["id"] in ids else "other"
+        lines.append(json.dumps({"id": i["id"], "role": tag, "title": i["title"], "source": i["source"],
+                                 "dek": i["dek"], "why": i["why"]}, ensure_ascii=False))
+    out = ask_json(conf["models"]["enrich"], "medium", "You write Aldar Group CX's weekly CX Time email.",
+                   TASK + "\n".join(lines), COPY_SCHEMA, max_tokens=6000)
+    by = {p["id"]: p for p in out["picks"]}
+    out["picks"] = [by.get(i["id"]) or fallback_pick(i) for i in feat]
+    return out
 
 
-def render(edition, intro, conf):
-    """Short by design: what the edition is about, a link, and the list of stories."""
+def fallback_pick(i):
+    first = i["why"].split(". ")[0].rstrip(".") + "."
+    return {"id": i["id"], "who": i["sourceShort"], "title": i["title"], "what": i["dek"], "forAldar": first}
+
+
+def fallback_copy(edition):
+    feat = featured(edition)
+    return {"subject": f"New in CX Time: Edition {edition['n']}",
+            "preheader": " · ".join(i["title"] for i in feat)[:100],
+            "headline": "This week in CX Time.",
+            "intro": ("This week's edition is about experiences people choose to come back for. "
+                      "Three stories lead it, and each comes with what it could mean for Aldar."),
+            "picks": [fallback_pick(i) for i in feat]}
+
+
+def publish_edm(edition, archive, copy, conf):
+    """Render and write the designed email for a published edition. Returns (page URL, subject)."""
     nl = conf.get("newsletter", {})
-    site, hub = nl.get("site_url", ""), nl.get("hub_url", "")
-    subject = f"Aldar CX Time · Edition {edition['n']} · {edition['date']}"
-    fmt = {"read": "", "watch": "Video · ", "listen": "Podcast · "}
-    items = sorted(edition["items"], key=lambda i: not i["lead"])  # the lead first, no separate section
-    H = [f"<p><b>Aldar CX Time</b> · Edition {edition['n']} · {_e(edition['date'])}</p>",
-         f"<p>{_e(intro)}</p>"]
-    if site:
-        H.append(f'<p><a href="{_e(site)}"><b>Read the edition</b></a></p>')
-    H.append("<ul>")
-    for i in items:
-        H.append(f'<li><a href="{_e(i["sourceUrl"])}">{_e(i["title"])}</a> · <i>{fmt[i["format"]]}{_e(i["source"])}</i></li>')
-    H.append("</ul>")
-    H.append("<p>Group CX</p>")
-    return subject, "\n".join(H)
-
-
-def load_outbox():
-    return json.loads(OUTBOX.read_text()) if OUTBOX.exists() else {"emails": []}
-
-
-def queue(edition, intro, conf):
-    nl = conf.get("newsletter", {})
-    to = nl.get("to", [])
-    if not to:
-        return None
-    box = load_outbox()
-    if any(m["edition"] == edition["n"] for m in box["emails"]):
-        return None  # each edition is emailed once
-    subject, body = render(edition, intro, conf)
-    box["emails"].append({"edition": edition["n"], "date": edition["date"], "to": to, "cc": nl.get("cc", []),
-                          "subject": subject, "html": body, "status": "pending",
-                          "queuedAt": datetime.now(timezone.utc).isoformat(timespec="seconds")})
-    OUTBOX.write_text(json.dumps(box, ensure_ascii=False, indent=1) + "\n")
-    return subject
+    base = nl.get("site_url", "https://aldar-cx-time.netlify.app").rstrip("/")
+    items = {i["id"]: i for i in edition["items"]}
+    picks = [p for p in copy["picks"] if p["id"] in items][:3]
+    imgs = archive.get("images", {})
+    srcs = [ROOT / imgs[p["id"]].lstrip("/") if imgs.get(p["id"]) else None for p in picks]
+    hero_url, thumb_urls = None, [None] * len(picks)
+    if any(srcs):
+        hero_src = next(s for s in srcs if s)
+        hero_url, made = edm.make_images(edition["n"], hero_src, [s or hero_src for s in srcs], base)
+        thumb_urls = [u if s else None for u, s in zip(made, srcs)]
+    html = edm.render({
+        "number": edition["n"], "date": edition["date"], "headline": copy["headline"], "intro": copy["intro"],
+        "preheader": copy["preheader"], "editionUrl": base, "heroImage": hero_url,
+        "stories": [dict(p, image=u) for p, u in zip(picks, thumb_urls)],
+    })
+    out = ROOT / "sites" / "cx-time" / "email" / f"edition-{edition['n']}"
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "index.html").write_text(html, encoding="utf-8")
+    url = f"{base}/email/edition-{edition['n']}/"
+    log = json.loads(LOG.read_text()) if LOG.exists() else {"emails": []}
+    if not any(m["edition"] == edition["n"] for m in log["emails"]):
+        log["emails"].append({"edition": edition["n"], "date": edition["date"], "subject": copy["subject"],
+                              "to": nl.get("to", []), "page": url, "file": f"sites/cx-time/email/edition-{edition['n']}/index.html",
+                              "status": "ready to send from Outlook",
+                              "builtAt": datetime.now(timezone.utc).isoformat(timespec="seconds")})
+        LOG.write_text(json.dumps(log, ensure_ascii=False, indent=1) + "\n")
+    return url, copy["subject"]

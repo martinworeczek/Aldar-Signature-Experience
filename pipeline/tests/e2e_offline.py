@@ -156,9 +156,11 @@ def main():
     r = run(py + ["check"], repo, env)
     assert (repo / "data" / "aldar-times.xlsx").exists()
     reg = json.loads((repo / "data" / "benchmarks-from-times.json").read_text())["benchmarks"]
+    page = repo / "sites" / "cx-time" / "email" / f"edition-{N}" / "index.html"
+    assert page.exists() and "Read the edition" in page.read_text() and "Mock headline." in page.read_text(), "EDM built"
+    assert (page.parent / "hero.jpg").exists() and (page.parent / "01.jpg").exists(), "EDM photos cropped"
     box = json.loads((repo / "data" / "cxtime-outbox.json").read_text())["emails"]
-    assert len([m for m in box if m["edition"] == N]) == 1 and box[-1]["edition"] == N and box[-1]["status"] == "pending", "edition email queued once"
-    assert "Read the edition" in box[-1]["html"] and "mock newsletter intro" in box[-1]["html"]
+    assert len([m for m in box if m["edition"] == N]) == 1
     assert len(reg) == 1 and reg[0]["edition"] == N, "only the /bench-selected draft is added, with provenance"
     assert all(b["story"] != bench_off for b in reg), "/nobench withdraws a /bench"
     sys.path.insert(0, str(repo / "pipeline"))
