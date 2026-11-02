@@ -56,10 +56,7 @@ def render(edition, intro, conf):
     for i in items:
         H.append(f'<li><a href="{_e(i["sourceUrl"])}">{_e(i["title"])}</a> · <i>{fmt[i["format"]]}{_e(i["source"])}</i></li>')
     H.append("</ul>")
-    tail = "Group CX"
-    if hub:
-        tail = f'Also in the <a href="{_e(hub)}">Signature Experience Hub</a>.<br>Group CX'
-    H.append(f"<p>{tail}</p>")
+    H.append("<p>Group CX</p>")
     return subject, "\n".join(H)
 
 
