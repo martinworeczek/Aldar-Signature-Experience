@@ -167,29 +167,43 @@ def propose(date=None, only_sources=None):
     for c in cands:
         s, why = scores.get(c["key"], (1, "not scored"))
         c["_screen"], c["_screenReason"] = s, why
-    shortlist = []
+    # Deep-read down each format's ranked pool until the shortlist is full of stories that could
+    # actually be read: a paywall or an empty page no longer costs a shortlist place, and no
+    # single source can take more than a few places.
+    say("== Deep read")
+    shortlist, tried = [], set()
+    cap = conf["edition"].get("shortlist_per_source", 4)
     for fmt in curate.FORMATS:
         pool = sorted((c for c in cands if c["formatHint"] == fmt and c["_screen"] >= 3),
                       key=lambda c: (c["_screen"], c["_src"]["weight"], c["publishedRaw"]), reverse=True)
-        keep = pool[: conf["edition"]["shortlist"][fmt]]
-        shortlist += keep
-    short_keys = {c["key"] for c in shortlist}
+        got, per_src = 0, Counter()
+        for c in pool:
+            if got >= conf["edition"]["shortlist"][fmt]:
+                break
+            if per_src[c["source"]] >= cap:
+                continue
+            tried.add(c["key"])
+            per_src[c["source"]] += 1
+            try:
+                harvest.deep_fetch(c, f, conf["fetch"])
+            except Exception as e:
+                ledger.append({"key": c["key"], "url": c["sourceUrl"], "title": c["titleRaw"], "source": c["source"],
+                               "score": c["_screen"], "stage": "fetch", "decision": "drop", "reason": str(e)[:200]})
+                say(f"  - {c['titleRaw'][:70]}  (fetch: {e})")
+                per_src[c["source"]] -= 1  # a failed read does not use up the source's places
+                continue
+            shortlist.append(c)
+            got += 1
     for c in cands:
-        if c["key"] not in short_keys:
+        if c["key"] not in tried:
             ledger.append({"key": c["key"], "url": c["sourceUrl"], "title": c["titleRaw"], "source": c["source"],
                            "stage": "screen", "decision": "drop", "score": c["_screen"],
                            "reason": c["_screenReason"] if c["_screen"] < 3 else "below the shortlist cut"})
 
-    say(f"== Deep read + enrich {len(shortlist)} shortlisted")
+    say(f"== Enrich + fact-check {len(shortlist)} shortlisted")
     records = []
     for c in shortlist:
         entry = {"key": c["key"], "url": c["sourceUrl"], "title": c["titleRaw"], "source": c["source"], "score": c["_screen"]}
-        try:
-            harvest.deep_fetch(c, f, conf["fetch"])
-        except Exception as e:
-            ledger.append({**entry, "stage": "fetch", "decision": "drop", "reason": str(e)[:200]})
-            say(f"  - {c['titleRaw'][:70]}  (fetch: {e})")
-            continue
         try:
             rec, flags, why = enrich.enrich_and_check(c, conf)
         except LLMError as e:

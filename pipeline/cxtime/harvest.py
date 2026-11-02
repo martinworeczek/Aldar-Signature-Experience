@@ -149,7 +149,7 @@ def _t(el, path):
 
 def parse_feed(xml_bytes):
     """RSS 2.0 or Atom -> list of plain dicts (metadata only)."""
-    root = ET.fromstring(xml_bytes)
+    root = ET.fromstring(xml_bytes.lstrip())  # some feeds start with a blank line before <?xml
     out = []
     channel_img = ""
     ch = root.find("channel")
@@ -272,10 +272,13 @@ def _meta(soup, *names):
 def article_text(soup):
     for bad in soup(["script", "style", "nav", "header", "footer", "aside", "form", "noscript", "figure"]):
         bad.decompose()
-    body = soup.find("article") or soup.find("main") or soup.body or soup
-    paras = [p.get_text(" ", strip=True) for p in body.find_all(["p", "h2", "h3", "li"])]
-    paras = [p for p in paras if len(p) > 40 or p.endswith((".", "?", "!"))]
-    return "\n".join(paras)
+    def text_of(el):
+        paras = [p.get_text(" ", strip=True) for p in el.find_all(["p", "h2", "h3", "li"])]
+        return "\n".join(p for p in paras if len(p) > 40 or p.endswith((".", "?", "!")))
+    # pages differ: the story may sit in <article>, <main> or a plain div; take whichever
+    # container holds the most real prose (a small <article> card must not win)
+    options = soup.find_all("article") + soup.find_all("main") + [soup.body or soup]
+    return max((text_of(el) for el in options), key=lambda t: len(t.split()), default="")
 
 
 def deep_fetch(c, f, cfg_fetch):
@@ -288,6 +291,9 @@ def deep_fetch(c, f, cfg_fetch):
         c["titleRaw"] = c["titleRaw"] or _meta(soup, "og:title")
         c["author"] = c["author"] or _meta(soup, "author", "article:author")
         text = article_text(soup)
+        feed_text = strip_html(c.get("_body", ""))
+        if len(feed_text.split()) > len(text.split()):  # many feeds carry the full story
+            text = feed_text
         words = len(text.split())
         c["durationRaw"] = str(words)
         c["sourceText"] = text[: cfg_fetch["max_source_chars"]]

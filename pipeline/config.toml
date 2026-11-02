@@ -14,7 +14,8 @@ min_experiential = 4         # 1-5, how squarely the story is about a lived cust
 lead_min_relevance = 5
 max_per_source = 2           # no single masthead dominates an edition
 max_ai_tech = 2              # AI stories only when applied to an experience, and at most this many
-shortlist = { read = 12, watch = 6, listen = 6 }   # handed to enrichment; headroom above the caps
+shortlist = { read = 12, watch = 6, listen = 6 }   # stories actually read in full and enriched; headroom above the caps
+shortlist_per_source = 4     # no source takes more than this many shortlist places
 
 [models]
 # One model for every step by default; change here if cost needs tuning.
@@ -69,26 +70,6 @@ lines = ["Community", "Retail", "Hospitality"]
 weight = 3
 
 [[sources]]
-name = "TrendWatching"
-short = "TrendWatching"
-kind = "rss"
-format = "read"
-url = "https://www.trendwatching.com/"
-tag = "Foresight"
-lines = ["All lines"]
-weight = 3
-
-[[sources]]
-name = "PSFK"
-short = "PSFK"
-kind = "rss"
-format = "read"
-url = "https://www.psfk.com/feed"
-tag = "Foresight"
-lines = ["Retail", "Hospitality"]
-weight = 2
-
-[[sources]]
 name = "Event Marketer"
 short = "Event Mktr"
 kind = "rss"
@@ -120,16 +101,6 @@ lines = ["Development", "Hospitality", "Retail"]
 weight = 2
 
 # -- Customer experience practice
-[[sources]]
-name = "CX Network"
-short = "CX Network"
-kind = "rss"
-format = "read"
-url = "https://www.cxnetwork.com/"
-tag = "Portfolio"
-lines = ["All lines"]
-weight = 3
-
 [[sources]]
 name = "CX Dive"
 short = "CX Dive"
@@ -173,16 +144,6 @@ weight = 2
 
 # -- Retail
 [[sources]]
-name = "Retail TouchPoints"
-short = "Retail TP"
-kind = "rss"
-format = "read"
-url = "https://www.retailtouchpoints.com/feed"
-tag = "Retail"
-lines = ["Retail"]
-weight = 3
-
-[[sources]]
 name = "Retail Dive"
 short = "Retail Dive"
 kind = "rss"
@@ -193,27 +154,6 @@ lines = ["Retail"]
 weight = 2
 
 # -- Places, communities, development
-[[sources]]
-name = "Urban Land (ULI)"
-short = "Urban Land"
-kind = "rss"
-format = "read"
-url = "https://urbanland.uli.org/"
-tag = "Development"
-lines = ["Development", "Community"]
-weight = 3
-
-[[sources]]
-name = "Project for Public Spaces"
-short = "PPS"
-kind = "rss"
-format = "read"
-url = "https://www.pps.org/"
-tag = "Development"
-lines = ["Community", "Development"]
-weight = 2
-
-# -- Education and workplace experience
 [[sources]]
 name = "EdSurge"
 short = "EdSurge"
@@ -235,6 +175,57 @@ lines = ["Corporate"]
 weight = 2
 
 # -- Podcasts (Listen). Searched on Apple Podcasts; the show's own feed is then read.
+[[sources]]
+name = "Hotel Designs"
+short = "Hotel Designs"
+kind = "rss"
+format = "read"
+url = "https://hoteldesigns.net/feed/"
+tag = "Design"
+lines = ["Hospitality", "Development"]
+weight = 2
+
+[[sources]]
+name = "designboom"
+short = "designboom"
+kind = "rss"
+format = "read"
+max_items = 20
+url = "https://www.designboom.com/feed/"
+tag = "Design"
+lines = ["Development", "Retail", "Hospitality"]
+weight = 2
+
+[[sources]]
+name = "Retail Design Blog"
+short = "Retail Design"
+kind = "rss"
+format = "read"
+url = "https://retaildesignblog.net/feed/"
+tag = "Retail"
+lines = ["Retail"]
+weight = 2
+
+[[sources]]
+name = "CustomerThink"
+short = "CustomerThink"
+kind = "rss"
+format = "read"
+url = "https://customerthink.com/feed/"
+tag = "Portfolio"
+lines = ["All lines"]
+weight = 1
+
+[[sources]]
+name = "Next City"
+short = "Next City"
+kind = "rss"
+format = "read"
+url = "https://nextcity.org/"
+tag = "Development"
+lines = ["Community", "Development"]
+weight = 2
+
 [[sources]]
 name = "Good Morning Hospitality (Skift)"
 short = "GMH Skift"
@@ -335,26 +326,6 @@ handle = "@blooloop"
 tag = "Portfolio"
 lines = ["Community", "Hospitality"]
 weight = 3
-
-[[sources]]
-name = "TrendWatching"
-short = "TrendWatching"
-kind = "youtube"
-format = "watch"
-handle = "@trendwatching"
-tag = "Foresight"
-lines = ["All lines"]
-weight = 2
-
-[[sources]]
-name = "Shep Hyken"
-short = "Shep Hyken"
-kind = "youtube"
-format = "watch"
-handle = "@ShepHyken"
-tag = "Portfolio"
-lines = ["All lines"]
-weight = 2
 
 [[sources]]
 name = "CX Today"
