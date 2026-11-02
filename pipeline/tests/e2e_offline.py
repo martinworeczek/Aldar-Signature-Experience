@@ -159,9 +159,9 @@ def main():
     page = repo / "sites" / "cx-time" / "email" / f"edition-{N}" / "index.html"
     em = page.read_text() if page.exists() else ""
     assert "Read the edition" in em and "Mock<br>headline." in em and "For Aldar" not in em, "EDM built (4b, no For Aldar lines)"
-    assert 'max-width:600px' in em and 'display:inline-block' in em, "EDM is fluid: fits the reading window"
+    assert 'max-width:800px' in em and 'display:inline-block' in em, "EDM is fluid: fits the reading window"
     from PIL import Image as _I
-    assert _I.open(page.parent / "hero.jpg").size == (1200, 1120) and _I.open(page.parent / "01.jpg").size == (528, 660), "EDM photos cropped"
+    assert _I.open(page.parent / "hero.jpg").size == (1200, 960) and _I.open(page.parent / "01.jpg").size == (528, 660), "EDM photos cropped"
     assert (page.parents[1] / "assets" / "pat-sadu-band.png").exists(), "Sadu patterns written"
     box = json.loads((repo / "data" / "cxtime-outbox.json").read_text())["emails"]
     assert len([m for m in box if m["edition"] == N]) == 1

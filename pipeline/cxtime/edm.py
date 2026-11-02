@@ -4,13 +4,12 @@ render(data) returns send-ready email HTML that follows the approved reference f
 presentation tables, inline styles, Outlook conditionals and VML, a hidden preheader, Poppins
 with Arial for Outlook, and no "For Aldar" lines.
 
-It fits the reading window. The card is fluid (100% wide, at most 600px), so it shrinks to a
-narrow reading pane or a phone even where media queries are ignored. The story spreads are
-"fluid hybrid": two inline-blocks that sit side by side when there is room and stack when there
-isn't (image first in every row, via the dir="rtl" swap on 02). Outlook for Windows, which
-supports neither, gets fixed 600px ghost tables.
+It fits the reading window. The card is fluid: it fills the pane up to 800px (wider than the
+600px design board, so a desktop reading pane isn't mostly empty margin) and shrinks to any
+narrower pane or phone. The story spreads scale in proportion (photo 47%, text 53%) and stack,
+photo first, below 620px (02 via the dir="rtl" swap). Outlook for Windows gets 800px ghost tables.
 
-make_images() writes the JPEG crops: the hero at 1200x1120 with both fades baked into the pixels,
+make_images() writes the JPEG crops: the hero at 1200x960 with both fades baked into the pixels,
 and the story photos at 528x660. make_patterns() draws the Sadu lozenge PNGs. Everything is
 written under sites/cx-time/email/ and so is hosted with the CX Time site.
 """
@@ -82,16 +81,17 @@ def _p99(zone):
 
 
 def _hero(src):
-    """1200x1120 cover crop (anchor 35% / 50%) with the two fades baked in: darkened behind the
+    """1200x960 cover crop (anchor 35% / 50%) with the two fades baked in: darkened behind the
     masthead, solid card colour at the foot. Over a bright photograph both fades deepen until the
     type reads: the masthead zone to a mean luminance of about 68 (peak about 125), and the zone
-    behind the date line and headline (58-80% of the height) to a mean of about 60."""
-    W, H = 1200, 1120
+    behind the date line and headline (50-80% of the height) to a mean of about 52."""
+    W, H = 1200, 960
     base = _cover(src, W, H, 0.35, 0.5)
     top_h = int(H * 0.44)
     top_stops = [(0, .86), (.45, .72), (.75, .35), (1, 0)]
     for k, shift in ((1.0, 0), (1.1, .04), (1.2, .08), (1.3, .12), (1.45, .16), (1.6, .2)):
-        foot_stops = [(0, 0), (.40 - shift, 0), (.62 - shift, .6 + shift), (.84 - shift / 2, .92), (1, 1)]
+        # solid card colour from 88% down: the hero box can end above the image's foot at wide widths
+        foot_stops = [(0, 0), (.36 - shift, 0), (.56 - shift, .6 + shift), (.76 - shift / 2, .94), (.88, 1), (1, 1)]
         im = base.copy()
         top = Image.new("L", (1, H), 0)
         foot = Image.new("L", (1, H), 0)
@@ -102,9 +102,9 @@ def _hero(src):
         im = Image.composite(Image.new("RGB", (W, H), (14, 13, 12)), im, top.resize((W, H)))
         im = Image.composite(Image.new("RGB", (W, H), (20, 20, 20)), im, foot.resize((W, H)))
         mast = im.crop((0, 0, W, int(H * 0.30))).convert("L")
-        text = im.crop((0, int(H * 0.58), W, int(H * 0.80))).convert("L")
+        text = im.crop((0, int(H * 0.50), W, int(H * 0.80))).convert("L")
         if (ImageStat.Stat(mast).mean[0] <= 72 and _p99(mast) <= 130
-                and ImageStat.Stat(text).mean[0] <= 60):
+                and ImageStat.Stat(text).mean[0] <= 52 and _p99(text) <= 150):
             break
     return im
 
@@ -217,15 +217,15 @@ a[x-apple-data-detectors]{{color:inherit!important;text-decoration:none!importan
 
 
 def _story(k, s, url, flip):
-    """One spread: a 264px photo and a 256px text block (28px gutter inside it). Inline-blocks
-    sit side by side in a 520px row and stack, photo first, in anything narrower."""
-    img = (f'<a href="{url}" target="_blank"><img src="{e(s["image"])}" width="264" height="330" alt="{e(s["who"])}" '
-           f'class="fi" style="display:block;width:264px;max-width:100%;height:auto;border:0;background:#1E1E1E;'
+    """One spread: the photo takes 47% of the row and the text 53% (with its 32px gutter inside),
+    so the pair scales with the card from 800px down; below 620px they stack, photo first."""
+    img = (f'<a href="{url}" target="_blank"><img src="{e(s["image"])}" width="338" height="423" alt="{e(s["who"])}" '
+           f'class="fi" style="display:block;width:100%;max-width:100%;height:auto;border:0;background:#1E1E1E;'
            f'font-family:Arial,sans-serif;font-size:12px;color:{MUTED}"></a>') if s.get("image") else (
-           f'<table role="presentation" width="264" cellpadding="0" cellspacing="0" border="0" class="fi" style="width:264px">'
-           f'<tr><td height="330" bgcolor="#1E1E1E" style="height:330px;background:#1E1E1E">&nbsp;</td></tr></table>')
+           f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%">'
+           f'<tr><td height="420" bgcolor="#1E1E1E" style="height:420px;background:#1E1E1E">&nbsp;</td></tr></table>')
     kind = f' &middot; {e(s["kind"])}' if s.get("kind") else ""
-    pad = "padding-right:28px" if flip else "padding-left:28px"
+    pad = "padding-right:32px" if flip else "padding-left:32px"
     text = (f'<div style="{F}font-size:56px;line-height:56px;{X}color:{RULE};font-weight:200;">{k:02d}</div>{gap(14)}'
             f'<div style="{F}font-size:9px;line-height:13px;{X}color:{MUTED};letter-spacing:2.6px;text-transform:uppercase;">'
             f'{e(s["who"])}{kind}</div>{gap(12)}'
@@ -237,11 +237,11 @@ def _story(k, s, url, flip):
     return (f'<tr><td class="px" style="padding:{top} 40px 0">'
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr>'
             f'<td{d} valign="middle" style="font-size:0;text-align:left">'
-            f'<!--[if mso]><table role="presentation" width="520" cellpadding="0" cellspacing="0" border="0"{d}><tr>'
-            f'<td width="264" valign="middle" dir="ltr"><![endif]-->'
-            f'<div class="st" dir="ltr" style="display:inline-block;width:100%;max-width:264px;vertical-align:middle;text-align:left">{img}</div>'
-            f'<!--[if mso]></td><td width="256" valign="middle" dir="ltr"><![endif]-->'
-            f'<div class="st pt16" dir="ltr" style="display:inline-block;width:100%;max-width:256px;vertical-align:middle;text-align:left">'
+            f'<!--[if mso]><table role="presentation" width="720" cellpadding="0" cellspacing="0" border="0"{d}><tr>'
+            f'<td width="338" valign="middle" dir="ltr"><![endif]-->'
+            f'<div class="st" dir="ltr" style="display:inline-block;width:47%;vertical-align:middle;text-align:left">{img}</div>'
+            f'<!--[if mso]></td><td width="382" valign="middle" dir="ltr"><![endif]-->'
+            f'<div class="st pt16" dir="ltr" style="display:inline-block;width:53%;vertical-align:middle;text-align:left">'
             f'<div class="g0" style="{pad}">{text}</div></div>'
             f'<!--[if mso]></td></tr></table><![endif]-->'
             f'</td></tr></table></td></tr>')
@@ -257,18 +257,18 @@ def render(d):
     bg_attr = f' background="{hero}"' if hero else ""
     bg_css = f"background:#141414 url({hero}) center top / cover no-repeat" if hero else "background:#141414"
     vml_open = (f'<!--[if mso]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" '
-                f'style="width:600px;height:560px"><v:fill type="frame" src="{hero}" color="#141414"/>'
+                f'style="width:800px;height:640px"><v:fill type="frame" src="{hero}" color="#141414"/>'
                 f'<v:textbox inset="0,0,0,0"><![endif]-->') if hero else ""
     vml_close = '<!--[if mso]></v:textbox></v:rect><![endif]-->' if hero else ""
-    band = (f'<img src="{assets}/pat-sadu-band.png" width="520" height="28" alt="" class="fi" '
-            f'style="display:block;width:520px;max-width:100%;height:auto;border:0;margin:0 auto">')
+    band = (f'<img src="{assets}/pat-sadu-band.png" width="720" height="39" alt="" class="fi" '
+            f'style="display:block;width:720px;max-width:100%;height:auto;border:0;margin:0 auto">')
     stories = "".join(_story(k, s, url, k == 2) for k, s in enumerate(d["stories"], 1))
     btn = "Read the edition"
     body = f"""<body style="margin:0;padding:0;background:#0C0C0C" bgcolor="#0C0C0C">
 <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;color:#0C0C0C">{e(d["preheader"])}{PRE_PAD}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0C0C0C" style="width:100%;background:#0C0C0C"><tr><td class="outer" align="center" style="padding:32px 0 48px">
-<!--[if mso]><table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td><![endif]-->
-<table role="presentation" class="w" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#141414" style="width:100%;max-width:600px;background:#141414;margin:0 auto">
+<!--[if mso]><table role="presentation" width="800" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td><![endif]-->
+<table role="presentation" class="w" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#141414" style="width:100%;max-width:800px;background:#141414;margin:0 auto">
 <tr><td style="padding:0">
 {vml_open}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#141414"{bg_attr} style="width:100%;{bg_css}"><tr><td style="padding:0">
@@ -281,7 +281,7 @@ def render(d):
 <tr><td class="px" style="padding:0 40px 0">{rule(40)}{gap(20)}
 <div style="{F}font-size:10px;line-height:14px;{X}color:{BODY};letter-spacing:2.6px;text-transform:uppercase;"><span style="color:{HI}">Edition {n}</span>&nbsp;&nbsp;&middot;&nbsp;&nbsp;{e(d["date"])}</div>{gap(16)}
 <div class="h1" style="{F}font-size:56px;line-height:60px;{X}color:{IVORY};letter-spacing:-.8px;font-weight:300;">{two_lines(d["headline"])}</div>{gap(24)}
-<div style="{F}font-size:15px;line-height:26px;{X}color:{BODY};">{e(d["intro"])}</div></td></tr>
+<div style="{F}font-size:15px;line-height:26px;{X}color:{BODY};max-width:600px;">{e(d["intro"])}</div></td></tr>
 <tr><td height="8" style="height:8px;font-size:0;line-height:0">&nbsp;</td></tr>
 </table></td></tr></table>
 {vml_close}
