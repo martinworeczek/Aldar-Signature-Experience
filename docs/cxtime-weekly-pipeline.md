@@ -73,9 +73,9 @@ lines, which have no benchmarks yet, start filling up from the news.
 | Rule | Setting |
 |---|---|
 | Harvest window | last 7 days per source; a quiet source offers its newest 3 items, never older than 30 days |
-| Shortlist for the full read | 12 articles, 6 videos, 6 podcasts (headroom above the caps) |
+| Shortlist for the full read | 18 articles, 6 videos, 6 podcasts (headroom above the caps), at most 4 per source |
 | Caps | at most 6 articles, 3 videos, 3 podcasts; ceilings, not quotas |
-| Quality bar | relevance ≥ 4 **and** experiential ≥ 4 (both 1-5), and a clean fact-check |
+| Quality bar | experiential ≥ 4 **and** relevance ≥ 3 (both 1-5), and a clean fact-check (up to two corrective rewrites) |
 | Lead (Signal of the Week) | the strongest relevance-5 story; you can override it with `/lead` |
 | Minimum edition | 5 stories. Below that the edition is marked **HOLD**: it is never padded, and you decide |
 | Variety | at most 2 stories per masthead and 2 "AI & Tech" stories; lines spread so no line dominates |

@@ -168,10 +168,16 @@ def enrich(c, cfg, feedback=None):
 
 VERIFY_TASK = """You are the fact-checker. Compare the DRAFT with the SOURCE.
 List every statement in title, dek, summary, why, excerpt, opps, keyInsights and benchmark
-(name those fields 'benchmark.<field>') that states a
-fact (a number, name, date, claim about what happened, or a quote) not supported by the source,
-and any quote that is verbatim but over 25 words or unattributed. Recommendations and opinions
-about what Aldar could do are fine and are not issues. Return an empty list if all is supported."""
+(name those fields 'benchmark.<field>') that states a fact - a number, name, date or claim about
+what happened - that the source does not support, or that changes its meaning.
+
+Not issues:
+- The excerpt is a pull-quote that is PARAPHRASED by design. Only flag it if it is inside
+  quotation marks and is not the source's words, if a verbatim quote is 25 words or more, or if
+  it misrepresents what the source says.
+- Fair paraphrase, light summarising and ordinary word choice ('cosy' vs 'relaxed').
+- Recommendations and opinions about what Aldar could do (why, opps, transfer).
+Report only real factual problems. Return an empty list if all is supported."""
 
 
 def verify(c, rec, cfg):
@@ -214,12 +220,20 @@ def enrich_and_check(c, cfg):
     rec = enrich(c, cfg)
     if not rec["keep"]:
         return None, [], rec["dropReason"] or "not experiential enough"
-    issues = verify(c, rec, cfg)
-    if issues:
-        rec = enrich(c, cfg, feedback=issues)
+    problems = validate(rec)
+    if problems:  # e.g. a 2-sentence summary: one corrective rewrite before giving up
+        rec = enrich(c, cfg, feedback=[{"field": "format", "claim": "", "problem": p} for p in problems])
         if not rec["keep"]:
             return None, [], rec["dropReason"] or "dropped on rewrite"
-        issues = verify(c, rec, cfg)
+    issues = verify(c, rec, cfg)
+    for _ in range(2):  # up to two corrective rewrites, each re-checked
+        if not issues:
+            break
+        fix = enrich(c, cfg, feedback=issues + [{"field": "note", "claim": "", "problem":
+              "Fix only the statements listed; keep everything else as it was."}])
+        if not fix["keep"] or validate(fix):
+            break
+        rec, issues = fix, verify(c, fix, cfg)
     flags = [f"fact-check: {i['field']}: {i['claim']} ({i['problem']})" for i in issues
              if not i["field"].startswith("benchmark")]
     problems = validate(rec)

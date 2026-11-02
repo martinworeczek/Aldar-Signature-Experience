@@ -9,12 +9,12 @@ fallback_items = 3           # a source with nothing new offers its newest items
 fallback_max_age_days = 30   # ...but never older than this
 caps = { read = 6, watch = 3, listen = 3 }   # ceilings, not quotas
 min_items = 5                # below this the edition is held, not padded
-min_relevance = 4            # 1-5, strategic relevance to Aldar
+min_relevance = 3            # 1-5, strategic relevance to Aldar (with experiential >= 4)
 min_experiential = 4         # 1-5, how squarely the story is about a lived customer experience
 lead_min_relevance = 5
 max_per_source = 2           # no single masthead dominates an edition
 max_ai_tech = 2              # AI stories only when applied to an experience, and at most this many
-shortlist = { read = 12, watch = 6, listen = 6 }   # stories actually read in full and enriched; headroom above the caps
+shortlist = { read = 18, watch = 6, listen = 6 }   # stories actually read in full and enriched; headroom above the caps
 shortlist_per_source = 4     # no source takes more than this many shortlist places
 
 [models]
