@@ -185,3 +185,4 @@ The originals are small, so the 2× output is upscaled and looks slightly soft o
 - **Image pipeline:** as above. Flat pillarbox bands are trimmed, then the image is cover-cropped (anchor 55%/35%, or 50% if trimmed), and both green fades are baked in at JPEG q76.
 - **Credits:** the unique `imageCredit` values of the boards that carry a photo.
 - **Copy:** the preheader is the only written line; the review page shows it, and `/preheader` and `/subject` override it. The subject is `Aldar CX Times · Edition N — the top five`. "Why it matters for Aldar" is the record's `why`, verbatim.
+- **Label change (Group CX, 3 Nov 2026):** the right-hand column's label reads **"Signature Experience opportunity"** instead of "Why it matters for Aldar". Its text is still the record's `why`, verbatim.

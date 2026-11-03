@@ -152,7 +152,7 @@ reminder. Close the pull request to discard an edition.
 
 ## The announcement email
 
-Every edition gets a designed announcement email (design "5a Top Five", spec in `docs/edm/README.md`). It carries the edition's **five most relevant stories**, the lead first. Each is a full-bleed photo board with *The story* and *Why it matters for Aldar* (the edition's own text, verbatim). Each board's **Read / Watch / Listen to the story** link goes to the source. A **Read the edition** panel leads into CX Time. The email is fluid, so it fits any reading pane or phone.
+Every edition gets a designed announcement email (design "5a Top Five", spec in `docs/edm/README.md`). It carries the edition's **five most relevant stories**, the lead first. Each is a full-bleed photo board with *The story* and *Signature Experience opportunity* (the edition's own "why it matters" text, verbatim). Each board's **Read / Watch / Listen to the story** link goes to the source. A **Read the edition** panel leads into CX Time. The email is fluid, so it fits any reading pane or phone.
 
 - **Words.** The subject is `Aldar CX Times · Edition N — the top five`, and a one-line preheader is written with the proposal. Both are shown on the review page under *Announcement email*; change them with `/subject` or `/preheader` followed by your text. Choose which stories follow the lead with `/pick e3-s4 e3-s5 …` (up to four); the rest fill by relevance. The email is approved together with the edition.
 - **Build.** On publish, the board photographs are cut to JPEG with their fades baked in (Outlook desktop does not show WebP), and the

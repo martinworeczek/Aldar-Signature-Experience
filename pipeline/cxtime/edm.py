@@ -2,7 +2,7 @@
 
 The five most relevant stories of the edition (the lead first, then the highest relevance in
 edition order), each as a full-bleed photo board fading into forest green, with The story beside
-Why it matters for Aldar (the Hub's own `why`, verbatim). Each board's Read / Watch / Listen
+Signature Experience opportunity (the label; the text is the Hub's own `why`, verbatim). Each board's Read / Watch / Listen
 link goes to the source material; titles and the CTA go to the CX Time edition.
 
 It fits the reading window. The card fills the pane up to 800px and shrinks to any narrower pane
@@ -242,7 +242,7 @@ def _board(k, s, url, last):
 <div style="{F}font-size:14px;line-height:22px;{X}color:{BODY};font-weight:300;">{e(s["dek"])}</div></td>
 <td class="hs" width="24" style="width:24px;font-size:0">&nbsp;</td>
 <td class="st bl0" valign="top" style="padding:22px 0 0 24px;border-left:1px solid {RULE_COL}">
-<div style="{lbl}">Why it matters for Aldar</div>{gap(12)}
+<div style="{lbl}">Signature Experience opportunity</div>{gap(12)}
 <div style="{F}font-size:16px;line-height:25px;{X}color:{PALE};font-weight:300;">{e(s["why"])}</div></td>
 </tr></table>{gap(24)}
 <a href="{src_url}" target="_blank" style="{F}font-size:11px;line-height:15px;{X}color:{GOLD};letter-spacing:2.6px;text-transform:uppercase;font-weight:500;text-decoration:none;">{VERB.get(s["format"], "Read")} the story&nbsp;&nbsp;&rarr;</a>

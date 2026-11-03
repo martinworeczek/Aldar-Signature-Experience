@@ -417,7 +417,7 @@ def write_review(d, st, conf):
         L.append(f"<details><summary><b>Announcement email</b> (built on publish for {', '.join(nl.get('to', [])) or 'Group CX'}; "
                  "change with /subject, /preheader, /pick)</summary>\n")
         L.append(f"**Subject:** {em['subject']}  \n**Preview line:** {em['preheader']}\n")
-        L.append("The top five, each with its own *The story* and *Why it matters for Aldar* from the edition; "
+        L.append("The top five, each with its own *The story* and *Signature Experience opportunity* (the story's why) from the edition; "
                  "each board's Read / Watch / Listen link goes to the source.\n")
         by = {i["id"]: i for i in p["edition"]["items"]}
         for k, sid in enumerate(em.get("picks", []), 1):

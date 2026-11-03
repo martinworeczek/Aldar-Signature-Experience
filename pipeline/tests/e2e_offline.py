@@ -160,7 +160,7 @@ def main():
     em = page.read_text() if page.exists() else ""
     ed_n = after["editions"][0]
     assert "Read the edition" in em and "</span>&nbsp;Times" in em and em.count("&#9679;") == min(5, len(ed_n["items"])), "EDM built (5a, top five)"
-    assert "Signal of the week" in em and "Why it matters for Aldar" in em, "lead board and the curated why"
+    assert "Signal of the week" in em and "Signature Experience opportunity" in em and "Why it matters" not in em, "lead board and the curated why"
     lead = next(i for i in ed_n["items"] if i["lead"])
     assert f'href="{lead["sourceUrl"]}"' in em, "Read the story links to the source"
     assert 'max-width:800px' in em, "EDM is fluid: fits the reading window"
