@@ -142,10 +142,7 @@ def build_edition(st, conf, archive):
         except LLMError:
             email = newsletter.fallback_copy(edition)
     if email:
-        email = dict(email, **{k: ov[k] for k in ("subject", "headline", "intro") if ov.get(k)})
-        if ov.get("headline") and not ov.get("subject"):
-            from . import newsletter
-            email["subject"] = newsletter.subject_for(edition["n"], email["headline"])
+        email = dict(email, **{k: ov[k] for k in ("subject", "preheader") if ov.get(k)})
     st["proposal"] = {"edition": edition, "keys": keymap, "notes": notes, "email": email, "emailFor": sig,
                       "bench": [b["key"] for b in bench],
                       "benchReasons": {b["key"]: b.get("_benchReason", "") for b in bench},
@@ -286,8 +283,8 @@ HELP = """Reply on this pull request with one command per line:
 | `/rerun e3-l2 focus on the arrival ritual` | Rewrite one story; the note is passed to the editor. |
 | `/bench e3-s2` | Add this story's benchmark draft to the Benchmark Repository on publish. Nothing is added without it. |
 | `/nobench e3-s2` | Withdraw a `/bench` you gave earlier. |
-| `/headline Worth leaving home for.` · `/intro …` · `/subject …` | Replace a line of the announcement email. |
-| `/pick e3-s4 e3-s5` | Choose the two stories the email features after the lead. |
+| `/subject …` · `/preheader …` | Replace the announcement email's subject or preview line. |
+| `/pick e3-s4 e3-s5 e3-w1 e3-l1` | Choose up to four stories the email carries after the lead (the rest fill by relevance). |
 """
 
 
@@ -338,15 +335,15 @@ def revise(text, date=None):
                 if not next(r for r in st["records"] if r["key"] == k).get("_bench"):
                     raise ValueError("this story has no benchmark draft")
                 ov["bench"] = sorted(set(ov.get("bench", [])) | {k})
-            elif cmd in ("/intro", "/headline", "/subject"):
+            elif cmd in ("/preheader", "/subject"):
                 if not args:
                     raise ValueError(f"write the text after {cmd}")
                 ov[cmd[1:]] = args
             elif cmd == "/pick":
                 ids = args.split()
                 known = {i["id"] for i in st["proposal"]["edition"]["items"]}
-                if len(ids) != 2 or not set(ids) <= known:
-                    raise ValueError("give two story ids from this edition, e.g. /pick e3-s4 e3-s5")
+                if not 1 <= len(ids) <= 4 or not set(ids) <= known:
+                    raise ValueError("give one to four story ids from this edition, e.g. /pick e3-s4 e3-s5")
                 ov["picks"] = ids
             elif cmd == "/rerun":
                 ref, _, note = args.partition(" ")
@@ -418,11 +415,15 @@ def write_review(d, st, conf):
     if em:
         nl = conf.get("newsletter", {})
         L.append(f"<details><summary><b>Announcement email</b> (built on publish for {', '.join(nl.get('to', [])) or 'Group CX'}; "
-                 "change with /subject, /headline, /intro, /pick)</summary>\n")
+                 "change with /subject, /preheader, /pick)</summary>\n")
         L.append(f"**Subject:** {em['subject']}  \n**Preview line:** {em['preheader']}\n")
-        L.append(f"**{em['headline']}** {em['intro']}\n")
-        for k, s in enumerate(em["picks"], 1):
-            L.append(f"{k:02d} · {s['who']}{' · ' + s['kind'] if s.get('kind') else ''} (`{s['id']}`): **{s['title']}**. {s['what']}  ")
+        L.append("The top five, each with its own *The story* and *Why it matters for Aldar* from the edition; "
+                 "each board's Read / Watch / Listen link goes to the source.\n")
+        by = {i["id"]: i for i in p["edition"]["items"]}
+        for k, sid in enumerate(em.get("picks", []), 1):
+            s = by.get(sid)
+            if s:
+                L.append(f"{k:02d} · `{sid}` · relevance {s.get('relevance')}: **{s['title']}**  ")
         L.append("\n</details>\n")
     for n in p["notes"]:
         L.append(f"> {'⚠️ ' if n.startswith('HOLD') else ''}{n}")

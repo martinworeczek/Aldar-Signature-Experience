@@ -158,11 +158,15 @@ def main():
     reg = json.loads((repo / "data" / "benchmarks-from-times.json").read_text())["benchmarks"]
     page = repo / "sites" / "cx-time" / "email" / f"edition-{N}" / "index.html"
     em = page.read_text() if page.exists() else ""
-    assert "Read the edition" in em and "Mock<br>headline." in em and "For Aldar" not in em, "EDM built (4b, no For Aldar lines)"
-    assert 'max-width:800px' in em and 'display:inline-block' in em, "EDM is fluid: fits the reading window"
+    ed_n = after["editions"][0]
+    assert "Read the edition" in em and "</span>&nbsp;Times" in em and em.count("&#9679;") == min(5, len(ed_n["items"])), "EDM built (5a, top five)"
+    assert "Signal of the week" in em and "Why it matters for Aldar" in em, "lead board and the curated why"
+    lead = next(i for i in ed_n["items"] if i["lead"])
+    assert f'href="{lead["sourceUrl"]}"' in em, "Read the story links to the source"
+    assert 'max-width:800px' in em, "EDM is fluid: fits the reading window"
     from PIL import Image as _I
-    assert _I.open(page.parent / "hero.jpg").size == (1200, 960) and _I.open(page.parent / "01.jpg").size == (528, 660), "EDM photos cropped"
-    assert (page.parents[1] / "assets" / "pat-sadu-band.png").exists(), "Sadu patterns written"
+    assert _I.open(page.parent / "top5-01.jpg").size == (1600, 1000), "board photos cut to the widest panel"
+    assert (page.parents[1] / "assets" / "pat-sadu-mini-clear.png").exists(), "Sadu patterns written"
     box = json.loads((repo / "data" / "cxtime-outbox.json").read_text())["emails"]
     assert len([m for m in box if m["edition"] == N]) == 1
     assert len(reg) == 1 and reg[0]["edition"] == N, "only the /bench-selected draft is added, with provenance"

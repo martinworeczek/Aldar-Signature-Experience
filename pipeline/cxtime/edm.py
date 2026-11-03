@@ -1,17 +1,17 @@
-"""Edition announcement EDM, design "4b Sadu Thread" (docs/edm/README.md).
+"""Edition announcement EDM, design "5a Top Five" (docs/edm/README.md).
 
-render(data) returns send-ready email HTML that follows the approved reference file: nested
-presentation tables, inline styles, Outlook conditionals and VML, a hidden preheader, Poppins
-with Arial for Outlook, and no "For Aldar" lines.
+The five most relevant stories of the edition (the lead first, then the highest relevance in
+edition order), each as a full-bleed photo board fading into forest green, with The story beside
+Why it matters for Aldar (the Hub's own `why`, verbatim). Each board's Read / Watch / Listen
+link goes to the source material; titles and the CTA go to the CX Time edition.
 
-It fits the reading window. The card is fluid: it fills the pane up to 800px (wider than the
-600px design board, so a desktop reading pane isn't mostly empty margin) and shrinks to any
-narrower pane or phone. The story spreads scale in proportion (photo 47%, text 53%) and stack,
-photo first, below 620px (02 via the dir="rtl" swap). Outlook for Windows gets 800px ghost tables.
+It fits the reading window. The card fills the pane up to 800px and shrinks to any narrower pane
+or phone. Board photos are cut at 1600x1000, the shape of the widest panel (800x500), so CSS
+`cover` only ever trims their sides, never the baked top fade, and boards join without a seam at
+every width. Outlook for Windows gets 800px ghost tables and VML panels.
 
-make_images() writes the JPEG crops: the hero at 1200x960 with both fades baked into the pixels,
-and the story photos at 528x660. make_patterns() draws the Sadu lozenge PNGs. Everything is
-written under sites/cx-time/email/ and so is hosted with the CX Time site.
+make_images() writes the board photos (flat filler bands trimmed, cover crop, both fades baked
+in); make_patterns() draws the Sadu lozenge PNGs into sites/cx-time/email/assets/.
 """
 import html
 from pathlib import Path
@@ -24,7 +24,11 @@ EMAIL_DIR = ROOT / "sites" / "cx-time" / "email"
 PRE_PAD = "&#847;&zwnj;&nbsp;" * 70
 F = "font-family:'Poppins','Helvetica Neue',Helvetica,Arial,sans-serif;"
 X = "mso-line-height-rule:exactly;"
-IVORY, BODY, MUTED, RULE, HI, INK = "#F3EFE6", "#C4BFB5", "#8E897F", "#D9B46A", "#E6C47F", "#0E0E0E"
+GREEN, GOLD, PALE, WHITE, BODY, MUTED = "#122216", "#D9B35C", "#F3DFA4", "#FFFFFF", "#ECEDEA", "#99936B"
+RULE_TOP, RULE_COL = "#565B41", "#616448"
+FMT = {"read": "Article", "watch": "Video", "listen": "Podcast"}
+VERB = {"read": "Read", "watch": "Watch", "listen": "Listen to"}
+CARD = 800
 
 
 def e(s):
@@ -37,20 +41,8 @@ def gap(n):
 
 def rule(w):
     return (f'<table role="presentation" width="{w}" cellpadding="0" cellspacing="0" border="0" style="width:{w}px">'
-            f'<tr><td height="1" bgcolor="{RULE}" style="height:1px;line-height:1px;font-size:0;background:{RULE}">'
+            f'<tr><td height="1" bgcolor="{GOLD}" style="height:1px;line-height:1px;font-size:0;background:{GOLD}">'
             f'&nbsp;</td></tr></table>')
-
-
-def two_lines(headline):
-    """The headline is set on two lines. An explicit line break wins; otherwise split the words
-    where the two lines come out most even ("Worth leaving / home for.")."""
-    if "\n" in headline:
-        return "<br>".join(e(p.strip()) for p in headline.split("\n", 1))
-    w = headline.split()
-    if len(w) < 2:
-        return e(headline)
-    best = min(range(1, len(w)), key=lambda k: max(len(" ".join(w[:k])), len(" ".join(w[k:]))))
-    return e(" ".join(w[:best])) + "<br>" + e(" ".join(w[best:]))
 
 
 # ---------------------------------------------------------------- images
@@ -70,43 +62,46 @@ def _ramp(t, stops):
     return stops[-1][1]
 
 
-def _p99(zone):
-    hist, acc = zone.histogram(), 0
-    n = sum(hist)
-    for v, c in enumerate(hist):
-        acc += c
-        if acc >= n * 0.99:
-            return v
-    return 255
+def _trim_bands(im):
+    """Crop away pillarbox bands: columns (from either edge) whose luminance barely varies
+    down the full height. Returns (image, trimmed?)."""
+    g = im.convert("L")
+    w, h = g.size
+    def flat(x):
+        return ImageStat.Stat(g.crop((x, 0, x + 1, h))).stddev[0] < 2.0
+    left = 0
+    while left < w // 3 and flat(left):
+        left += 1
+    right = w
+    while right > w * 2 // 3 and flat(right - 1):
+        right -= 1
+    if left > 4 or w - right > 4:
+        return im.crop((left + 6 if left > 4 else 0, 0, right - 6 if w - right > 4 else w, h)), True
+    return im, False
 
 
-def _hero(src):
-    """1200x960 cover crop (anchor 35% / 50%) with the two fades baked in: darkened behind the
-    masthead, solid card colour at the foot. Over a bright photograph both fades deepen until the
-    type reads: the masthead zone to a mean luminance of about 68 (peak about 125), and the zone
-    behind the date line and headline (50-80% of the height) to a mean of about 52."""
-    W, H = 1200, 960
-    base = _cover(src, W, H, 0.35, 0.5)
-    top_h = int(H * 0.44)
-    top_stops = [(0, .86), (.45, .72), (.75, .35), (1, 0)]
-    for k, shift in ((1.0, 0), (1.1, .04), (1.2, .08), (1.3, .12), (1.45, .16), (1.6, .2)):
-        # solid card colour from 88% down: the hero box can end above the image's foot at wide widths
-        foot_stops = [(0, 0), (.36 - shift, 0), (.56 - shift, .6 + shift), (.76 - shift / 2, .94), (.88, 1), (1, 1)]
-        im = base.copy()
-        top = Image.new("L", (1, H), 0)
-        foot = Image.new("L", (1, H), 0)
-        for y in range(H):
-            if y < top_h:
-                top.putpixel((0, y), round(255 * min(1, _ramp(y / top_h, top_stops) * k)))
-            foot.putpixel((0, y), round(255 * _ramp(y / (H - 1), foot_stops)))
-        im = Image.composite(Image.new("RGB", (W, H), (14, 13, 12)), im, top.resize((W, H)))
-        im = Image.composite(Image.new("RGB", (W, H), (20, 20, 20)), im, foot.resize((W, H)))
-        mast = im.crop((0, 0, W, int(H * 0.30))).convert("L")
-        text = im.crop((0, int(H * 0.50), W, int(H * 0.80))).convert("L")
-        if (ImageStat.Stat(mast).mean[0] <= 72 and _p99(mast) <= 130
-                and ImageStat.Stat(text).mean[0] <= 52 and _p99(text) <= 150):
-            break
-    return im
+GREEN_RGB = (18, 34, 22)
+
+
+def board_photo(src):
+    """1600x1000 board photo: bands trimmed, cover crop (anchor 55%/35%, 50% if trimmed), and both
+    fades baked in green: top 1 -> 0 over 16% (joins the board above), bottom from 32% to solid
+    at 100% (the pill and title sit on it, and its foot meets the green split row)."""
+    W, H = 1600, 1000
+    im = ImageOps.exif_transpose(Image.open(src)).convert("RGB")
+    im, trimmed = _trim_bands(im)
+    s = max(W / im.width, H / im.height)
+    im = im.resize((max(W, round(im.width * s)), max(H, round(im.height * s))), Image.LANCZOS)
+    ax = 0.5 if trimmed else 0.55
+    x, y = int((im.width - W) * ax), int((im.height - H) * 0.35)
+    im = im.crop((x, y, x + W, y + H))
+    top = [(0, 1), (.16, 0), (1, 0)]
+    foot = [(0, 0), (.32, 0), (.48, .36), (.66, .82), (.84, .95), (1, 1)]
+    col = Image.new("L", (1, H))
+    for yy in range(H):
+        t = yy / (H - 1)
+        col.putpixel((0, yy), round(255 * max(_ramp(t, top), _ramp(t, foot))))
+    return Image.composite(Image.new("RGB", (W, H), GREEN_RGB), im, col.resize((W, H)))
 
 
 def _lozenge(path, w, h, units, peak, opaque):
@@ -162,18 +157,19 @@ def make_patterns():
     return out
 
 
-def make_images(edition_n, hero_src, story_srcs, base_url):
-    """Write the hero and the three story photographs as JPEG; return their public URLs."""
+def make_images(edition_n, srcs, base_url):
+    """Write one board photo per story (None where a story has no photograph); return the URLs."""
     make_patterns()
     out = EMAIL_DIR / f"edition-{edition_n}"
     out.mkdir(parents=True, exist_ok=True)
-    jpg = dict(format="JPEG", quality=74, optimize=True, progressive=True)
-    _hero(hero_src).save(out / "hero.jpg", **jpg)
     urls = []
-    for k, src in enumerate(story_srcs, 1):
-        _cover(src, 528, 660, 0.5, 0.4).save(out / f"{k:02d}.jpg", **jpg)
-        urls.append(f"{base_url}/email/edition-{edition_n}/{k:02d}.jpg")
-    return f"{base_url}/email/edition-{edition_n}/hero.jpg", urls
+    for k, src in enumerate(srcs, 1):
+        if not src:
+            urls.append(None)
+            continue
+        board_photo(src).save(out / f"top5-{k:02d}.jpg", "JPEG", quality=76, optimize=True, progressive=True)
+        urls.append(f"{base_url}/email/edition-{edition_n}/top5-{k:02d}.jpg")
+    return urls
 
 
 # ---------------------------------------------------------------- html
@@ -188,10 +184,9 @@ HEAD = """<!DOCTYPE html>
 <meta name="format-detection" content="telephone=no,address=no,email=no,date=no">
 <meta name="color-scheme" content="dark">
 <meta name="supported-color-schemes" content="dark">
-<title>Aldar CX Time &middot; Edition {n}</title>
-<!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
-<!--[if !mso]><!--><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;600&display=swap" rel="stylesheet"><style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;600&display=swap');</style><!--<![endif]-->
-<!--[if mso]><style>td,div,a,span,p{{font-family:Arial,Helvetica,sans-serif !important}}</style><![endif]-->
+<title>Aldar CX Times &middot; Edition {n} &middot; Top five</title>
+<!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><style>td,div,a,span,p{{font-family:Arial,Helvetica,sans-serif !important}}</style><![endif]-->
+<!--[if !mso]><!--><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap" rel="stylesheet"><style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');</style><!--<![endif]-->
 <style>
 body{{margin:0!important;padding:0!important;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}}
 table{{border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt}}
@@ -202,102 +197,100 @@ a[x-apple-data-detectors]{{color:inherit!important;text-decoration:none!importan
 .st{{display:block!important;width:100%!important;max-width:100%!important;box-sizing:border-box}}
 .px{{padding-left:24px!important;padding-right:24px!important}}
 .hs{{display:none!important}}
-.fi{{width:100%!important;max-width:100%!important;height:auto!important}}
-.pt16{{padding-top:16px!important}}
-.g0{{padding-left:0!important;padding-right:0!important}}
-.h1{{font-size:42px!important;line-height:46px!important}}
-.phh{{height:96px!important}}
+.bl0{{border-left:0!important;padding-left:0!important;padding-top:20px!important}}
+.ph5{{height:auto!important}}
+.bsp{{height:150px!important;line-height:150px!important;max-height:none!important}}
+.h2{{font-size:30px!important;line-height:35px!important}}
 .mast{{font-size:44px!important;line-height:46px!important}}
 .outer{{padding:0!important}}
-.cta{{padding:18px 24px!important;letter-spacing:2px!important;white-space:normal!important}}
+.cta{{padding:18px 24px!important;letter-spacing:2px!important}}
 }}
 </style>
 </head>
 """
 
 
-def _story(k, s, url, flip):
-    """One spread: the photo takes 47% of the row and the text 53% (with its 32px gutter inside),
-    so the pair scales with the card from 800px down; below 620px they stack, photo first."""
-    img = (f'<a href="{url}" target="_blank"><img src="{e(s["image"])}" width="338" height="423" alt="{e(s["who"])}" '
-           f'class="fi" style="display:block;width:100%;max-width:100%;height:auto;border:0;background:#1E1E1E;'
-           f'font-family:Arial,sans-serif;font-size:12px;color:{MUTED}"></a>') if s.get("image") else (
-           f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%">'
-           f'<tr><td height="420" bgcolor="#1E1E1E" style="height:420px;background:#1E1E1E">&nbsp;</td></tr></table>')
-    kind = f' &middot; {e(s["kind"])}' if s.get("kind") else ""
-    pad = "padding-right:32px" if flip else "padding-left:32px"
-    text = (f'<div style="{F}font-size:56px;line-height:56px;{X}color:{RULE};font-weight:200;">{k:02d}</div>{gap(14)}'
-            f'<div style="{F}font-size:9px;line-height:13px;{X}color:{MUTED};letter-spacing:2.6px;text-transform:uppercase;">'
-            f'{e(s["who"])}{kind}</div>{gap(12)}'
-            f'<div style="{F}font-size:24px;line-height:31px;{X}color:{IVORY};font-weight:300;"><a href="{url}" target="_blank" '
-            f'style="color:{IVORY};text-decoration:none">{e(s["title"])}</a></div>{gap(12)}'
-            f'<div style="{F}font-size:13px;line-height:22px;{X}color:{BODY};">{e(s["what"])}</div>')
-    d = ' dir="rtl"' if flip else ""
-    top = "0" if k == 1 else "56px"
-    return (f'<tr><td class="px" style="padding:{top} 40px 0">'
-            f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr>'
-            f'<td{d} valign="middle" style="font-size:0;text-align:left">'
-            f'<!--[if mso]><table role="presentation" width="720" cellpadding="0" cellspacing="0" border="0"{d}><tr>'
-            f'<td width="338" valign="middle" dir="ltr"><![endif]-->'
-            f'<div class="st" dir="ltr" style="display:inline-block;width:47%;vertical-align:middle;text-align:left">{img}</div>'
-            f'<!--[if mso]></td><td width="382" valign="middle" dir="ltr"><![endif]-->'
-            f'<div class="st pt16" dir="ltr" style="display:inline-block;width:53%;vertical-align:middle;text-align:left">'
-            f'<div class="g0" style="{pad}">{text}</div></div>'
-            f'<!--[if mso]></td></tr></table><![endif]-->'
-            f'</td></tr></table></td></tr>')
+def _board(k, s, url, last):
+    """One story: Row A, the photo panel with pill and title; Row B, the gold-ruled split."""
+    label = "Signal of the week" if s.get("lead") else f'{FMT.get(s["format"], "Article")} &middot; {e(s.get("sourceShort") or s.get("source"))}'
+    img = e(s.get("image") or "")
+    # a board without a photograph is just its pill and title on green, sized to its text
+    h_attr = ' height="500"' if img else ""
+    h_css = "height:500px;" if img else ""
+    spacer = ('<div class="bsp" style="height:0;line-height:0;font-size:0;max-height:0;overflow:hidden">&nbsp;</div>'
+              if img else "")
+    bg_attr = f' background="{img}"' if img else ""
+    bg_css = f"background:{GREEN} url({img}) center bottom / cover no-repeat" if img else f"background:{GREEN}"
+    vml_o = (f'<!--[if mso]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:{CARD}px;height:500px">'
+             f'<v:fill type="frame" src="{img}" color="{GREEN}"/><v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true"><![endif]-->') if img else ""
+    vml_c = '<!--[if mso]></v:textbox></v:rect><![endif]-->' if img else ""
+    src_url = e(s.get("sourceUrl") or url)
+    lbl = f"{F}font-size:10px;line-height:14px;{X}color:{PALE};letter-spacing:2.8px;text-transform:uppercase;"
+    return f"""<tr><td style="padding:0">
+{vml_o}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="{GREEN}"{bg_attr} style="width:100%;{bg_css}"><tr><td class="px ph5"{h_attr} valign="bottom" style="{h_css}padding:0 40px;vertical-align:bottom">
+{spacer}
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate"><tr><td bgcolor="#1F2A1F" style="background:#1F2A1F;background:rgba(18,14,10,.45);border:1px solid #A39A72;border:1px solid rgba(243,223,164,.6);border-radius:999px;padding:6px 14px 6px 12px;{F}font-size:10px;line-height:14px;{X}color:{PALE};letter-spacing:2.4px;text-transform:uppercase;white-space:nowrap;"><span style="color:{GOLD};font-size:9px;text-shadow:0 0 10px {GOLD}">&#9679;</span>&nbsp;&nbsp;{k:02d} &middot; {label}</td></tr></table>{gap(18)}
+<div class="h2" style="{F}font-size:40px;line-height:44px;{X}color:{WHITE};font-weight:200;letter-spacing:-1px;max-width:640px;"><a href="{url}" target="_blank" style="color:{WHITE};text-decoration:none">{e(s["title"])}</a></div>{gap(26)}
+</td></tr></table>
+{vml_c}
+</td></tr>
+<tr><td class="px" bgcolor="{GREEN}" style="padding:0 40px;background:{GREEN}">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-top:1px solid {RULE_TOP}"><tr>
+<td class="st" width="36%" valign="top" style="width:36%;padding:22px 0 0">
+<div style="{lbl}">The story</div>{gap(12)}
+<div style="{F}font-size:14px;line-height:22px;{X}color:{BODY};font-weight:300;">{e(s["dek"])}</div></td>
+<td class="hs" width="24" style="width:24px;font-size:0">&nbsp;</td>
+<td class="st bl0" valign="top" style="padding:22px 0 0 24px;border-left:1px solid {RULE_COL}">
+<div style="{lbl}">Why it matters for Aldar</div>{gap(12)}
+<div style="{F}font-size:16px;line-height:25px;{X}color:{PALE};font-weight:300;">{e(s["why"])}</div></td>
+</tr></table>{gap(24)}
+<a href="{src_url}" target="_blank" style="{F}font-size:11px;line-height:15px;{X}color:{GOLD};letter-spacing:2.6px;text-transform:uppercase;font-weight:500;text-decoration:none;">{VERB.get(s["format"], "Read")} the story&nbsp;&nbsp;&rarr;</a>
+{gap(8 if last else 44)}
+</td></tr>
+"""
+
+
+def more_line(rest):
+    if rest <= 0:
+        return "Every story, and a Signature Experience<br class=\"hs\"> to explore for each."
+    noun = "story" if rest == 1 else "stories"
+    return f"{rest} more {noun}, and a Signature Experience<br class=\"hs\"> to explore for each."
 
 
 def render(d):
-    """d: number, date, headline, intro, preheader, editionUrl, heroImage, assetsUrl,
-    stories=[{who, kind, title, what, image}] (three)."""
+    """d: number, date, preheader, editionUrl, assetsUrl, total (stories in the edition), credits,
+    stories=[{lead, format, sourceShort, title, dek, why, sourceUrl, image}] (up to five)."""
     url = e(d["editionUrl"])
     n = d["number"]
     assets = d["assetsUrl"].rstrip("/")
-    hero = e(d.get("heroImage") or "")
-    bg_attr = f' background="{hero}"' if hero else ""
-    bg_css = f"background:#141414 url({hero}) center top / cover no-repeat" if hero else "background:#141414"
-    vml_open = (f'<!--[if mso]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" '
-                f'style="width:800px;height:640px"><v:fill type="frame" src="{hero}" color="#141414"/>'
-                f'<v:textbox inset="0,0,0,0"><![endif]-->') if hero else ""
-    vml_close = '<!--[if mso]></v:textbox></v:rect><![endif]-->' if hero else ""
-    band = (f'<img src="{assets}/pat-sadu-band.png" width="720" height="39" alt="" class="fi" '
-            f'style="display:block;width:720px;max-width:100%;height:auto;border:0;margin:0 auto">')
-    stories = "".join(_story(k, s, url, k == 2) for k, s in enumerate(d["stories"], 1))
-    btn = "Read the edition"
-    body = f"""<body style="margin:0;padding:0;background:#0C0C0C" bgcolor="#0C0C0C">
-<div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;color:#0C0C0C">{e(d["preheader"])}{PRE_PAD}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0C0C0C" style="width:100%;background:#0C0C0C"><tr><td class="outer" align="center" style="padding:32px 0 48px">
-<!--[if mso]><table role="presentation" width="800" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td><![endif]-->
-<table role="presentation" class="w" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#141414" style="width:100%;max-width:800px;background:#141414;margin:0 auto">
-<tr><td style="padding:0">
-{vml_open}
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#141414"{bg_attr} style="width:100%;{bg_css}"><tr><td style="padding:0">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%">
-<tr><td class="px" align="center" style="padding:36px 40px 0;text-align:center">
-<div style="{F}font-size:13px;line-height:17px;{X}color:{IVORY};letter-spacing:11px;text-transform:uppercase;padding-left:11px;">Aldar</div>{gap(10)}
-<div class="mast" style="{F}font-size:54px;line-height:56px;{X}color:{IVORY};font-weight:200;letter-spacing:1px;"><span style="color:{HI};font-weight:400">CX</span>&nbsp;Time</div>{gap(14)}
-<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto"><tr><td width="56" valign="middle" style="width:56px">{rule(56)}</td><td valign="middle" style="padding:0 10px"><img src="{assets}/pat-sadu-mini-clear.png" width="92" height="25" alt="" style="display:block;width:92px;height:25px;border:0"></td><td width="56" valign="middle" style="width:56px">{rule(56)}</td></tr></table></td></tr>
-<tr><td class="phh" height="150" style="height:150px;font-size:0;line-height:0">&nbsp;</td></tr>
-<tr><td class="px" style="padding:0 40px 0">{rule(40)}{gap(20)}
-<div style="{F}font-size:10px;line-height:14px;{X}color:{BODY};letter-spacing:2.6px;text-transform:uppercase;"><span style="color:{HI}">Edition {n}</span>&nbsp;&nbsp;&middot;&nbsp;&nbsp;{e(d["date"])}</div>{gap(16)}
-<div class="h1" style="{F}font-size:56px;line-height:60px;{X}color:{IVORY};letter-spacing:-.8px;font-weight:300;">{two_lines(d["headline"])}</div>{gap(24)}
-<div style="{F}font-size:15px;line-height:26px;{X}color:{BODY};max-width:600px;">{e(d["intro"])}</div></td></tr>
-<tr><td height="8" style="height:8px;font-size:0;line-height:0">&nbsp;</td></tr>
-</table></td></tr></table>
-{vml_close}
+    boards = "".join(_board(k, s, url, k == len(d["stories"])) for k, s in enumerate(d["stories"], 1))
+    credits = " &middot; ".join(e(c) for c in d.get("credits", []))
+    credit_html = (f'{gap(16)}<div style="{F}font-size:9px;line-height:14px;{X}color:{MUTED};">Images: {credits}</div>'
+                   if credits else "")
+    mini = f'<img src="{assets}/pat-sadu-mini-clear.png" width="92" height="25" alt="" style="display:block;width:92px;height:25px;border:0">'
+    body = f"""<body style="margin:0;padding:0;background:#0B0907" bgcolor="#0B0907">
+<div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;color:#0B0907">{e(d["preheader"])}{PRE_PAD}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0B0907" style="width:100%;background:#0B0907"><tr><td class="outer" align="center" style="padding:32px 0 48px">
+<!--[if mso]><table role="presentation" width="{CARD}" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td><![endif]-->
+<table role="presentation" class="w" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="{GREEN}" style="width:100%;max-width:{CARD}px;background:{GREEN};margin:0 auto">
+<tr><td class="px" align="center" bgcolor="{GREEN}" style="padding:48px 40px 0;text-align:center;background:{GREEN}">
+<div style="{F}font-size:13px;line-height:17px;{X}color:{WHITE};letter-spacing:11px;text-transform:uppercase;padding-left:11px;">Aldar</div>{gap(10)}
+<div class="mast" style="{F}font-size:54px;line-height:56px;{X}color:{WHITE};font-weight:200;letter-spacing:1px;"><span style="color:{GOLD};font-weight:400">CX</span>&nbsp;Times</div>{gap(14)}
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto"><tr><td width="56" valign="middle" style="width:56px">{rule(56)}</td><td valign="middle" style="padding:0 10px">{mini}</td><td width="56" valign="middle" style="width:56px">{rule(56)}</td></tr></table>{gap(26)}
+<div style="{F}font-size:10px;line-height:14px;{X}color:{BODY};letter-spacing:2.6px;text-transform:uppercase;"><span style="color:{PALE}">Edition {n}</span>&nbsp;&nbsp;&middot;&nbsp;&nbsp;{e(d["date"])}</div>{gap(36)}
 </td></tr>
-<tr><td class="px" align="center" style="padding:52px 40px 52px;text-align:center">{band}</td></tr>
-{stories}
-<tr><td class="px" align="center" style="padding:60px 40px 0;text-align:center">{band}</td></tr>
-<tr><td class="px" style="padding:48px 24px 0">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#1C1A16" style="width:100%;background:#1C1A16;background-image:linear-gradient(180deg,#24211B 0%,#16140F 100%);border:1px solid #3A3226;border-collapse:separate;border-radius:4px"><tr><td align="center" class="px" style="padding:56px 48px 54px;text-align:center">
-<div style="{F}font-size:10px;line-height:14px;{X}color:{BODY};letter-spacing:3px;text-transform:uppercase;">Edition {n} is live in the Hub</div>{gap(18)}
-<div style="{F}font-size:40px;line-height:46px;{X}color:{IVORY};font-weight:300;letter-spacing:-.5px;">Step inside<br>the edition.</div>{gap(18)}
-<div style="{F}font-size:15px;line-height:24px;{X}color:{BODY};">Three stories, and a Signature Experience<br class="hs"> to explore for each.</div>{gap(34)}
-<!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="{url}" style="height:60px;v-text-anchor:middle;width:340px" arcsize="50%" stroke="f" fillcolor="{RULE}"><w:anchorlock/><center style="color:{INK};font-family:Arial,sans-serif;font-size:14px;font-weight:bold;letter-spacing:3px">READ THE EDITION &rarr;</center></v:roundrect><![endif]-->
-<!--[if !mso]><!--><table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:separate;margin:0 auto"><tr><td align="center" bgcolor="{RULE}" style="background:{RULE};background-image:linear-gradient(180deg,{HI} 0%,#C9A257 100%);border-radius:999px;box-shadow:0 10px 30px rgba(217,180,106,.28)"><a class="cta" href="{url}" target="_blank" style="display:block;padding:21px 46px;{F}font-size:14px;line-height:18px;{X}color:{INK};font-weight:600;letter-spacing:3px;text-transform:uppercase;text-decoration:none;">{btn}&nbsp;&nbsp;&rarr;</a></td></tr></table><!--<![endif]-->
+{boards}<tr><td class="px" bgcolor="{GREEN}" style="padding:56px 24px 0;background:{GREEN}">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0F1D12" style="width:100%;background:#0F1D12;background-image:linear-gradient(180deg,#1A2E1E 0%,#0D1910 100%);border:1px solid {RULE_TOP};border-collapse:separate;border-radius:4px"><tr><td align="center" class="px" style="padding:54px 44px 52px;text-align:center">
+<div style="{F}font-size:10px;line-height:14px;{X}color:{PALE};letter-spacing:3px;text-transform:uppercase;">Edition {n} is live in the Hub</div>{gap(18)}
+<div style="{F}font-size:38px;line-height:44px;{X}color:{WHITE};font-weight:200;letter-spacing:-.5px;">Step inside<br>the edition.</div>{gap(18)}
+<div style="{F}font-size:15px;line-height:24px;{X}color:{BODY};font-weight:300;">{more_line(d["total"] - len(d["stories"]))}</div>{gap(34)}
+<!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="{url}" style="height:60px;v-text-anchor:middle;width:340px" arcsize="50%" stroke="f" fillcolor="{GOLD}"><w:anchorlock/><center style="color:#0C1C27;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;letter-spacing:3px">READ THE EDITION &rarr;</center></v:roundrect><![endif]-->
+<!--[if !mso]><!--><table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:separate;margin:0 auto"><tr><td align="center" bgcolor="#E8CD8D" style="background:#E8CD8D;background-image:linear-gradient(90deg,#F7E7BE 0%,{GOLD} 100%);border-radius:999px;box-shadow:0 10px 30px rgba(217,179,92,.28)"><a class="cta" href="{url}" target="_blank" style="display:block;padding:21px 46px;{F}font-size:14px;line-height:18px;{X}color:#0C1C27;font-weight:600;letter-spacing:3px;text-transform:uppercase;text-decoration:none;">Read the edition&nbsp;&nbsp;&rarr;</a></td></tr></table><!--<![endif]-->
 </td></tr></table></td></tr>
-<tr><td class="px" style="padding:48px 40px 44px;text-align:center"><img src="{assets}/pat-sadu-mini.png" width="104" height="28" alt="" style="display:block;width:104px;height:28px;border:0;margin:0 auto">{gap(22)}<div style="{F}font-size:9px;line-height:13px;{X}color:{MUTED};letter-spacing:2.4px;text-transform:uppercase;">Curated by Aldar Group Customer Experience</div></td></tr>
+<tr><td class="px" align="center" bgcolor="{GREEN}" style="padding:48px 40px 40px;text-align:center;background:{GREEN}">
+<img src="{assets}/pat-sadu-mini-clear.png" width="104" height="28" alt="" style="display:block;width:104px;height:28px;border:0;margin:0 auto">{gap(22)}
+<div style="{F}font-size:9px;line-height:13px;{X}color:{MUTED};letter-spacing:2.4px;text-transform:uppercase;">Curated by Aldar Group Customer Experience</div>{credit_html}</td></tr>
 </table>
 <!--[if mso]></td></tr></table><![endif]-->
 </td></tr></table>
