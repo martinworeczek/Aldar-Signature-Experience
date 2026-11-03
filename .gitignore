@@ -2,3 +2,5 @@
 node_modules/
 __pycache__/
 *.pyc
+# generated at build time by tools/build_mcp_data.mjs
+netlify/functions/_data/

@@ -1,5 +1,10 @@
 [build]
   publish = "."
+  # rebuild the MCP dataset from index.html on every deploy, so /mcp always matches the site
+  command = "node tools/build_mcp_data.mjs"
+
+[functions]
+  node_bundler = "esbuild"
 
 # Images are named by content hash, so a file never changes once published.
 [[headers]]
