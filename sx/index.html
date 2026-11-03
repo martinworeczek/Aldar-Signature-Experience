@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Submit &amp; Review · Signature Experience Hub</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070c10;--panel:#0d151b;--panel2:#111b22;--line:#1e2a33;--line2:#2a3843;
+  --ink:#eef1f3;--ink2:#aeb8c0;--ink3:#7c8892;--gold:#c9a24a;--gold2:#ebd9ae;--goldbg:rgba(201,162,74,.12);
+  --ok:#3fae74;--okbg:rgba(63,174,116,.13);--warn:#d9a441;--warnbg:rgba(217,164,65,.13);--bad:#d36b6b;--badbg:rgba(211,107,107,.13);--info:#5b8fd6;--infobg:rgba(91,143,214,.13);
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 Poppins,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--gold2)}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px 80px}
+header.top{display:flex;align-items:center;gap:14px;padding:18px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(7,12,16,.92);backdrop-filter:blur(10px);z-index:20}
+.brand{display:flex;flex-direction:column;line-height:1.15;text-decoration:none;color:var(--ink)}
+.brand b{font-weight:600;font-size:14px}.brand span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+.mark{width:34px;height:34px;border:1px solid var(--line2);border-radius:9px;display:grid;place-items:center;color:var(--gold);font-weight:700}
+.top .sp{flex:1}
+.who{font-size:12px;color:var(--ink2);text-align:right;line-height:1.3}.who b{color:var(--ink);font-weight:600;display:block}
+.btn{border:1px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:10px;padding:9px 15px;cursor:pointer;font-weight:500;font-size:13px;display:inline-flex;align-items:center;gap:7px;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:#3a4b57}.btn:disabled{opacity:.5;cursor:default}
+.btn.gold{background:linear-gradient(180deg,#d9b560,#c29a42);color:#0a1014;border-color:transparent;font-weight:600}
+.btn.ok{background:var(--ok);border-color:transparent;color:#06140c;font-weight:600}
+.btn.bad{color:#f2b1b1;border-color:#5b3434}
+.btn.ghost{background:transparent}
+.btn.sm{padding:6px 11px;font-size:12px}
+h1{font-weight:500;font-size:28px;margin:34px 0 6px;letter-spacing:-.01em}
+h2{font-weight:600;font-size:16px;margin:0 0 12px}
+.lede{color:var(--ink2);margin:0 0 24px;max-width:720px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 22px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.tab{background:transparent;border:1px solid transparent;color:var(--ink2);padding:8px 14px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:500}
+.tab.on{background:var(--goldbg);color:var(--gold2);border-color:rgba(201,162,74,.35)}
+.tab .n{display:inline-block;min-width:18px;padding:0 6px;border-radius:999px;background:var(--gold);color:#0a1014;font-size:11px;font-weight:700;margin-left:6px;text-align:center}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.grid{display:grid;gap:14px}
+.list{display:grid;gap:10px}
+.row{display:flex;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;text-decoration:none;color:inherit}
+.row:hover{border-color:var(--line2)}
+.thumb{width:64px;height:48px;border-radius:8px;object-fit:cover;background:var(--panel2);flex-shrink:0}
+.row .t{flex:1;min-width:0}.row .t b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row .t span{color:var(--ink3);font-size:12px}
+.chip{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.c-pending{background:var(--warnbg);color:var(--warn)}.c-returned{background:var(--infobg);color:#8fb4ea}.c-approved{background:var(--okbg);color:#7bd3a3}.c-rejected,.c-unpublished{background:var(--badbg);color:#eaa0a0}.c-withdrawn{background:var(--panel2);color:var(--ink3)}
+.kind{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+.empty{color:var(--ink3);padding:30px;text-align:center;border:1px dashed var(--line2);border-radius:12px}
+label.f{display:block;margin:0 0 16px}
+label.f>span,.flabel{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:6px}
+label.f>span i,.flabel i{font-style:normal;font-weight:400;color:var(--ink3)}
+input[type=text],input[type=url],input[type=email],input[type=month],input[type=password],select,textarea{width:100%;background:#0a1116;border:1px solid var(--line2);border-radius:10px;padding:10px 12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+textarea{min-height:96px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+@media (max-width:720px){.two{grid-template-columns:1fr}h1{font-size:23px}.who{display:none}}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{border:1px solid var(--line2);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:12.5px;background:#0a1116;user-select:none}
+.pill.on{border-color:var(--gold);background:var(--goldbg);color:var(--gold2)}
+.assets{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.asset{display:flex;align-items:center;gap:9px;border:1px solid var(--line2);border-radius:10px;padding:8px 10px;background:#0a1116;font-size:12.5px}
+.asset.on{border-color:rgba(201,162,74,.5)}
+.asset .nm{flex:1;cursor:pointer}
+.asset .lv{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line2);cursor:pointer;color:var(--ink3)}
+.asset .lv.on{background:var(--okbg);color:#7bd3a3;border-color:transparent}
+.check{display:flex;align-items:center;gap:9px;cursor:pointer;margin:0 0 16px;font-size:13px}
+.check input{width:16px;height:16px;accent-color:var(--gold)}
+.photo{display:flex;gap:14px;align-items:center}
+.photo img{width:150px;height:100px;object-fit:cover;border-radius:10px;background:var(--panel2);border:1px solid var(--line2)}
+.hint{font-size:12px;color:var(--ink3);margin-top:6px}
+.warnbox{background:var(--warnbg);border:1px solid rgba(217,164,65,.35);color:#f0cf8a;border-radius:10px;padding:10px 12px;font-size:12.5px;margin:-6px 0 16px}
+.errbox{background:var(--badbg);border:1px solid rgba(211,107,107,.4);color:#f2b8b8;border-radius:10px;padding:10px 12px;font-size:13px;margin:0 0 16px}
+.okbox{background:var(--okbg);border:1px solid rgba(63,174,116,.35);color:#a9e3c3;border-radius:10px;padding:10px 12px;font-size:13px;margin:0 0 16px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.sep{height:1px;background:var(--line);margin:22px 0}
+.preview{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px}
+@media (max-width:820px){.preview{grid-template-columns:1fr}}
+.preview img.hero{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:12px;background:var(--panel2)}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:8px 14px;font-size:13px}
+.kv dt{color:var(--ink3)}.kv dd{margin:0}
+.diff{display:grid;grid-template-columns:140px 1fr 1fr;gap:6px 14px;font-size:13px;align-items:start}
+.diff .h{color:var(--ink3);font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.diff .old{color:var(--ink3);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.25)}
+.diff .new{color:var(--gold2)}
+.hist{font-size:12.5px;color:var(--ink2);display:grid;gap:6px}
+.hist b{color:var(--ink);font-weight:600}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;background:#0a1116;border:1px solid var(--line2);border-radius:8px;padding:5px 9px;letter-spacing:.02em}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th{text-align:left;font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;font-weight:600;padding:8px 8px;border-bottom:1px solid var(--line)}
+table.t td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.t input{padding:7px 9px}
+.scroll{overflow-x:auto}
+.login{max-width:420px;margin:12vh auto 0}
+.muted{color:var(--ink3)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1b2730;border:1px solid var(--line2);padding:10px 16px;border-radius:10px;font-size:13px;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.filters select,.filters input{width:auto;min-width:160px}
+ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-bottom:8px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:var(--gold);border-radius:50%;animation:s .8s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/"><b>Signature Experience Hub</b><span>Submit &amp; review</span></a>
+  <div class="sp"></div>
+  <div class="who" id="who"></div>
+  <button class="btn ghost sm" id="signout" hidden>Sign out</button>
+  <a class="btn sm" href="/">Back to the hub</a>
+</header>
+<main class="wrap" id="app"><div class="login"><span class="spin"></span></div></main>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var app = $("#app");
+  var S = { code: "", me: null, subs: [], tab: "", editing: null };
+  var STATUS = { pending: "Waiting for review", returned: "Changes requested", approved: "Published", rejected: "Not approved", withdrawn: "Withdrawn", unpublished: "Unpublished" };
+  var STAGE = { rev: "In Review", impl: "In Implementation", live: "Deployed & Live", dep: "Backlog (2027)", disc: "Discontinued" };
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
+  function toast(msg) { var t = document.createElement("div"); t.className = "toast"; t.textContent = msg; document.body.appendChild(t); setTimeout(function () { t.remove(); }, 2600); }
+  function fmtDate(iso) { if (!iso) return ""; var d = new Date(iso); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) + ", " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }); }
+  function monthLabel(t) { var m = /^(\d{4})-(\d{2})$/.exec(t || ""); if (!m) return "TBC"; return new Date(+m[1], +m[2] - 1, 1).toLocaleDateString("en-GB", { month: "short", year: "numeric" }); }
+  function lineLabel(l) { var o = S.me && S.me.options[l]; return o ? o.label : l; }
+
+  function api(path, opt) {
+    opt = opt || {};
+    var h = { "x-sx-code": S.code };
+    if (opt.body && !(opt.body instanceof Blob)) { h["content-type"] = "application/json"; opt.body = JSON.stringify(opt.body); }
+    if (opt.type) h["content-type"] = opt.type;
+    return fetch("/api/sx/" + path, { method: opt.method || (opt.body ? "POST" : "GET"), headers: h, body: opt.body }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) { var e = new Error(j.error || ("Request failed (" + r.status + ")")); e.status = r.status; throw e; } return j; });
+    });
+  }
+
+  // ---------- sign in ----------
+  function loginView(err) {
+    $("#who").innerHTML = ""; $("#signout").hidden = true;
+    app.innerHTML = '<div class="login card"><h2 style="font-size:20px;font-weight:500">Submit &amp; review</h2>' +
+      '<p class="muted" style="margin-top:0">Business-line leads submit new signature experiences and updates here. Group CX reviews every one before it appears on the hub.</p>' +
+      (err ? '<div class="errbox">' + esc(err) + '</div>' : '') +
+      '<form id="lf"><label class="f"><span>Access code</span><input type="password" id="code" autocomplete="current-password" placeholder="e.g. HP-XXXX-XXXX-XXXX" required></label>' +
+      '<label class="check"><input type="checkbox" id="rem" checked> Remember me on this device</label>' +
+      '<button class="btn gold" style="width:100%;justify-content:center">Sign in</button></form>' +
+      '<p class="hint">No code? Ask Group CX for your business line\'s access code.</p></div>';
+    $("#lf").onsubmit = function (e) { e.preventDefault(); signIn($("#code").value.trim(), $("#rem").checked); };
+    $("#code").focus();
+  }
+  function signIn(code, remember) {
+    S.code = code;
+    app.innerHTML = '<div class="login"><span class="spin"></span></div>';
+    api("session", { method: "POST" }).then(function (me) {
+      S.me = me; if (remember) store("sx_code", code);
+      $("#who").innerHTML = "<b>" + esc(me.name) + "</b>" + (me.role === "reviewer" ? "Reviewer · Group CX" : esc(lineLabel(me.line)) + " lead");
+      $("#signout").hidden = false;
+      return loadSubs().then(route);
+    }).catch(function (e) { store("sx_code", null); S.code = ""; loginView(e.message); });
+  }
+  $("#signout").onclick = function () { store("sx_code", null); S.code = ""; S.me = null; location.hash = ""; loginView(); };
+  function loadSubs() { return api("submissions").then(function (j) { S.subs = j.submissions || []; }); }
+  function refreshSession() { return api("session", { method: "POST" }).then(function (me) { S.me = me; }); }
+
+  // ---------- routing ----------
+  window.addEventListener("hashchange", function () { if (S.me) route(); });
+  function route() {
+    var h = location.hash.replace(/^#/, "").split("/");
+    var rev = S.me.role === "reviewer";
+    if ((h[0] === "review" || h[0] === "mine" || h[0] === "s") && h[1]) { var s = S.subs.filter(function (x) { return x.id === h[1]; })[0]; if (s) return detailView(s); }
+    var tab = h[0] || (rev ? "queue" : "mine");
+    S.tab = tab;
+    if (rev) {
+      if (tab === "all") return shell(allView());
+      if (tab === "leads") return shell(leadsView(), bindLeads);
+      if (tab === "notify") return shell(notifyView(), bindNotify);
+      return shell(queueView());
+    }
+    if (tab === "new") return shell(formHTML("new"), function () { bindForm("new"); });
+    if (tab === "update") return shell(updatePicker(), bindUpdatePicker);
+    return shell(mineView());
+  }
+  function shell(inner, bind) {
+    var rev = S.me.role === "reviewer";
+    var pending = S.subs.filter(function (s) { return s.status === "pending"; }).length;
+    var tabs = rev
+      ? [["queue", "Review queue", pending], ["all", "All submissions"], ["leads", "Leads & access codes"], ["notify", "Notifications"]]
+      : [["mine", "My submissions"], ["new", "New experience"], ["update", "Update an experience"]];
+    var title = rev ? "Review submissions" : lineLabel(S.me.line);
+    var lede = rev ? "Everything business-line leads submit waits here for your decision. Approved experiences and updates appear on the hub, and in CX Martin, straight away."
+      : "Submit a new signature experience, or an update to one of yours. Group CX reviews each submission before it is published to the hub.";
+    app.innerHTML = "<h1>" + esc(title) + '</h1><p class="lede">' + lede + '</p><div class="tabs">' +
+      tabs.map(function (t) { return '<button class="tab' + (S.tab === t[0] ? " on" : "") + '" data-t="' + t[0] + '">' + t[1] + (t[2] ? '<span class="n">' + t[2] + "</span>" : "") + "</button>"; }).join("") +
+      "</div>" + inner;
+    app.querySelectorAll(".tab").forEach(function (b) { b.onclick = function () { location.hash = b.dataset.t; }; });
+    if (bind) bind();
+    window.scrollTo(0, 0);
+  }
+
+  // ---------- lists ----------
+  function subRow(s) {
+    var f = s.fields || {};
+    var exp = s.kind === "update" ? (S.me.experiences.filter(function (e) { return e.id === s.exp_id; })[0] || {}) : {};
+    var img = f.photo || exp.image_url || "";
+    var name = s.kind === "new" ? f.name : (s.exp_name || exp.name || s.exp_id);
+    return '<a class="row" href="#s/' + esc(s.id) + '">' + (img ? '<img class="thumb" src="' + esc(img) + '" alt="" loading="lazy">' : '<div class="thumb"></div>') +
+      '<div class="t"><div class="kind">' + (s.kind === "new" ? "New experience" : "Update") + (S.me.role === "reviewer" ? " · " + esc(lineLabel(s.line)) : "") + '</div><b>' + esc(name) + '</b><span>' +
+      (S.me.role === "reviewer" ? esc(s.lead) + " · " : "") + "Updated " + esc(fmtDate(s.updated_at)) + "</span></div>" +
+      '<span class="chip c-' + s.status + '">' + STATUS[s.status] + "</span></a>";
+  }
+  function mineView() {
+    if (!S.subs.length) return '<div class="empty">Nothing submitted yet. <a href="#new">Submit a new experience</a> or <a href="#update">update an existing one</a>.</div>';
+    var ret = S.subs.filter(function (s) { return s.status === "returned"; });
+    return (ret.length ? '<div class="warnbox">' + ret.length + " submission" + (ret.length > 1 ? "s need" : " needs") + " changes. Open " + (ret.length > 1 ? "them" : "it") + " to see Group CX's comment and resubmit.</div>" : "") +
+      '<div class="list">' + S.subs.map(subRow).join("") + "</div>";
+  }
+  function queueView() {
+    var p = S.subs.filter(function (s) { return s.status === "pending"; }).sort(function (a, b) { return String(a.updated_at).localeCompare(String(b.updated_at)); });
+    return p.length ? '<div class="list">' + p.map(subRow).join("") + "</div>" : '<div class="empty">Nothing waiting for review.</div>';
+  }
+  function allView() {
+    setTimeout(function () {
+      var run = function () {
+        var l = $("#fl").value, st = $("#fs").value, q = $("#fq").value.toLowerCase();
+        var list = S.subs.filter(function (s) { var f = s.fields || {}; return (!l || s.line === l) && (!st || s.status === st) && (!q || JSON.stringify([f.name, s.exp_name, s.lead, f.note]).toLowerCase().indexOf(q) >= 0); });
+        $("#fr").innerHTML = list.length ? list.map(subRow).join("") : '<div class="empty">No submissions match.</div>';
+      };
+      ["#fl", "#fs", "#fq"].forEach(function (id) { $(id).oninput = run; }); run();
+    });
+    return '<div class="filters"><select id="fl"><option value="">All lines</option>' + Object.keys(S.me.options).map(function (l) { return '<option value="' + l + '">' + esc(lineLabel(l)) + "</option>"; }).join("") +
+      '</select><select id="fs"><option value="">Any status</option>' + Object.keys(STATUS).map(function (k) { return '<option value="' + k + '">' + STATUS[k] + "</option>"; }).join("") +
+      '</select><input type="text" id="fq" placeholder="Search"></div><div class="list" id="fr"></div>';
+  }
+
+  // ---------- detail ----------
+  function detailView(s) {
+    var rev = S.me.role === "reviewer", f = s.fields || {}, O = S.me.options[s.line];
+    var exp = S.me.experiences.filter(function (e) { return e.id === s.exp_id; })[0] || {};
+    var pillar = (O.pillars.filter(function (p) { return p.id === f.pillar; })[0] || {}).name;
+    var journey = ((O.journeys || []).filter(function (j) { return j.id === f.journey; })[0] || {}).name;
+    var type = ((O.types || []).filter(function (t) { return t.id === f.type; })[0] || {}).label;
+    var assets = (f.assets || []).map(function (a) { return esc(a.name) + (a.live ? ' <span class="chip c-approved" style="padding:1px 7px">live</span>' : ""); }).join(", ");
+    var body;
+    if (s.kind === "new") {
+      var kv = [["Line", lineLabel(s.line)], ["Stage", STAGE[f.stage]], ["Target go-live", O.has.target && f.stage !== "live" ? monthLabel(f.target) : ""], ["Pillar", pillar], ["Journey stage", journey], ["Type", type],
+        ["Flagship", f.defining ? "Yes" : "No"], ["Segment", Array.isArray(f.segment) ? f.segment.join(", ") : f.segment], ["School tiers", (f.tiers || []).join(", ")], ["Verticals", (f.verticals || []).join(", ")],
+        ["Group", f.group], ["Cadence", f.cadence], ["Capex", f.capex], ["EVP", f.evp], ["Moment", f.moment], ["Customer benefit", f.customer_benefit], ["Aldar benefit", f.aldar_benefit]]
+        .filter(function (x) { return x[1]; });
+      body = '<div class="preview"><div>' + (f.photo ? '<img class="hero" src="' + esc(f.photo) + '" alt="">' : "") +
+        '<h2 style="font-size:22px;font-weight:500;margin:16px 0 6px">' + esc(f.name) + '</h2><p style="color:var(--gold2);margin:0 0 12px">' + esc(f.essence) + '</p><p style="color:var(--ink2);white-space:pre-wrap">' + esc(f.narrative) + "</p>" +
+        ((f.touchpoints || []).length ? '<div class="flabel">Touchpoints</div><ul style="margin:0;padding-left:18px;color:var(--ink2)">' + f.touchpoints.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ul>" : "") +
+        "</div><div><dl class=\"kv\">" + kv.map(function (x) { return "<dt>" + x[0] + "</dt><dd>" + esc(x[1]) + "</dd>"; }).join("") +
+        (assets ? "<dt>Assets in scope</dt><dd>" + assets + "</dd>" : "") + (f.folder_url ? '<dt>Asset folder</dt><dd><a href="' + esc(f.folder_url) + '" target="_blank" rel="noopener">Open in SharePoint</a></dd>' : "") +
+        (f.note ? "<dt>Latest note</dt><dd>" + esc(f.note) + "</dd>" : "") + "</dl></div></div>";
+    } else {
+      var rows = [];
+      if (f.stage) rows.push(["Stage", exp.stage, STAGE[f.stage]]);
+      if (f.target) rows.push(["Target go-live", exp.target, monthLabel(f.target)]);
+      if (f.assets) rows.push(["Live at", (exp.assets || []).filter(function (a) { return a.live; }).map(function (a) { return a.name; }).join(", ") || "None", f.assets.filter(function (a) { return a.live; }).map(function (a) { return a.name; }).join(", ") || "None"]);
+      if (f.essence) rows.push(["Essence", exp.essence, f.essence]);
+      if (f.narrative) rows.push(["Narrative", "…", f.narrative]);
+      body = '<div class="preview"><div>' + (exp.image_url || f.photo ? '<img class="hero" src="' + esc(f.photo || exp.image_url) + '" alt="">' : "") +
+        '<h2 style="font-size:22px;font-weight:500;margin:16px 0 6px">' + esc(s.exp_name || exp.name) + '</h2><p class="muted" style="margin:0">' + esc(lineLabel(s.line)) + " · currently " + esc(exp.stage || "") + "</p></div><div>" +
+        '<div class="flabel">Update note</div><p style="margin-top:0;white-space:pre-wrap">' + esc(f.note) + "</p>" +
+        (rows.length ? '<div class="diff"><div class="h">Field</div><div class="h">Now</div><div class="h">Proposed</div>' + rows.map(function (r) { return "<div class=\"muted\">" + r[0] + '</div><div class="old">' + esc(r[1]) + '</div><div class="new">' + esc(r[2]) + "</div>"; }).join("") + "</div>" : '<p class="muted">Note only: no other changes.</p>') +
+        (f.photo ? '<p class="hint">Includes a new photo.</p>' : "") + "</div></div>";
+    }
+    var hist = '<div class="sep"></div><div class="flabel">History</div><div class="hist">' + (s.history || []).map(function (h) {
+      return "<div><b>" + esc(h.by) + "</b> " + esc(h.action) + " · " + esc(fmtDate(h.at)) + (h.comment ? '<div style="color:var(--ink);margin:2px 0 4px">“' + esc(h.comment) + "”</div>" : "") + "</div>";
+    }).join("") + "</div>";
+    var acts = "";
+    if (rev && s.status === "pending") {
+      acts = '<div class="sep"></div><label class="f"><span>Comment <i>(required to send back; shared with the lead)</i></span><textarea id="cm" placeholder="What should change, or a note on your decision"></textarea></label>' +
+        '<div class="actions"><button class="btn ok" id="ap">Approve and publish</button><button class="btn" id="ed">Edit, then approve</button><button class="btn" id="rt">Send back for changes</button><button class="btn bad" id="rj">Reject</button></div>';
+    } else if (rev && s.status === "approved") {
+      acts = '<div class="sep"></div><div class="actions"><button class="btn bad" id="up">Unpublish</button></div><p class="hint">Unpublishing removes it from the hub and CX Martin. The submission stays here.</p>';
+    } else if (!rev && (s.status === "pending" || s.status === "returned")) {
+      acts = '<div class="sep"></div><div class="actions"><button class="btn gold" id="me">' + (s.status === "returned" ? "Make changes and resubmit" : "Edit submission") + '</button><button class="btn bad" id="wd">Withdraw</button></div>';
+    }
+    app.innerHTML = '<p style="margin:26px 0 0"><a href="#' + (rev ? "queue" : "mine") + '">← Back</a></p><div style="display:flex;align-items:center;gap:12px;margin:14px 0 18px;flex-wrap:wrap"><span class="kind">' +
+      (s.kind === "new" ? "New experience" : "Update") + " · " + esc(lineLabel(s.line)) + " · from " + esc(s.lead) + '</span><span class="chip c-' + s.status + '">' + STATUS[s.status] + "</span></div>" +
+      (s.status === "returned" && s.reviewer_comment ? '<div class="warnbox" style="margin:0 0 16px"><b>Group CX:</b> ' + esc(s.reviewer_comment) + "</div>" : "") +
+      '<div class="card">' + body + hist + acts + "</div>";
+    window.scrollTo(0, 0);
+    var act = function (action, fields) {
+      var comment = ($("#cm") || {}).value || "";
+      if (action === "return" && !comment.trim()) { toast("Add a comment so the lead knows what to change."); $("#cm").focus(); return; }
+      if (action === "reject" && !confirm("Reject this submission? The lead will see your comment.")) return;
+      if (action === "unpublish" && !confirm("Unpublish? It will disappear from the hub and CX Martin.")) return;
+      app.querySelectorAll(".actions .btn").forEach(function (b) { b.disabled = true; });
+      api("review/" + s.id, { body: { action: action, comment: comment, fields: fields } }).then(function (j) {
+        toast({ approve: "Approved: it's live on the hub", return: "Sent back to the lead", reject: "Rejected", unpublish: "Unpublished" }[action] + (j.notified === false && action !== "unpublish" ? " (no notification sent: set up Notifications)" : ""));
+        return Promise.all([loadSubs(), refreshSession()]).then(function () { location.hash = "queue"; route(); });
+      }).catch(function (e) { toast(e.message); app.querySelectorAll(".actions .btn").forEach(function (b) { b.disabled = false; }); });
+    };
+    if ($("#ap")) $("#ap").onclick = function () { act("approve"); };
+    if ($("#rt")) $("#rt").onclick = function () { act("return"); };
+    if ($("#rj")) $("#rj").onclick = function () { act("reject"); };
+    if ($("#up")) $("#up").onclick = function () { act("unpublish"); };
+    if ($("#ed")) $("#ed").onclick = function () { editView(s, function (fields) { act("approve", fields); }, "Approve and publish"); };
+    if ($("#me")) $("#me").onclick = function () {
+      editView(s, function (fields) {
+        return api("submissions/" + s.id, { body: { fields: fields } }).then(function () { toast("Resubmitted for review"); return loadSubs().then(function () { location.hash = "mine"; route(); }); });
+      }, s.status === "returned" ? "Resubmit for review" : "Save changes");
+    };
+    if ($("#wd")) $("#wd").onclick = function () {
+      if (!confirm("Withdraw this submission?")) return;
+      api("submissions/" + s.id + "/withdraw", { method: "POST", body: {} }).then(function () { toast("Withdrawn"); return loadSubs().then(function () { location.hash = "mine"; route(); }); }).catch(function (e) { toast(e.message); });
+    };
+  }
+  function editView(s, onSubmit, label) {
+    app.innerHTML = '<p style="margin:26px 0 0"><a href="#s/' + esc(s.id) + '">← Back</a></p><h1>' + (s.kind === "new" ? "Edit experience" : "Edit update") + '</h1><p class="lede">' + esc(lineLabel(s.line)) + " · from " + esc(s.lead) + "</p>" +
+      (s.kind === "new" ? formHTML("new", s.line, s.fields, label) : updateFormHTML(s.line, S.me.experiences.filter(function (e) { return e.id === s.exp_id; })[0], s.fields, label));
+    bindForm(s.kind, s.line, s.kind === "update" ? s.exp_id : null, onSubmit);
+    window.scrollTo(0, 0);
+  }
+
+  // ---------- forms ----------
+  function sel(name, list, val, placeholder) {
+    return '<select name="' + name + '"><option value="">' + (placeholder || "Choose…") + "</option>" + list.map(function (o) { return '<option value="' + esc(o.id) + '"' + (o.id === val ? " selected" : "") + ">" + esc(o.name || o.label) + "</option>"; }).join("") + "</select>";
+  }
+  function stagePills(O, val) {
+    return '<div class="pills" data-pills="stage">' + O.stages.map(function (s) { return '<span class="pill' + (s.key === val ? " on" : "") + '" data-v="' + s.key + '">' + s.label + "</span>"; }).join("") + "</div>";
+  }
+  function assetPicker(O, chosen) {
+    var on = {}; (chosen || []).forEach(function (a) { on[a.name] = a; });
+    var extra = (chosen || []).filter(function (a) { return !O.assets.some(function (x) { return x.name === a.name; }); }).map(function (a) { return { name: a.name }; });
+    return '<div class="assets" id="assets">' + O.assets.concat(extra).map(function (a) {
+      var c = on[a.name];
+      return '<div class="asset' + (c ? " on" : "") + '" data-n="' + esc(a.name) + '"><input type="checkbox"' + (c ? " checked" : "") + '><span class="nm">' + esc(a.name) + '</span><span class="lv' + (c && c.live ? " on" : "") + '" title="Live at this asset">Live</span></div>';
+    }).join("") + "</div>";
+  }
+  function formHTML(kind, line, f, label) {
+    line = line || S.me.line; f = f || {};
+    var O = S.me.options[line];
+    var stage = f.stage || O.stages[0].key;
+    var h = '<form class="card" id="xf" novalidate><div id="ferr"></div>';
+    h += '<label class="f"><span>Name</span><input type="text" name="name" maxlength="90" value="' + esc(f.name) + '" placeholder="e.g. The W Paws arrival"></label><div id="dup"></div>';
+    h += '<label class="f"><span>Essence <i>· one line, shown on the card</i></span><input type="text" name="essence" maxlength="260" value="' + esc(f.essence) + '"></label>';
+    h += '<label class="f"><span>Narrative <i>· what the customer experiences, start to finish</i></span><textarea name="narrative" maxlength="2000">' + esc(f.narrative) + "</textarea></label>";
+    h += '<div class="two">';
+    if (O.pillars.length) h += '<label class="f"><span>Pillar</span>' + sel("pillar", O.pillars, f.pillar) + "</label>";
+    if (O.verticals) h += '<div class="f" style="margin-bottom:16px"><div class="flabel">Verticals</div><div class="pills" data-multi="verticals">' + O.verticals.map(function (v) { return '<span class="pill' + ((f.verticals || []).indexOf(v.id) >= 0 ? " on" : "") + '" data-v="' + v.id + '" title="' + esc(v.full) + '">' + esc(v.label) + "</span>"; }).join("") + "</div></div>";
+    if (O.journeys) h += '<label class="f"><span>Journey stage</span>' + sel("journey", O.journeys, f.journey) + "</label>";
+    if (O.types) h += '<label class="f"><span>Type</span>' + sel("type", O.types, f.type) + "</label>";
+    if (O.groups) h += '<label class="f"><span>Scope group</span><input type="text" name="group" list="groups" value="' + esc(f.group || "Portfolio-wide") + '"><datalist id="groups">' + O.groups.map(function (g) { return '<option value="' + esc(g) + '">'; }).join("") + "</datalist></label>";
+    if (O.cadence) h += '<label class="f"><span>Cadence</span>' + sel("cadence", O.cadence.map(function (c) { return { id: c, name: c }; }), f.cadence || "Permanent") + "</label>";
+    if (O.capex) h += '<label class="f"><span>Capex</span>' + sel("capex", O.capex.map(function (c) { return { id: c, name: c }; }), f.capex || "Medium") + '</label><label class="f"><span>EVP theme</span>' + sel("evp", O.evp.map(function (c) { return { id: c, name: c }; }), f.evp) + "</label>";
+    if (O.tiers) h += '<div class="f" style="margin-bottom:16px"><div class="flabel">School tiers</div><div class="pills" data-multi="tiers">' + O.tiers.map(function (t) { return '<span class="pill' + ((f.tiers || []).indexOf(t) >= 0 ? " on" : "") + '" data-v="' + esc(t) + '">' + esc(t) + "</span>"; }).join("") + "</div></div>";
+    if (O.segment_multi) h += '<div class="f" style="margin-bottom:16px"><div class="flabel">Segments</div><div class="pills" data-multi="segment">' + O.segments.map(function (s) { return '<span class="pill' + ((f.segment || []).indexOf(s.id) >= 0 ? " on" : "") + '" data-v="' + esc(s.id) + '">' + esc(s.label) + "</span>"; }).join("") + "</div></div>";
+    else if (O.segments.length) h += '<label class="f"><span>Segment</span><input type="text" name="segment" list="segs" value="' + esc(f.segment) + '"><datalist id="segs">' + O.segments.map(function (s) { return '<option value="' + esc(s.id) + '">' + esc(s.label) + "</option>"; }).join("") + "</datalist></label>";
+    h += "</div>";
+    h += '<label class="check"><input type="checkbox" name="defining"' + (f.defining ? " checked" : "") + "> Flagship (defining) experience</label>";
+    h += '<div class="f" style="margin-bottom:16px"><div class="flabel">Stage</div>' + stagePills(O, stage) + "</div>";
+    if (O.has.target) h += '<label class="f" id="tgt"><span>Target go-live <i>· leave empty if not set</i></span><input type="month" name="target" value="' + esc(f.target) + '" style="max-width:240px"></label>';
+    if (O.has.assets && O.assets.length) h += '<div class="f" style="margin-bottom:16px"><div class="flabel">Assets in scope <i id="livehint">· tick each asset it applies to; mark <b>Live</b> where it is running</i></div>' + assetPicker(O, f.assets) + "</div>";
+    if (O.has.touchpoints) h += '<label class="f"><span>Touchpoints <i>· one per line</i></span><textarea name="touchpoints">' + esc((f.touchpoints || []).join("\n")) + "</textarea></label>";
+    if (O.has.benefits) h += '<label class="f"><span>Moment of truth</span><input type="text" name="moment" value="' + esc(f.moment) + '"></label><div class="two"><label class="f"><span>Customer benefit</span><textarea name="customer_benefit" style="min-height:70px">' + esc(f.customer_benefit) + '</textarea></label><label class="f"><span>Aldar benefit</span><textarea name="aldar_benefit" style="min-height:70px">' + esc(f.aldar_benefit) + "</textarea></label></div>";
+    h += '<label class="f"><span>Latest note <i>· status, owner, next step</i></span><textarea name="note" style="min-height:70px">' + esc(f.note) + "</textarea></label>";
+    h += '<div class="f" style="margin-bottom:16px"><div class="flabel">Photo <i>· landscape works best; it is resized automatically</i></div><div class="photo"><img id="pimg" alt=""' + (f.photo ? ' src="' + esc(f.photo) + '"' : ' style="visibility:hidden"') + '><div><input type="file" id="pfile" accept="image/*"><input type="hidden" name="photo" value="' + esc(f.photo) + '"><div class="hint" id="pstat"></div></div></div></div>';
+    h += '<label class="f"><span>SharePoint asset folder <i>· optional link</i></span><input type="url" name="folder_url" value="' + esc(f.folder_url) + '" placeholder="https://…sharepoint.com/…"></label>';
+    h += '<div class="actions"><button class="btn gold" type="submit">' + (label || "Submit for review") + "</button></div></form>";
+    return h;
+  }
+  function updatePicker() {
+    var list = S.me.experiences.filter(function (e) { return e.line === S.me.line; });
+    return '<div class="card"><label class="f"><span>Which experience?</span><input type="text" id="uq" placeholder="Search your ' + esc(list.length) + ' experiences"></label><div class="list" id="ul"></div></div><div id="uf"></div>';
+  }
+  function bindUpdatePicker() {
+    var list = S.me.experiences.filter(function (e) { return e.line === S.me.line; });
+    var draw = function () {
+      var q = $("#uq").value.toLowerCase();
+      var m = list.filter(function (e) { return !q || (e.name + " " + e.essence).toLowerCase().indexOf(q) >= 0; }).slice(0, q ? 30 : 8);
+      $("#ul").innerHTML = m.map(function (e) { return '<div class="row" data-id="' + esc(e.id) + '">' + (e.image_url ? '<img class="thumb" src="' + esc(e.image_url) + '" alt="" loading="lazy">' : '<div class="thumb"></div>') + '<div class="t"><b>' + esc(e.name) + "</b><span>" + esc(e.stage) + " · " + esc(e.target) + "</span></div></div>"; }).join("") || '<div class="empty">No match.</div>';
+      $("#ul").querySelectorAll(".row").forEach(function (r) { r.onclick = function () {
+        var e = list.filter(function (x) { return x.id === r.dataset.id; })[0];
+        $("#ul").innerHTML = ""; $("#uq").value = e.name;
+        $("#uf").innerHTML = '<div style="height:14px"></div>' + updateFormHTML(S.me.line, e, {});
+        bindForm("update", S.me.line, e.id);
+      }; });
+    };
+    $("#uq").oninput = function () { $("#uf").innerHTML = ""; draw(); }; draw();
+  }
+  function updateFormHTML(line, e, f, label) {
+    var O = S.me.options[line]; e = e || {}; f = f || {};
+    var stage = f.stage || e.stage_key || O.stages[0].key; if (stage === "audited") stage = "live";
+    var assets = f.assets || e.assets || [];
+    var h = '<form class="card" id="xf" novalidate><div id="ferr"></div><div class="kind" style="margin-bottom:4px">Updating</div><h2 style="font-size:19px;font-weight:500">' + esc(e.name) + '</h2><p class="muted" style="margin-top:-6px">Now: ' + esc(e.stage) + " · " + esc(e.target) + "</p>";
+    h += '<label class="f"><span>Update note <i>· what changed? This goes into the experience history</i></span><textarea name="note">' + esc(f.note) + "</textarea></label>";
+    if (O.stages.length > 1) h += '<div class="f" style="margin-bottom:16px"><div class="flabel">Stage</div>' + stagePills(O, stage) + "</div>";
+    if (O.has.target) h += '<label class="f" id="tgt"><span>Target go-live <i>· leave empty to keep the current one</i></span><input type="month" name="target" value="' + esc(f.target || (e.target_sort || "")) + '" style="max-width:240px"></label>';
+    if (O.has.assets && (O.assets.length || assets.length)) h += '<div class="f" style="margin-bottom:16px"><div class="flabel">Assets in scope <i id="livehint">· mark <b>Live</b> where it is now running</i></div>' + assetPicker(O, assets) + "</div>";
+    h += '<details' + (f.essence || f.narrative || f.photo ? " open" : "") + ' style="margin-bottom:16px"><summary style="cursor:pointer;color:var(--ink2);font-size:13px;margin-bottom:12px">Also change the description or photo</summary>' +
+      '<label class="f"><span>Essence</span><input type="text" name="essence" maxlength="260" value="' + esc(f.essence) + '" placeholder="' + esc(e.essence) + '"></label>' +
+      '<label class="f"><span>Narrative</span><textarea name="narrative" placeholder="Leave empty to keep the current narrative">' + esc(f.narrative) + "</textarea></label>" +
+      '<div class="flabel">New photo</div><div class="photo"><img id="pimg" alt=""' + (f.photo ? ' src="' + esc(f.photo) + '"' : ' style="visibility:hidden"') + '><div><input type="file" id="pfile" accept="image/*"><input type="hidden" name="photo" value="' + esc(f.photo) + '"><div class="hint" id="pstat"></div></div></div></details>';
+    h += '<div class="actions"><button class="btn gold" type="submit">' + (label || "Submit update for review") + "</button></div></form>";
+    return h;
+  }
+
+  function resize(file) {
+    return new Promise(function (res, rej) {
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function () {
+        var max = 1800, w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max / Math.max(w, h));
+        var c = document.createElement("canvas"); c.width = Math.round(w * k); c.height = Math.round(h * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        c.toBlob(function (b) { b ? res(b) : rej(new Error("Could not read that image.")); }, "image/jpeg", 0.85);
+      };
+      img.onerror = function () { rej(new Error("Could not read that image.")); };
+      img.src = url;
+    });
+  }
+  function words(s) { return String(s || "").toLowerCase().split(/[^a-z0-9]+/).filter(function (w) { return w.length > 2 && ["the", "and", "for", "with", "our", "your"].indexOf(w) < 0; }); }
+
+  function bindForm(kind, line, expId, onSubmit) {
+    line = line || S.me.line;
+    var form = $("#xf"), O = S.me.options[line];
+    var fe = function (k) { return form.elements.namedItem(k); };
+    // pills
+    form.querySelectorAll("[data-pills]").forEach(function (g) { g.querySelectorAll(".pill").forEach(function (p) { p.onclick = function () { g.querySelectorAll(".pill").forEach(function (x) { x.classList.remove("on"); }); p.classList.add("on"); sync(); }; }); });
+    form.querySelectorAll("[data-multi]").forEach(function (g) { g.querySelectorAll(".pill").forEach(function (p) { p.onclick = function () { p.classList.toggle("on"); sync(); }; }); });
+    // assets
+    form.querySelectorAll(".asset").forEach(function (a) {
+      var cb = a.querySelector("input"), lv = a.querySelector(".lv");
+      var set = function (v) { cb.checked = v; a.classList.toggle("on", v); if (!v) lv.classList.remove("on"); };
+      cb.onchange = function () { set(cb.checked); };
+      a.querySelector(".nm").onclick = function () { set(!cb.checked); };
+      lv.onclick = function () { if (stageNow() !== "live") { toast("Set the stage to Deployed & Live to mark assets live."); return; } set(true); lv.classList.toggle("on"); };
+    });
+    function stageNow() { var p = form.querySelector('[data-pills="stage"] .pill.on'); return p ? p.dataset.v : O.stages[0].key; }
+    function sync() {
+      var st = stageNow();
+      if ($("#tgt")) $("#tgt").style.display = st === "rev" || st === "impl" ? "" : "none";
+      form.querySelectorAll(".asset .lv").forEach(function (l) { l.style.display = st === "live" ? "" : "none"; if (st !== "live") l.classList.remove("on"); });
+      // estates: journeys follow the first vertical
+      if (O.verticals && fe("journey")) {
+        var v = form.querySelector('[data-multi="verticals"] .pill.on'), grp = v && v.dataset.v !== "chs" ? "pm" : "chs";
+        [].forEach.call(fe("journey").options, function (o) { var j = O.journeys.filter(function (x) { return x.id === o.value; })[0]; o.hidden = !!(j && j.group !== grp); });
+        var cur = O.journeys.filter(function (x) { return x.id === fe("journey").value; })[0]; if (cur && cur.group !== grp) fe("journey").value = "";
+      }
+    }
+    sync();
+    // duplicate hint
+    if (kind === "new" && fe("name")) {
+      var mine = S.me.experiences.filter(function (e) { return e.line === line; });
+      fe("name").oninput = function () {
+        var w = words(fe("name").value); if (w.length === 0) { $("#dup").innerHTML = ""; return; }
+        var need = w.length <= 2 ? w.length : Math.ceil(w.length * 0.6);
+        var hits = mine.map(function (e) { var ew = words(e.name); var n = w.filter(function (x) { return ew.indexOf(x) >= 0; }).length; return [n, e]; }).filter(function (x) { return x[0] >= need; }).sort(function (a, b) { return b[0] - a[0]; }).slice(0, 3);
+        $("#dup").innerHTML = hits.length ? '<div class="warnbox">Similar experiences already exist: ' + hits.map(function (x) { return "<b>" + esc(x[1].name) + "</b> (" + esc(x[1].stage) + ")"; }).join(", ") + ". If it's one of these, <a href=\"#update\">submit an update</a> instead.</div>" : "";
+      };
+    }
+    // photo
+    var pf = $("#pfile");
+    if (pf) pf.onchange = function () {
+      var file = pf.files[0]; if (!file) return;
+      $("#pstat").innerHTML = '<span class="spin"></span> Uploading…';
+      resize(file).then(function (blob) { return api("photo", { method: "POST", body: blob, type: "image/jpeg" }); }).then(function (j) {
+        fe("photo").value = j.url; var im = $("#pimg"); im.src = j.url; im.style.visibility = ""; $("#pstat").textContent = "Uploaded.";
+      }).catch(function (e) { $("#pstat").textContent = e.message; });
+    };
+    form.onsubmit = function (ev) {
+      ev.preventDefault();
+      var f = {};
+      ["name", "essence", "narrative", "pillar", "journey", "type", "group", "cadence", "capex", "evp", "segment", "target", "moment", "customer_benefit", "aldar_benefit", "note", "photo", "folder_url"].forEach(function (k) { var el = fe(k); if (el && el.value !== undefined) f[k] = el.value.trim(); });
+      if (fe("defining")) f.defining = fe("defining").checked;
+      if (fe("touchpoints")) f.touchpoints = fe("touchpoints").value.split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
+      form.querySelectorAll("[data-multi]").forEach(function (g) { f[g.dataset.multi] = [].map.call(g.querySelectorAll(".pill.on"), function (p) { return p.dataset.v; }); });
+      f.stage = stageNow();
+      if (!(f.stage === "rev" || f.stage === "impl")) delete f.target;
+      if (form.querySelector("#assets")) f.assets = [].filter.call(form.querySelectorAll(".asset"), function (a) { return a.querySelector("input").checked; }).map(function (a) { return { name: a.dataset.n, live: f.stage === "live" && a.querySelector(".lv").classList.contains("on") }; });
+      if (kind === "update") { Object.keys(f).forEach(function (k) { if (f[k] === "") delete f[k]; }); }
+      var btn = form.querySelector("[type=submit]"); btn.disabled = true; var old = btn.innerHTML; btn.innerHTML = '<span class="spin"></span> Sending…';
+      var p = onSubmit ? Promise.resolve(onSubmit(f)) : api("submissions", { body: { kind: kind, line: line, exp_id: expId, fields: f } }).then(function (j) {
+        toast("Submitted. Group CX will review it" + (j.notified ? " and has been notified." : "."));
+        return loadSubs().then(function () { location.hash = "mine"; route(); });
+      });
+      p.catch(function (e) { $("#ferr").innerHTML = '<div class="errbox">' + esc(e.message) + "</div>"; $("#ferr").scrollIntoView({ behavior: "smooth", block: "center" }); btn.disabled = false; btn.innerHTML = old; });
+    };
+  }
+
+  // ---------- reviewer: leads ----------
+  function leadsView() {
+    var L = S.me.leads || {};
+    return '<div class="card"><p class="muted" style="margin-top:0">One lead per business line. Share each code privately with that lead; they sign in at <b>' + esc(location.origin) + '/sx/</b>. Regenerate a code to revoke the old one straight away.</p><div class="scroll"><table class="t"><thead><tr><th>Line</th><th>Lead name</th><th>Email <span style="text-transform:none;letter-spacing:0">(decision emails)</span></th><th>Access code</th><th></th></tr></thead><tbody>' +
+      Object.keys(S.me.options).map(function (l) {
+        var x = L[l] || {};
+        return '<tr data-l="' + l + '"><td style="white-space:nowrap">' + esc(lineLabel(l)) + '</td><td><input type="text" data-k="name" value="' + esc(x.name) + '" placeholder="Name"></td><td><input type="email" data-k="email" value="' + esc(x.email) + '" placeholder="name@aldar.com"></td>' +
+          '<td style="white-space:nowrap"><span class="code">' + esc(x.code) + '</span> <button class="btn sm ghost" data-a="copy">Copy</button></td><td style="white-space:nowrap"><button class="btn sm" data-a="save">Save</button> <button class="btn sm bad" data-a="regen">New code</button></td></tr>';
+      }).join("") + "</tbody></table></div></div>";
+  }
+  function bindLeads() {
+    app.querySelectorAll("tr[data-l]").forEach(function (tr) {
+      var l = tr.dataset.l;
+      tr.querySelector('[data-a="copy"]').onclick = function () { var c = (S.me.leads[l] || {}).code; (navigator.clipboard ? navigator.clipboard.writeText(c) : Promise.reject()).then(function () { toast("Code copied"); }, function () { prompt("Copy the code:", c); }); };
+      tr.querySelector('[data-a="save"]').onclick = function () { save({ line: l, name: tr.querySelector('[data-k="name"]').value, email: tr.querySelector('[data-k="email"]').value }, "Saved"); };
+      tr.querySelector('[data-a="regen"]').onclick = function () { if (confirm("Issue a new code for " + lineLabel(l) + "? The old code stops working immediately.")) save({ line: l, regenerate: true }, "New code issued"); };
+    });
+    function save(body, msg) { api("leads", { body: body }).then(function (j) { S.me.leads = j.leads; toast(msg); route(); }).catch(function (e) { toast(e.message); }); }
+  }
+  // ---------- reviewer: notifications ----------
+  function notifyView() {
+    var s = S.me.settings || {};
+    return '<div class="card"><label class="f"><span>Your name <i>· shown to leads on decisions</i></span><input type="text" id="rn" value="' + esc(s.reviewer_name || "Group CX") + '"></label>' +
+      '<label class="f"><span>Your email <i>· new submissions are emailed here</i></span><input type="email" id="re" value="' + esc(s.reviewer_email) + '" placeholder="name@aldar.com"></label>' +
+      '<label class="f"><span>Teams workflow webhook URL</span><input type="url" id="tw" value="' + esc(s.teams_webhook) + '" placeholder="https://…logic.azure.com/… or https://…powerplatform.com/…"></label>' +
+      '<div class="actions"><button class="btn gold" id="ns">Save</button><button class="btn" id="nt">Save and send a test</button></div>' +
+      '<div class="sep"></div><h2>Setting up the Teams workflow (once, about 5 minutes)</h2><ol class="steps">' +
+      "<li>In Teams, open the channel or chat where you want alerts, choose <b>…</b> → <b>Workflows</b>, and pick the template <b>“Send webhook alerts to a channel”</b> (or <b>“…to a chat”</b>).</li>" +
+      "<li>Name it “Signature Experience Hub”, choose where it posts, and create it. Copy the <b>webhook URL</b> it shows, paste it above and click <b>Save and send a test</b>. The card should appear in Teams.</li>" +
+      "<li>For email too: open the workflow in Power Automate (Teams → Workflows → Edit), add a step after the trigger: <b>Office 365 Outlook → Send an email (V2)</b>. Set <b>To</b> = <code class=\"code\">triggerBody()?['email_to']</code>, <b>Subject</b> = <code class=\"code\">triggerBody()?['subject']</code>, <b>Body</b> = <code class=\"code\">triggerBody()?['html']</code>. Save.</li>" +
+      "<li>New submissions are emailed to you. Decisions (approved, sent back, rejected) are emailed to that line's lead, using the email on the <a href=\"#leads\">Leads</a> tab.</li></ol></div>";
+  }
+  function bindNotify() {
+    var go = function (test) {
+      api("settings", { body: { reviewer_name: $("#rn").value, reviewer_email: $("#re").value, teams_webhook: $("#tw").value, test: test } }).then(function (j) {
+        S.me.settings = j.settings;
+        toast(test ? (j.test && j.test.sent ? "Saved. Test sent: check Teams." : "Saved, but the test didn't go through: " + ((j.test && (j.test.reason || ("status " + j.test.status))) || "")) : "Saved");
+      }).catch(function (e) { toast(e.message); });
+    };
+    $("#ns").onclick = function () { go(false); }; $("#nt").onclick = function () { go(true); };
+  }
+
+  // ---------- start ----------
+  var saved = store("sx_code");
+  if (saved) signIn(saved, true); else loginView();
+})();
+</script>
+</body>
+</html>

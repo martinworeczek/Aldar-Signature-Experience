@@ -1,8 +1,9 @@
 // MCP server for the Aldar Signature Experience Hub (Streamable HTTP, stateless, read-only).
 // Microsoft Copilot Studio and other MCP clients connect to https://<site>/mcp.
-// The dataset is generated from index.html on every deploy (tools/build_mcp_data.mjs).
+// The dataset is generated from index.html on every deploy (tools/build_mcp_data.mjs), plus
+// submissions approved through /sx/ (read live from Netlify Blobs).
 // Open and public: no authentication. Read-only, rate limited per client.
-import dataset from "./_data/mcp-dataset.json" with { type: "json" };
+import { liveDataset } from "./_lib/live-data.mjs";
 import { callTool, toolList, ToolError, SERVER_INFO, INSTRUCTIONS } from "./_lib/mcp-core.mjs";
 
 const PROTOCOLS = ["2025-06-18", "2025-03-26", "2024-11-05"];
@@ -17,7 +18,7 @@ const json = (body, status = 200, extra = {}) =>
 const empty = (status) => new Response(null, { status, headers: CORS });
 const rpcError = (id, code, message) => ({ jsonrpc: "2.0", id: id ?? null, error: { code, message } });
 
-function handle(msg) {
+function handle(msg, dataset) {
   if (!msg || msg.jsonrpc !== "2.0" || typeof msg.method !== "string") return rpcError(msg?.id, -32600, "Invalid request");
   const { id, method, params = {} } = msg;
   const isNotification = id === undefined || id === null;
@@ -55,10 +56,11 @@ export default async (req) => {
   let body;
   try { body = await req.json(); } catch { return json(rpcError(null, -32700, "Parse error"), 400); }
   if (Array.isArray(body)) {
-    const out = body.map(handle).filter(Boolean);
+    const dataset = await liveDataset();
+    const out = body.map((m) => handle(m, dataset)).filter(Boolean);
     return out.length ? json(out) : empty(202);
   }
-  const out = handle(body);
+  const out = handle(body, body && body.method === "tools/call" ? await liveDataset() : null);
   return out ? json(out) : empty(202);
 };
 
