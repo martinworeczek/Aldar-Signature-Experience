@@ -1,21 +1,21 @@
 // MCP server for the Aldar Signature Experience Hub (Streamable HTTP, stateless, read-only).
 // Microsoft Copilot Studio and other MCP clients connect to https://<site>/mcp.
 // The dataset is generated from index.html on every deploy (tools/build_mcp_data.mjs).
-// If MCP_API_KEY is set on the site, requests must send it as `x-api-key` or `Authorization: Bearer`.
+// Open and public: no authentication. Read-only, rate limited per client.
 import dataset from "./_data/mcp-dataset.json" with { type: "json" };
 import { callTool, toolList, ToolError, SERVER_INFO, INSTRUCTIONS } from "./_lib/mcp-core.mjs";
 
 const PROTOCOLS = ["2025-06-18", "2025-03-26", "2024-11-05"];
+const CORS = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "GET, POST, DELETE, OPTIONS",
+  "access-control-allow-headers": "content-type, accept, mcp-protocol-version, mcp-session-id, authorization",
+  "access-control-expose-headers": "mcp-session-id",
+};
 const json = (body, status = 200, extra = {}) =>
-  new Response(body == null ? null : JSON.stringify(body), { status, headers: { "content-type": "application/json", ...extra } });
+  new Response(body == null ? null : JSON.stringify(body), { status, headers: { "content-type": "application/json", ...CORS, ...extra } });
+const empty = (status) => new Response(null, { status, headers: CORS });
 const rpcError = (id, code, message) => ({ jsonrpc: "2.0", id: id ?? null, error: { code, message } });
-
-function authorised(req) {
-  const key = process.env.MCP_API_KEY;
-  if (!key) return true;
-  const bearer = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
-  return req.headers.get("x-api-key") === key || bearer === key;
-}
 
 function handle(msg) {
   if (!msg || msg.jsonrpc !== "2.0" || typeof msg.method !== "string") return rpcError(msg?.id, -32600, "Invalid request");
@@ -48,22 +48,22 @@ function handle(msg) {
 }
 
 export default async (req) => {
+  if (req.method === "OPTIONS") return empty(204);
   if (req.method === "GET") return json({ error: "This MCP endpoint accepts POST (Streamable HTTP, no SSE stream)." }, 405, { allow: "POST" });
-  if (req.method === "DELETE") return new Response(null, { status: 204 });
+  if (req.method === "DELETE") return empty(204);
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405, { allow: "POST" });
-  if (!authorised(req)) return json(rpcError(null, -32001, "Unauthorised: send the API key as x-api-key or Authorization: Bearer."), 401);
   let body;
   try { body = await req.json(); } catch { return json(rpcError(null, -32700, "Parse error"), 400); }
   if (Array.isArray(body)) {
     const out = body.map(handle).filter(Boolean);
-    return out.length ? json(out) : new Response(null, { status: 202 });
+    return out.length ? json(out) : empty(202);
   }
   const out = handle(body);
-  return out ? json(out) : new Response(null, { status: 202 });
+  return out ? json(out) : empty(202);
 };
 
 export const config = {
   path: "/mcp",
-  method: ["GET", "POST", "DELETE"],
+  method: ["GET", "POST", "DELETE", "OPTIONS"],
   rateLimit: { windowLimit: 120, windowSize: 60, aggregateBy: ["ip", "domain"] },
 };

@@ -4,7 +4,7 @@ A read-only [Model Context Protocol](https://modelcontextprotocol.io) server ove
 
 - **Endpoint:** `https://aldar-signature-experience.netlify.app/mcp`
 - **Transport:** Streamable HTTP (stateless; JSON responses; no SSE stream). Protocol versions 2025-06-18, 2025-03-26 and 2024-11-05.
-- **Auth:** API key in the `x-api-key` header (or `Authorization: Bearer <key>`). The key is the `MCP_API_KEY` secret on the Netlify site (production, functions scope). Rotate it there; nothing in the repo changes.
+- **Auth:** none. The server is open and public (read-only, CORS enabled), so any MCP client can connect with just the URL.
 - **Freshness:** Netlify runs `node tools/build_mcp_data.mjs` on every deploy. It loads the data sets embedded in `index.html` exactly as the browser does and writes the dataset the function serves. So the MCP answers always match the deployed site; there is no second copy to maintain.
 - **Rate limit:** 120 requests per minute per client.
 
@@ -45,11 +45,11 @@ Every tool is read-only (`readOnlyHint`) and returns both text JSON and `structu
    - **Server name:** Aldar Signature Experience Hub
    - **Server description:** Read-only access to Aldar's signature experiences, programmes, deployment, benchmarks, CX Time and Idea Exchange.
    - **Server URL:** `https://aldar-signature-experience.netlify.app/mcp`
-3. **Authentication:** choose **API key**, type **Header**, header name `x-api-key`. When you create the connection, paste the key.
+3. **Authentication:** choose **None**.
 4. Click **Create**. Copilot Studio lists the 11 tools; leave them all enabled.
 5. In the agent's instructions, add: "For anything about Aldar signature experiences, CX programmes, benchmarks, CX Time or the Idea Exchange, use the Aldar Signature Experience Hub tools. Call get_overview first if unsure. Quote stages, dates and counts exactly as returned."
 
-If your Copilot Studio tenant offers only the custom-connector route, create a custom connector from an OpenAPI definition with host `aldar-signature-experience.netlify.app`, base path `/`, a POST operation `/mcp` marked `x-ms-agentic-protocol: mcp-streamable-1.0`, and API key header `x-api-key`.
+If your Copilot Studio tenant offers only the custom-connector route, create a custom connector from an OpenAPI definition with host `aldar-signature-experience.netlify.app`, base path `/`, a POST operation `/mcp` marked `x-ms-agentic-protocol: mcp-streamable-1.0`, and no authentication.
 
 ## Maintaining it
 
