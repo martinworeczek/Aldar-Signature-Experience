@@ -54,7 +54,8 @@ class Fetcher:
         if wait > 0:
             time.sleep(wait)
         self.last[host] = time.time()
-        r = self.s.get(url, timeout=self.timeout, **kw)
+        kw.setdefault("timeout", self.timeout)
+        r = self.s.get(url, **kw)
         r.raise_for_status()
         return r
 

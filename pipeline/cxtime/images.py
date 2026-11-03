@@ -2,8 +2,10 @@
 official video poster), crop to 16:9, encode WebP under the size budget, and store it in img/
 by content hash. The source's file is never hotlinked. Missing or too-small images give None,
 and the card falls back to its tag gradient."""
-import hashlib, io
+import hashlib, io, time
 from pathlib import Path
+
+import requests
 
 from PIL import Image, ImageOps
 
@@ -38,7 +40,7 @@ def fetch_and_store(url, fetcher, cfg):
     """Returns ('/img/<hash>.webp', newly_written) - the file is written under the repo's img/ - or raises."""
     if not url:
         raise ValueError("no image offered by the source")
-    r = fetcher.get(url, check_robots=False)
+    r = _get_patiently(url, fetcher)
     data, size = process(r.content, cfg)
     ref = f"/img/{hashlib.sha1(data).hexdigest()[:16]}.webp"
     path = ROOT / ref.lstrip("/")
@@ -46,3 +48,26 @@ def fetch_and_store(url, fetcher, cfg):
         return ref, False
     path.write_bytes(data)
     return ref, True
+
+
+# Image hosts are often slower than the article pages: Edition 3 lost the Lark Hotels photo to a
+# single 25s read timeout. Network failures (timeouts, dropped connections, 5xx) get three tries
+# with longer timeouts; a 4xx or an unusable image is final.
+ATTEMPTS = ((None, 0), (45, 4), (75, 10))  # (timeout seconds, pause before the try); None = fetcher default
+
+
+def _get_patiently(url, fetcher):
+    last = None
+    for timeout, pause in ATTEMPTS:
+        if pause:
+            time.sleep(pause)
+        try:
+            kw = {"timeout": timeout} if timeout else {}
+            return fetcher.get(url, check_robots=False, **kw)
+        except requests.HTTPError as e:
+            if e.response is not None and e.response.status_code < 500:
+                raise
+            last = e
+        except (requests.Timeout, requests.ConnectionError) as e:
+            last = e
+    raise last

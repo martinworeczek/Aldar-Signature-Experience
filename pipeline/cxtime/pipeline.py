@@ -425,6 +425,12 @@ def write_review(d, st, conf):
             if s:
                 L.append(f"{k:02d} · `{sid}` · relevance {s.get('relevance')}: **{s['title']}**  ")
         L.append("\n</details>\n")
+        # a story without a photo shows as a plain green board in the email: say so up front
+        for sid in em.get("picks", []):
+            r = recs.get(p["keys"].get(sid))
+            if r is not None and not r.get("_image"):
+                L.append(f"> ⚠️ Email story `{sid}` has no photo ({r.get('_imageNote') or 'none offered'}), so its board "
+                         f"will be plain green. Swap it with `/pick`, or keep it.\n")
     for n in p["notes"]:
         L.append(f"> {'⚠️ ' if n.startswith('HOLD') else ''}{n}")
     if p["notes"]:
