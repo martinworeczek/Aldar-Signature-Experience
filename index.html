@@ -42,6 +42,7 @@
     L.forEach(function(x){var a=x[1],k=a.rel?'link[rel="'+a.rel+'"]':'meta[name="'+a.name+'"]';if(!h.querySelector(k)){var e=document.createElement(x[0]);for(var n in a)e.setAttribute(n,a[n]);h.appendChild(e);}});}
   var t=null;new MutationObserver(function(){if(t)return;t=setTimeout(function(){t=null;fix()},150)}).observe(document,{childList:true,subtree:true});
 })();</script>
+<script id="__sig_mobile" src="/app/mobile.js"></script>
 <script id="__sig_edition">window.__SIG_EDITION="group";</script>
 <script id="__sig_sx" src="/sx/sx-apply.js"></script>
 <script id="__sig_sx_boot">(function(){

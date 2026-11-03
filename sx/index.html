@@ -88,7 +88,24 @@ input[type=text],input[type=url],input[type=email],input[type=month],input[type=
 input:focus,select:focus,textarea:focus{border-color:var(--gold)}
 textarea{min-height:96px;resize:vertical}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
-@media (max-width:720px){.two{grid-template-columns:1fr}h1{font-size:23px}.who{display:none}}
+#mb{display:none}#mnav{display:none}
+@media (max-width:720px){.two{grid-template-columns:1fr}h1{font-size:23px}.who,#signout,.top .hubl,.tabs{display:none!important}
+  header.top{padding:12px 16px}.wrap{padding:0 16px 60px}
+  #mb{display:flex;width:42px;height:42px;border-radius:12px;border:1px solid rgba(201,162,74,.45);background:var(--panel2);color:var(--gold);font-size:19px;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  #mnav{display:block;position:fixed;left:0;right:0;top:67px;bottom:0;z-index:40;background:rgba(5,9,12,.6);opacity:0;pointer-events:none;transition:opacity .2s}
+  #mnav.open{opacity:1;pointer-events:auto}
+  #mnav .pn{background:var(--panel);border-bottom:1px solid var(--line);padding:10px 16px 16px;transform:translateY(-8px);transition:transform .2s}
+  #mnav.open .pn{transform:none}
+  #mnav .me{font-size:12px;color:var(--ink3);padding:8px 4px 10px;border-bottom:1px solid var(--line);margin-bottom:6px}#mnav .me b{display:block;color:var(--ink);font-size:14px;font-weight:600}
+  #mnav .it{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:transparent;border:0;border-radius:10px;padding:13px 10px;color:var(--ink);font-size:15px;text-decoration:none;cursor:pointer}
+  #mnav .it.on{background:var(--goldbg);color:var(--gold2)}
+  #mnav .it .n{min-width:20px;padding:0 7px;border-radius:999px;background:var(--gold);color:#0a1014;font-size:11px;font-weight:700;text-align:center}
+  #mnav hr{border:0;border-top:1px solid var(--line);margin:8px 0}
+  .actions .btn{flex:1 1 auto;justify-content:center}
+  .preview img.hero{aspect-ratio:4/3}
+  .kv{grid-template-columns:110px 1fr}.diff{grid-template-columns:90px 1fr 1fr;font-size:12px}
+  .photo{flex-direction:column;align-items:flex-start}
+}
 .pills{display:flex;flex-wrap:wrap;gap:8px}
 .pill{border:1px solid var(--line2);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:12.5px;background:#0a1116;user-select:none}
 .pill.on{border-color:var(--gold);background:var(--goldbg);color:var(--gold2)}
@@ -139,8 +156,10 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
   <div class="sp"></div>
   <div class="who" id="who"></div>
   <button class="btn ghost sm" id="signout" hidden>Sign out</button>
-  <a class="btn sm" href="/">Back to the hub</a>
+  <a class="btn sm hubl" href="/">Back to the hub</a>
+  <button id="mb" type="button" aria-label="Menu" aria-expanded="false">&#9776;</button>
 </header>
+<div id="mnav"><div class="pn" id="mpn"></div></div>
 <main class="wrap" id="app"><div class="login"><span class="spin"></span></div></main>
 
 <script>
@@ -171,7 +190,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
 
   // ---------- sign in ----------
   function loginView(err) {
-    $("#who").innerHTML = ""; $("#signout").hidden = true;
+    $("#who").innerHTML = ""; $("#signout").hidden = true; menu([]);
     app.innerHTML = '<div class="login card"><h2 style="font-size:20px;font-weight:500">Submit &amp; review</h2>' +
       '<p class="muted" style="margin-top:0">Business-line leads submit new signature experiences and updates here. Group CX reviews every one before it appears on the hub.</p>' +
       (err ? '<div class="errbox">' + esc(err) + '</div>' : '') +
@@ -214,6 +233,21 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
     if (tab === "update") return shell(updatePicker(), bindUpdatePicker);
     return shell(mineView());
   }
+  // phone menu: the tabs, back to the hub and sign out
+  function menu(tabs) {
+    var h = "";
+    if (S.me) h += '<div class="me"><b>' + esc(S.me.name) + "</b>" + (S.me.role === "reviewer" ? "Reviewer · Group CX" : esc(lineLabel(S.me.line)) + " lead") + "</div>";
+    (tabs || []).forEach(function (t) { h += '<button class="it' + (S.tab === t[0] ? " on" : "") + '" data-t="' + t[0] + '"><span>' + t[1] + "</span>" + (t[2] ? '<span class="n">' + t[2] + "</span>" : "") + "</button>"; });
+    if (tabs && tabs.length) h += "<hr>";
+    h += '<a class="it" href="/"><span>Back to the hub</span><span>→</span></a>';
+    if (S.me) h += '<button class="it" data-a="out"><span>Sign out</span></button>';
+    $("#mpn").innerHTML = h;
+    $("#mpn").querySelectorAll("[data-t]").forEach(function (b) { b.onclick = function () { closeMenu(); location.hash = b.dataset.t; }; });
+    var o = $("#mpn").querySelector('[data-a="out"]'); if (o) o.onclick = function () { closeMenu(); $("#signout").onclick(); };
+  }
+  function closeMenu() { $("#mnav").classList.remove("open"); $("#mb").innerHTML = "&#9776;"; $("#mb").setAttribute("aria-expanded", "false"); }
+  $("#mb").onclick = function () { var o = $("#mnav").classList.toggle("open"); $("#mb").innerHTML = o ? "&#10005;" : "&#9776;"; $("#mb").setAttribute("aria-expanded", o ? "true" : "false"); };
+  $("#mnav").onclick = function (e) { if (e.target.id === "mnav") closeMenu(); };
   function shell(inner, bind) {
     var rev = S.me.role === "reviewer";
     var pending = S.subs.filter(function (s) { return s.status === "pending"; }).length;
@@ -227,6 +261,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
       tabs.map(function (t) { return '<button class="tab' + (S.tab === t[0] ? " on" : "") + '" data-t="' + t[0] + '">' + t[1] + (t[2] ? '<span class="n">' + t[2] + "</span>" : "") + "</button>"; }).join("") +
       "</div>" + inner;
     app.querySelectorAll(".tab").forEach(function (b) { b.onclick = function () { location.hash = b.dataset.t; }; });
+    menu(tabs);
     if (bind) bind();
     window.scrollTo(0, 0);
   }

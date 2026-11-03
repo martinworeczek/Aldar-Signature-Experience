@@ -66,6 +66,10 @@ RESTORE = """<script id="__sig_app_restore">(function(){
 """
 
 
+# phone layer: burger menu + full-width layout below 700px (app/mobile.js adds app/mobile.css)
+MOBILE = '<script id="__sig_mobile" src="/app/mobile.js"></script>\n'
+
+
 def apply(path, block, restore=False, drop_title=None):
     s = open(path, encoding="utf-8").read()
     s = re.sub(r"<!-- __sig_app:start -->[\s\S]*?<!-- __sig_app:end -->\n", "", s)
@@ -76,7 +80,8 @@ def apply(path, block, restore=False, drop_title=None):
         s = re.sub(r"<title>[^<]*</title>\n?", "", s, count=1)
     m = re.search(r"<head[^>]*>\n?", s)
     assert m, "no <head> in " + path
-    s = s[: m.end()] + block + (RESTORE if restore else "") + s[m.end():]
+    s = re.sub(r'<script id="__sig_mobile"[^>]*></script>\n', "", s)
+    s = s[: m.end()] + block + (RESTORE + MOBILE if restore else "") + s[m.end():]
     open(path, "w", encoding="utf-8").write(s)
     print("app meta applied:", path)
 
