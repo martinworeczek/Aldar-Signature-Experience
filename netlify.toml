@@ -2,7 +2,7 @@
   publish = "."
   # keep the hub hooked up to approved submissions (idempotent), then rebuild the MCP
   # dataset from index.html on every deploy, so /mcp always matches the site
-  command = "python3 tools/apply_sx_hook.py && node tools/build_mcp_data.mjs"
+  command = "python3 tools/apply_sx_hook.py && python3 tools/apply_app_meta.py && node tools/build_mcp_data.mjs"
 
 [functions]
   node_bundler = "esbuild"
@@ -12,3 +12,9 @@
   for = "/img/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+    Cache-Control = "public, max-age=3600"

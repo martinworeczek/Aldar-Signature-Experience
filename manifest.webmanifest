@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "Aldar Signature Experience Hub",
+  "short_name": "Aldar SX Hub",
+  "description": "Every Aldar signature experience across the seven business lines, with global benchmarks, Aldar CX Time and the Idea Exchange.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#070c10",
+  "theme_color": "#070c10",
+  "lang": "en-GB",
+  "icons": [
+    { "src": "/app/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/app/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/app/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Submit & review", "short_name": "Submit", "description": "Submit a signature experience or review submissions", "url": "/sx/", "icons": [{ "src": "/app/icon-192.png", "sizes": "192x192", "type": "image/png" }] }
+  ]
+}
