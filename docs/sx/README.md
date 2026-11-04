@@ -25,8 +25,8 @@ edit `SX_REVIEWER_CODE` under Netlify → Project configuration → Environment 
   photo (required) and a SharePoint folder link. The choices come from each line's own data, so a
   submission looks and filters like any other card.
 - **Update:** pick one of your line's experiences, then add a note (required) and, optionally, a new stage,
-- **Photos from the live experience:** part of an update. The lead chooses the asset (for example W Hotel), uploads photos and can add a caption. Once approved, the photos appear in the card detail under *Implementation photos*, grouped by asset. An update with only photos needs no written note.
   target, live assets, essence, narrative or photo. The note is added to the experience's dated history.
+- **Photos from the live experience:** part of an update. The lead chooses the asset (for example W Hotel), uploads photos and can add a caption. Once approved, the photos appear in the card detail under *Implementation photos*, grouped by asset. An update with only photos needs no written note.
 
 ## How it works
 
