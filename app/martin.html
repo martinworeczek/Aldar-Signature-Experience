@@ -61,7 +61,14 @@ textarea::placeholder{color:var(--ink3)}
 .err{max-width:1240px;margin:0 auto 14px;background:rgba(201,138,110,.12);border:1px solid rgba(201,138,110,.35);color:#F0C4B2;border-radius:12px;padding:12px 14px;font-size:13px}
 .err a{color:#F6D9CC}
 /* visual cards: experiences and customer stories named in an answer */
-.msg img{max-width:100%;border-radius:10px;display:block;margin:6px 0}
+/* pictures CX Martin puts in an answer: a sized photo in text, a thumbnail in a table */
+.msg img{display:block;width:100%;max-width:460px;max-height:280px;object-fit:cover;border-radius:10px;margin:8px 0;background:#16232B}
+.msg td img,.msg th img{width:132px;max-width:132px;height:88px;max-height:none;margin:0;border-radius:8px}
+.msg img.xo{cursor:pointer;transition:opacity .15s}.msg img.xo:hover{opacity:.85}
+/* tables keep words whole: wrap between words, never inside them */
+.msg table,.msg td,.msg th{overflow-wrap:normal;word-break:normal;hyphens:none}
+.msg th{white-space:nowrap}
+.msg td:has(img){width:1%;padding-right:4px}
 .vis{max-width:1240px;margin:-6px auto 18px;padding-left:40px}
 .vk{font-size:9.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold2);margin:0 0 8px}
 .hero{display:grid;grid-template-columns:minmax(220px,38%) 1fr;background:var(--panel);border:1px solid var(--line2);border-radius:16px;overflow:hidden;max-width:min(1060px,92%)}
@@ -190,8 +197,17 @@ textarea::placeholder{color:var(--ink3)}
     var d = document.createElement("div"); d.innerHTML = html; var text = nrm(d.textContent);
     return IX.stories.filter(function (s) { var n = nrm(s.title); return n.length >= 10 && text.indexOf(n) >= 0; }).map(function (s) { return s.id; });
   }
+  // the experience behind a picture CX Martin embedded (matched on the image file)
+  function expForImg(src) {
+    if (!IX || !src) return null; var f = String(src).split("?")[0].replace(/^https?:\/\/[^/]+/, "");
+    return IX.experiences.find(function (x) { return x.image && x.image === f; }) || null;
+  }
   function visuals(html) {
     var xs = named(html), st = namedStories(html);
+    // the answer already shows pictures: keep the cards only for experiences it shows no picture of
+    var d0 = document.createElement("div"); d0.innerHTML = html;
+    var pictured = {}; d0.querySelectorAll("img").forEach(function (im) { var x = expForImg(im.getAttribute("src")); if (x) pictured[x.id] = 1; });
+    if (d0.querySelector("img")) { xs = xs.filter(function (x) { return !pictured[x.id]; }); if (xs.length > 1 || (xs.length && Object.keys(pictured).length)) xs = []; }
     if (!xs.length && st.length) { var w = document.createElement("div"); w.className = "vis"; w.innerHTML = storiesHtml(st, "Customer stories in this answer").replace('style="margin-top:14px"', ""); return w; }
     if (!xs.length) return null;
     var v = document.createElement("div"); v.className = "vis";
@@ -237,6 +253,12 @@ textarea::placeholder{color:var(--ink3)}
     var cites = ((a.entities || []).filter(function (e) { return e.citation; })[0] || {}).citation || [];
     var html = md(text);
     add("bot", html, cites.length ? '<div class="src">From the hub&rsquo;s live data' + (cites.length > 1 ? " · " + cites.length + " look-ups" : "") + "</div>" : "");
+    var row = log.lastElementChild;
+    if (row) row.querySelectorAll(".msg img").forEach(function (im) {
+      im.loading = "lazy"; im.onerror = function () { im.remove(); };
+      var x = expForImg(im.getAttribute("src")); if (!x) return;
+      im.classList.add("xo"); im.title = "Open " + x.name + " in the hub"; im.onclick = function () { hubOpen(x.id); };
+    });
     var vis = visuals(html); if (vis) { log.appendChild(vis); scroll(); }
     if (a.suggestedActions && a.suggestedActions.actions && a.suggestedActions.actions.length) chips(a.suggestedActions.actions.map(function (x) { return x.title || x.value; }));
     else if (!S.greeted) { S.greeted = true; if (!document.getElementById("chips")) chips(STARTERS); } // starters follow the greeting
