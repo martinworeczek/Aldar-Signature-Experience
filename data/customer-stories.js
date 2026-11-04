@@ -1,5 +1,6 @@
 // Customer stories — expressions of Signature Experiences in the field.
 // Source: uploads "Signature Experience Customer Stories.xlsx" (All stories sheet, 4 Nov 2026).
+// `photo` (optional): a site path or URL for the card's 16:7 band; `photo_position` sets the crop (CSS background-position).
 // `experience` links are PROPOSED from the story text (sure:true = unambiguous); the workbook has no link column.
 window.CS_DATA = {
  "updated": "4 Nov 2026",
@@ -152,7 +153,9 @@ window.CS_DATA = {
    "memorable": "A day that could have felt lonely became one he will remember. The team marked a personal milestone at exactly the right moment, and made him feel looked after in his own home.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/stories/cs-10-14d2fc43b4.webp",
+   "photo_position": "center 22%"
   },
   {
    "id": "cs-11",
@@ -165,7 +168,9 @@ window.CS_DATA = {
    "memorable": "No child was left out. By taking the event to the children’s doors, the team showed families that the community is built around them, not around a schedule.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/stories/cs-11-47c41068cd.webp",
+   "photo_position": "center 38%"
   },
   {
    "id": "cs-12",
@@ -178,7 +183,9 @@ window.CS_DATA = {
    "memorable": "The team heard about a loss in passing and answered it with a lasting, personal tribute. Mrs. McMillan was deeply touched that her community cared about what mattered most to her family, at a difficult time.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/stories/cs-12-42285c4755.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-13",
@@ -308,7 +315,9 @@ window.CS_DATA = {
    "memorable": "Ruth noticed an opportunity to care beyond the team’s everyday responsibilities and acted on it personally. The thoughtful surprise made the resident feel seen, supported and genuinely cared for by the community.",
    "colleagues": "Ruth",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/stories/cs-22-571a2ebd30.webp",
+   "photo_position": "center 8%"
   },
   {
    "id": "cs-23",

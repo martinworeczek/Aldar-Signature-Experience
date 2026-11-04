@@ -336,7 +336,7 @@ export const TOOLS = [
   {
     name: "get_customer_story",
     title: "Get one customer story",
-    description: "One customer story in full: title, business line, place, the story, what made it memorable, the colleagues involved, its source and the signature experience it expresses (with link status confirmed or proposed). Accepts the id (e.g. cs-01) or the title.",
+    description: "One customer story in full: title, business line, place, the story, what made it memorable, the colleagues involved, its source, a photo URL when there is one, and the signature experience it expresses (with link status confirmed or proposed). Accepts the id (e.g. cs-01) or the title.",
     inputSchema: { type: "object", required: ["id"], properties: { id: { type: "string", description: "Story id (from list_customer_stories/search) or its title." } } },
     run: (D, a) => {
       const c = findCustomerStory(D, a.id);

@@ -64,7 +64,7 @@ WALL = """  <!-- ===================== CUSTOMER STORIES ===================== --
     <div style="padding:22px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:18px">
       <sc-for list="{{ cs.cards }}" as="s" hint-placeholder-count="9">
         <div data-cs-card="1" style="position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s" style-hover="transform:translateY(-4px);box-shadow:0 22px 48px rgba(40,30,10,.14)">
-          <div style="position:relative;aspect-ratio:16/7;background:{{ s.grad }};background-size:cover;background-position:center">
+          <div style="{{ s.bandCss }}">
             <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,0) 40%)"></div>
             <span style="position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:7px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:999px;padding:5px 11px;font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase"><span style="width:6px;height:6px;border-radius:50%;background:{{ s.dot }}"></span>{{ s.line }}</span>
           </div>
@@ -123,8 +123,10 @@ METHODS = r"""  // ===== Customer stories (data/customer-stories.js -> window.CS
     const titleCss = Object.assign({ fontFamily: "'Fraunces',serif", fontSize: '23px', lineHeight: '26px', letterSpacing: '-.01em', color: 'var(--ink)', textWrap: 'pretty' }, clamp(2, 26));
     const storyCss = Object.assign({ fontSize: '13px', lineHeight: '21px', color: 'var(--muted)', textWrap: 'pretty' }, clamp(5, 21));
     const memCss = Object.assign({ fontSize: '13.5px', lineHeight: '21px', color: 'var(--ink)', textWrap: 'pretty' }, clamp(3, 21));
-    const photo = s.photo ? 'url("' + s.photo + '"), ' : '';
-    return Object.assign({}, s, { place: s.place || s.category || '', who: who, dot: LC[s.line] || '#E8B96A', grad: photo + (G[s.line] || G.Corporate), titleCss, storyCss, memCss,
+    const grad = G[s.line] || G.Corporate;
+    // the 16:7 band: the story's photograph when there is one (photo_position sets the crop), else the line gradient
+    const bandCss = { position: 'relative', aspectRatio: '16 / 7', backgroundColor: '#1A1A1A', backgroundImage: s.photo ? 'url("' + s.photo + '")' : grad, backgroundSize: 'cover', backgroundPosition: s.photo_position || 'center' };
+    return Object.assign({}, s, { place: s.place || s.category || '', who: who, dot: LC[s.line] || '#E8B96A', grad, bandCss, titleCss, storyCss, memCss,
       moreLabel: open ? 'Show less' : 'Read in full',
       toggle: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const m = Object.assign({}, this.state.csExp || {}); m[s.id] = !open; this.setState({ csExp: m }); },
       linkLabel: ex ? (ex.sure ? '↗ ' + ex.name : '? ' + ex.name) : '+ Link to an experience',

@@ -161,7 +161,7 @@ export function buildDataset(W, full = [], SITE = "https://aldar-signature-exper
     const ex = c.experience && expById[c.experience.id];
     return {
       id: c.id, line_label: c.line, category: c.category, title: c.title, place: c.place || null, story: c.story, what_made_it_memorable: c.memorable,
-      colleagues: c.colleagues || null, source: c.source || null,
+      colleagues: c.colleagues || null, source: c.source || null, photo_url: abs(c.photo),
       experience: ex ? { id: ex.id, name: ex.name, line: ex.line_label, stage: ex.stage, link_status: c.experience.sure ? "confirmed" : "proposed" } : null,
     };
   });
