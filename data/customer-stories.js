@@ -434,7 +434,9 @@ window.CS_DATA = {
    "memorable": "A simple, highly personal gesture created a strong emotional connection. Tala immediately wore the jersey, the family captured the moment, and she later changed her Instagram profile picture to herself wearing it.",
    "colleagues": "Aldar colleague: Ahmed Saber – Duty Manager, Crowne Plaza Yas Island",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/stories/cs-31-9c0ef990db.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-32",
@@ -447,7 +449,9 @@ window.CS_DATA = {
    "memorable": "The team identified an immediate personal need and resolved it proactively, turning a stressful situation into a highly personalized hospitality moment. The guest later provided written recognition of the exceptional service.",
    "colleagues": "Aldar colleague: Surendra Rajah, Stills Bar & Restaurant Supervisor",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/stories/cs-32-6dba282c76.webp",
+   "photo_position": "center 8%"
   },
   {
    "id": "cs-33",
@@ -460,7 +464,9 @@ window.CS_DATA = {
    "memorable": "The handmade artwork captured the character of Mamsha Beach and turned a first visit into a lasting personal memory. The guest specifically recognized the team for going “above and beyond” and creating an unforgettable souvenir.",
    "colleagues": "Sujan · Mamsha Beach team",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/stories/cs-33-9aa485bcb7.webp",
+   "photo_position": "center 20%"
   },
   {
    "id": "cs-34",
@@ -512,7 +518,9 @@ window.CS_DATA = {
    "memorable": "What started as curiosity became a cultural experience for the family. The children had a wonderful time, and their mother felt welcomed and included in a tradition that was new to her.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/stories/cs-37-3de6a908bb.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-38",
@@ -525,7 +533,9 @@ window.CS_DATA = {
    "memorable": "An unexpected gift, offered before anyone asked. The colouring books gave the children something of their own and set a happy tone for the whole visit.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/stories/cs-38-2e83241e84.webp",
+   "photo_position": "center 45%"
   },
   {
    "id": "cs-39",
