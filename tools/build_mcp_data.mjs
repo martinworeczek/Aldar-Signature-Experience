@@ -65,4 +65,17 @@ fs.mkdirSync(path.dirname(OUT), { recursive: true });
 fs.writeFileSync(OUT, JSON.stringify(dataset));
 fs.writeFileSync(NATIVE_OUT, JSON.stringify(native));
 fs.writeFileSync(OPTIONS_OUT, JSON.stringify(formOptions(W)));
+// ---- the branded CX Martin chat's visual index (app/martin.html shows image cards for experiences it names) ----
+{
+  const ppOff = JSON.parse(fs.readFileSync("features.json", "utf8")).project_plus === false;
+  const rel = (u) => (u && u.startsWith(SITE) ? u.slice(SITE.length) : u || null);
+  const short = (t, n) => { t = String(t || "").replace(/\s+/g, " ").trim(); return t.length > n ? t.slice(0, n - 1).replace(/\s+\S*$/, "") + "\u2026" : t; };
+  const exps = dataset.experiences.filter((x) => !(ppOff && x.line === "pp"));
+  const index = {
+    generated_at: dataset.generated_at,
+    experiences: exps.map((x) => ({ id: x.id, name: x.name, line: x.line_label, stage: x.stage, defining: !!x.defining, essence: short(x.essence || x.narrative, 190), image: rel(x.image_url), stories: (x.customer_stories || []).map((c) => c.id) })),
+    stories: (dataset.customer_stories || []).map((c) => ({ id: c.id, title: c.title, line: c.line_label, place: c.place, memorable: short(c.what_made_it_memorable, 160), photo: rel(c.photo_url), pos: (((native.CS_DATA || {}).stories || []).find((y) => y.id === c.id) || {}).photo_position || null, experience: c.experience ? c.experience.id : null })),
+  };
+  fs.writeFileSync("app/martin-index.json", JSON.stringify(index));
+}
 console.log("mcp dataset:", JSON.stringify(dataset.counts), (fs.statSync(OUT).size / 1e6).toFixed(2) + " MB; native", (fs.statSync(NATIVE_OUT).size / 1e6).toFixed(2) + " MB");

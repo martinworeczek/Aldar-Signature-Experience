@@ -158,7 +158,7 @@ CH_NEW = ("      // customer stories: the last chapter, only when this experienc
           + CH_OLD)
 
 GUARDS = [
-    ("  <!-- ===================== PAGE HEADER (non-dashboard views) ===================== -->", WALL, 1),
+    ("  <!-- ===================== PAGE HEADER (non-dashboard views) ===================== -->", WALL, 1, "<!-- ===================== CUSTOMER STORIES ===================== -->"),
     ("Submit &amp; review</b>.</div></sc-if>\n        </div>\n      </div>\n", CHAPTER, 1),
     (OPEN_SPAN, MARKER, 3),
     ("  // ===== Portfolio Discovery helpers =====\n", METHODS, 1),

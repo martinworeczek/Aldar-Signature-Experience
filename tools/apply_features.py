@@ -150,11 +150,24 @@ GUARDS += [
 
 GUARDS += [
     # Ask: CX Martin (Copilot Studio) in place of Echo while ask_echo is false
-    ("  <!-- ===================== ASSISTANT ===================== -->\n", '  <!-- ============ ASK CX MARTIN (Copilot Studio web chat, features.json) ============ -->\n  <sc-if value="{{ vMartin }}" hint-placeholder-val="{{ false }}">\n  <section style="max-width:none;padding:26px 28px 40px;width:100%">\n    <div style="position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(232,185,106,.26);background:radial-gradient(120% 140% at 50% 0%,#16232B 0%,#0A1014 70%);padding:30px 34px 28px">\n      <div style="font-size:9.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#E8B96A">Aldar &middot; Ask CX Martin</div>\n      <div style="font-family:\'Poppins\',sans-serif;color:#F6F3EC;font-size:clamp(26px,2.8vw,36px);font-weight:300;line-height:1.15;margin-top:12px;letter-spacing:-.015em">Ask CX Martin, Aldar&rsquo;s CX agent</div>\n      <div style="font-size:14px;font-weight:300;color:rgba(246,243,236,.72);line-height:1.6;margin-top:8px;max-width:70ch">The same agent as in Microsoft Copilot and Teams, answering live from the hub: signature experiences across every line, deployment, benchmarks, Aldar CX Time and side-by-side comparisons.</div>\n    </div>\n    <div style="margin-top:18px;border-radius:16px;overflow:hidden;border:1px solid rgba(232,185,106,.26);background:#0A1014;box-shadow:0 18px 44px -18px rgba(11,17,22,.45)">\n      <iframe src="{{ martinUrl }}" title="Ask CX Martin" allow="clipboard-write" style="display:block;width:100%;height:max(560px, calc(100vh - 300px));border:0;background:#0A1014"></iframe>\n    </div>\n  </section>\n  </sc-if>\n\n' + "  <!-- ===================== ASSISTANT ===================== -->\n", 1),
+    ("  <!-- ===================== ASSISTANT ===================== -->\n", '  <!-- ============ ASK CX MARTIN (Copilot Studio web chat, features.json) ============ -->\n  <sc-if value="{{ vMartin }}" hint-placeholder-val="{{ false }}">\n  <section style="max-width:none;padding:26px 28px 40px;width:100%">\n    <div style="position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(232,185,106,.26);background:radial-gradient(120% 140% at 50% 0%,#16232B 0%,#0A1014 70%);padding:30px 34px 28px">\n      <div style="font-size:9.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#E8B96A">Aldar &middot; Ask CX Martin</div>\n      <div style="font-family:\'Poppins\',sans-serif;color:#F6F3EC;font-size:clamp(26px,2.8vw,36px);font-weight:300;line-height:1.15;margin-top:12px;letter-spacing:-.015em">Ask CX Martin, Aldar&rsquo;s CX agent</div>\n      <div style="font-size:14px;font-weight:300;color:rgba(246,243,236,.72);line-height:1.6;margin-top:8px;max-width:70ch">The same agent as in Microsoft Copilot and Teams, answering live from the hub: signature experiences across every line, deployment, benchmarks, Aldar CX Time and side-by-side comparisons.</div>\n    </div>\n    <div style="margin-top:18px;border-radius:16px;overflow:hidden;border:1px solid rgba(232,185,106,.26);background:#0A1014;box-shadow:0 18px 44px -18px rgba(11,17,22,.45)">\n      <iframe src="{{ martinUrl }}" title="Ask CX Martin" allow="clipboard-write" style="display:block;width:100%;height:max(560px, calc(100vh - 300px));border:0;background:#0A1014"></iframe>\n    </div>\n  </section>\n  </sc-if>\n\n' + "  <!-- ===================== ASSISTANT ===================== -->\n", 1, "ASK CX MARTIN (Copilot Studio web chat"),
     ("vAssistant: V === 'assistant',", "vAssistant: V === 'assistant' && !" + O + ".askEcho, vMartin: V === 'assistant' && !!" + O + ".askEcho, martinUrl: window.__SIG_MARTIN_URL || '',", 1),
     ("iconItem('\u2726', 'Ask Echo', 'assistant')", "iconItem('\u2726', " + O + ".askEcho ? 'Ask CX Martin' : 'Ask Echo', 'assistant')", 1),
     ("['assistant', 'Ask Echo', 'The CX assistant'],", "['assistant', " + O + ".askEcho ? 'Ask CX Martin' : 'Ask Echo', " + O + ".askEcho ? 'Aldar\u2019s Copilot CX agent' : 'The CX assistant'],", 1),
     ("assistant: ['Overview', 'Ask Echo', ''],", "assistant: ['Overview', " + O + ".askEcho ? 'Ask CX Martin' : 'Ask Echo', ''],", 1),
+]
+
+GUARDS += [
+    # CX Martin: the branded chat (app/martin.html) opens an experience it names in the hub's detail view
+    ("    window.addEventListener('hashchange', this._onHash);\n",
+     "    window.addEventListener('hashchange', this._onHash);\n    window.addEventListener('message', (ev) => { try { if (ev.origin !== location.origin) return; const m = ev.data || {}; if (m.type === 'sig:open-exp' && m.id) this.openExp(String(m.id)); } catch (e) {} });\n", 1),
+    # CX Martin page: slimmer intro, and the chat fills the rest of the screen
+    ("padding:30px 34px 28px\">", "padding:18px 26px 16px\">", 1),
+    ("font-size:clamp(26px,2.8vw,36px)", "font-size:clamp(22px,2.2vw,28px)", 1),
+    ("height:max(560px, calc(100vh - 300px))", "height:max(480px, calc(100vh - 262px))", 1),
+    ("line-height:1.15;margin-top:12px;letter-spacing:-.015em\">Ask CX Martin, Aldar", "line-height:1.15;margin-top:8px;letter-spacing:-.015em\">Ask CX Martin, Aldar", 1),
+    ("font-size:14px;font-weight:300;color:rgba(246,243,236,.72);line-height:1.6;margin-top:8px;max-width:70ch\">The same agent as in Microsoft Copilot", "font-size:13px;font-weight:300;color:rgba(246,243,236,.72);line-height:1.55;margin-top:5px;max-width:none\">The same agent as in Microsoft Copilot", 1),
+    ("<div style=\"margin-top:18px;border-radius:16px;overflow:hidden;border:1px solid rgba(232,185,106,.26);background:#0A1014;box-shadow:0 18px 44px -18px rgba(11,17,22,.45)\">\n      <iframe src=\"{{ martinUrl }}\"", "<div style=\"margin-top:12px;border-radius:16px;overflow:hidden;border:1px solid rgba(232,185,106,.26);background:#0A1014;box-shadow:0 18px 44px -18px rgba(11,17,22,.45)\">\n      <iframe src=\"{{ martinUrl }}\"", 1),
 ]
 
 GUARDS += [
@@ -203,8 +216,10 @@ html = html[:i] + tag + html[i:]
 m = re.search(r'(<script type="__bundler/template">\s*)(".*?")(\s*</script>)', html, re.S)
 t = json.loads(m.group(2))
 GUARDS += customer_stories.GUARDS
-for old, new, n in GUARDS:
-    if t.count(new) >= n:
+for g in GUARDS:
+    old, new, n = g[:3]
+    # skip when already applied: the new text is there, or (for blocks other guards refine later) its marker is
+    if t.count(new) >= n or (len(g) > 3 and g[3] in t):
         continue
     assert t.count(old) == n, f"guard anchor found {t.count(old)}x (expected {n}): {old[:70]}"
     t = t.replace(old, new)
