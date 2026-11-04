@@ -131,6 +131,10 @@ def main():
     out = re.sub(r'<script type="application/json" id="__sig_state">.*?</script>', '', out, flags=re.S)
     out = re.sub(r'<script id="__sig_ai_netlify">.*?</script>\n?', '', out, flags=re.S)
     out = re.sub(r'<script id="__sig_c2_fit">.*?</script>\n?', '', out, flags=re.S)
+    # the hub's feature script carries hub-only data (Customer Stories, implementation photos, themes);
+    # the CX Times page only needs the on/off switches
+    fm = re.search(r'<script id="__sig_features">(window\.__SIG_OFF=\{.*?\});.*?</script>', out, re.S)
+    if fm: out = out[:fm.start()] + '<script id="__sig_features">' + fm.group(1) + ';</script>' + out[fm.end():]
     out = out.replace("<title>Bundled Page</title>", "<title>Aldar CX Times</title>", 1)
 
     if os.path.isdir(OUT + "/img"):

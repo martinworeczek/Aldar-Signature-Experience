@@ -64,7 +64,7 @@ for k, e in man.items():
         # follow-ups on an applied module (each applied once, when its old text is still there)
         n0 = s
         for old, new in FOLLOWUPS:
-            if old in s and new not in s: s = s.replace(old, new)
+            if old in s: s = s.replace(old, new)  # the old text is gone once applied
         if s == n0:
             print("benchmark v3: already applied"); done = True; break
         b2 = s.encode("utf-8"); b2 = gzip.compress(b2, 9, mtime=0) if z else b2
@@ -79,7 +79,7 @@ for k, e in man.items():
     r = s.index("  renderVals() {"); ret = s.index("\n    return {\n", r)
     s = s[:ret] + "\n    return {\n      u3: this._u3(S, RDY)," + s[ret + len("\n    return {"):]
     for old, new in FOLLOWUPS:
-        if old in s and new not in s: s = s.replace(old, new)
+        if old in s: s = s.replace(old, new)  # the old text is gone once applied
     b2 = s.encode("utf-8")
     if z: b2 = gzip.compress(b2, 9, mtime=0)
     e["data"] = base64.b64encode(b2).decode()
