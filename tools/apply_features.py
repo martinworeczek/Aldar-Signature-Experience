@@ -156,6 +156,11 @@ GUARDS += [
     ("assistant: ['Overview', 'Ask Echo', ''],", "assistant: ['Overview', " + O + ".askEcho ? 'Ask CX Martin' : 'Ask Echo', ''],", 1),
 ]
 
+GUARDS += [
+    # sidebar: no "New" badge on Benchmark and Boards
+    ("    // ---- view header text ----\n", "    navGroups.forEach(g => g.items.forEach(it => { if (it.right === 'New' && (it.label === 'Benchmark' || it.label === 'Boards')) { it.right = ''; it.rightCss = {}; } }));\n    // ---- view header text ----\n", 1),
+]
+
 # guards inside bundled modules: (old, new, count)
 ASSET_GUARDS = [
     # Benchmark: the Benchmark Editor tab (both tab lists) and its view
