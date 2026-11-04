@@ -6,5 +6,7 @@
   "cx_academy": false,
   "benchmark_editor": false,
   "project_plus": false,
-  "board_sharing": true
+  "board_sharing": true,
+  "ask_echo": false,
+  "cx_martin_chat_url": "https://copilotstudio.microsoft.com/environments/2b4ab1ce-075d-ef6b-9c81-2cc01333575c/bots/cr57a_cxmartin_eoddtv/webchat?__version__=2&enableFileAttachment=false&cliAgent=true"
 }
