@@ -96,6 +96,16 @@ const storyText = (s) => [s.title, s.dek, (s.summary || []).join(" "), s.why_it_
 const storyRow = (s) => ({ id: s.id, edition: s.edition, format: s.format, signal_of_the_week: s.signal_of_the_week, tag: s.tag, source: s.source, published: s.published, duration: s.duration, title: s.title, dek: s.dek, why_it_matters: s.why_it_matters, relevant_lines: s.relevant_lines, source_url: s.source_url });
 const allStories = (D) => D.cx_time.flatMap((e) => e.stories);
 
+// ---------------- customer stories ----------------
+const CS_LINE = { cp: "Corporate", hp: "Hospitality", rp: "Retail", edu: "Education", dev: "Development", est: "Estates", pp: "Project Plus" };
+const csText = (c) => [c.title, c.place, c.category, c.line_label, c.story, c.what_made_it_memorable, c.colleagues, c.experience?.name].join(" ");
+const csRow = (c) => ({ id: c.id, title: c.title, line: c.line_label, place: c.place, what_made_it_memorable: c.what_made_it_memorable, experience: c.experience ? { id: c.experience.id, name: c.experience.name, link_status: c.experience.link_status } : null });
+const csAll = (D) => D.customer_stories || [];
+function findCustomerStory(D, id) {
+  const n = norm(id), all = csAll(D);
+  return all.find((c) => norm(c.id) === n) || all.find((c) => norm(c.title) === n) || all.find((c) => norm(c.title).includes(n));
+}
+
 const count = (arr, f) => {
   const o = {};
   for (const x of arr) for (const k of [].concat(f(x) ?? "—")) o[k] = (o[k] || 0) + 1;
@@ -135,6 +145,7 @@ export const TOOLS = [
         benchmarks: "208 global CX reference cases (brand, industry, why it works, how it transfers to Aldar lines, which Aldar experiences it informed). Tools: list_benchmarks, get_benchmark.",
         cx_time: "Aldar CX Time editions: curated articles, videos and podcasts with AI summary, why it matters to Aldar and a suggested signature experience. Tools: list_cx_time, get_cx_time_story.",
         idea_exchange: "26 transferable experience moves, what each becomes in every line, and the experiences that embody it. Tool: get_idea_moves.",
+        customer_stories: "Customer Stories: short anecdotes, told by the colleagues who delivered them, of how a signature experience was lived by a real customer (title, line, place, the story, what made it memorable, colleagues). Some are linked to the experience they express: confirmed, or proposed and awaiting a line owner's check. Tools: list_customer_stories, get_customer_story; get_experience also returns an experience's stories.",
         search: "Free-text search across all categories at once. Tool: search.",
       },
       notes: [
@@ -147,18 +158,19 @@ export const TOOLS = [
   {
     name: "search",
     title: "Search everything",
-    description: "Free-text search across signature experiences, benchmarks, CX Time stories and Idea Exchange moves. Returns the best matches per category with ids to pass to the get_* tools.",
+    description: "Free-text search across signature experiences, customer stories, benchmarks, CX Time stories and Idea Exchange moves. Returns the best matches per category with ids to pass to the get_* tools.",
     inputSchema: { type: "object", required: ["query"], properties: {
       query: { type: "string", description: "What to look for, e.g. 'pet welcome', 'kids check-in', 'survey replacement'." },
-      categories: { type: "array", items: { type: "string", enum: ["experiences", "benchmarks", "cx_time", "idea_moves"] }, description: "Limit to these categories (default all)." },
+      categories: { type: "array", items: { type: "string", enum: ["experiences", "customer_stories", "benchmarks", "cx_time", "idea_moves"] }, description: "Limit to these categories (default all)." },
       line: LINE_ARG, limit: { type: "integer", description: "Max matches per category (default 8, max 50)." },
     } },
     run: (D, a) => {
       if (!a.query) throw new ToolError("query is required");
-      const cats = a.categories?.length ? a.categories : ["experiences", "benchmarks", "cx_time", "idea_moves"];
+      const cats = a.categories?.length ? a.categories : ["experiences", "customer_stories", "benchmarks", "cx_time", "idea_moves"];
       const L = Math.min(Number(a.limit) || 8, 50), lk = lineKey(a.line), out = { query: a.query };
       const top = (arr, txt, row) => rank(arr, txt, a.query).slice(0, L).map(([v, x]) => ({ score: Math.round(v * 100) / 100, ...row(x) }));
       if (cats.includes("experiences")) out.experiences = top(D.experiences.filter((x) => !lk || x.line === lk), expText, expRow);
+      if (cats.includes("customer_stories")) out.customer_stories = top(csAll(D).filter((c) => !lk || c.line_label === CS_LINE[lk]), csText, csRow);
       if (cats.includes("benchmarks")) out.benchmarks = top(D.benchmarks.filter((b) => !lk || b.line === lk), bmText, bmRow);
       if (cats.includes("cx_time")) out.cx_time = top(allStories(D), storyText, storyRow);
       if (cats.includes("idea_moves")) out.idea_moves = top(D.idea_moves, (m) => [m.label, m.description, Object.values(m.becomes_by_line).join(" ")].join(" "), (m) => ({ key: m.key, label: m.label, journey_bucket: m.journey_bucket, description: m.description }));
@@ -175,7 +187,7 @@ export const TOOLS = [
   {
     name: "get_experience",
     title: "Get one signature experience",
-    description: "The full record for one signature experience: narrative, stage, target, latest note and dated history, deployment by asset, audit scores, touchpoints, benefits, photo URL, SharePoint asset folder, Idea Exchange moves and the benchmarks that informed it. Accepts the id or the name.",
+    description: "The full record for one signature experience: narrative, stage, target, latest note and dated history, deployment by asset, audit scores, touchpoints, benefits, photo URL, implementation photos, SharePoint asset folder, Idea Exchange moves, the benchmarks that informed it and its customer stories (customer_stories, when it has any). Accepts the id or the name.",
     inputSchema: { type: "object", required: ["id"], properties: { id: { type: "string", description: "Experience id (from list_experiences/search) or its name." } } },
     run: (D, a) => {
       const x = findExperience(D, a.id);
@@ -299,6 +311,37 @@ export const TOOLS = [
       if (!lk) return m;
       const label = D.programmes.find((p) => p.line === lk).line_label;
       return { ...m, becomes_by_line: { [label]: m.becomes_by_line[label] }, experiences: m.experiences.filter((x) => x.line === label) };
+    },
+  },
+  {
+    name: "list_customer_stories",
+    title: "List customer stories",
+    description: "Customer Stories: moments told by the colleagues who delivered them, each an expression of a signature experience in the field. Filter by business line, linked experience, whether a story is linked to an experience yet, or free text. Returns compact rows plus totals by line; use get_customer_story for the full story.",
+    inputSchema: { type: "object", properties: {
+      line: LINE_ARG,
+      experience: { type: "string", description: "Only stories linked to this experience (id or name)." },
+      linked: { type: "boolean", description: "true = only stories linked to a signature experience; false = only stories awaiting a link." },
+      query: { type: "string", description: "Free text matched against title, place, story, what made it memorable and colleagues." }, ...PAGING,
+    } },
+    run: (D, a) => {
+      const all = csAll(D); let r = all; const lk = lineKey(a.line);
+      if (lk) r = r.filter((c) => c.line_label === CS_LINE[lk]);
+      if (a.experience) { const x = findExperience(D, a.experience); if (!x) throw new ToolError(`No experience matches "${a.experience}".`); r = r.filter((c) => c.experience && c.experience.id === x.id); }
+      if (a.linked != null) r = r.filter((c) => !!c.experience === !!a.linked);
+      if (a.query) r = rank(r, csText, a.query).map(([, c]) => c);
+      return { updated: D.customer_stories_updated || null, totals: { stories: all.length, linked_to_an_experience: all.filter((c) => c.experience).length, by_line: count(all, (c) => c.line_label) },
+        note: "Links marked 'proposed' were inferred from the story text and still need a line owner's confirmation.", ...page(r.map(csRow), a.limit, a.offset) };
+    },
+  },
+  {
+    name: "get_customer_story",
+    title: "Get one customer story",
+    description: "One customer story in full: title, business line, place, the story, what made it memorable, the colleagues involved, its source and the signature experience it expresses (with link status confirmed or proposed). Accepts the id (e.g. cs-01) or the title.",
+    inputSchema: { type: "object", required: ["id"], properties: { id: { type: "string", description: "Story id (from list_customer_stories/search) or its title." } } },
+    run: (D, a) => {
+      const c = findCustomerStory(D, a.id);
+      if (!c) throw new ToolError(`No customer story matches "${a.id}". Use list_customer_stories or search to find it.`);
+      return c;
     },
   },
   {

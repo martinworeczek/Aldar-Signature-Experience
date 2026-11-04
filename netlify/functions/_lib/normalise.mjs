@@ -155,6 +155,20 @@ export function buildDataset(W, full = [], SITE = "https://aldar-signature-exper
     experiences: experiences.filter((x) => x.idea_moves.some((y) => y.key === m.k)).map((x) => ({ id: x.id, name: x.name, line: x.line_label })),
   }));
 
+  // ---- Customer Stories (data/customer-stories.js): hidden records are left out, as in the hub ----
+  const expById = Object.fromEntries(experiences.map((x) => [x.id, x]));
+  const customer_stories = (((W.CS_DATA || {}).stories) || []).filter((c) => c && !c.hidden).map((c) => {
+    const ex = c.experience && expById[c.experience.id];
+    return {
+      id: c.id, line_label: c.line, category: c.category, title: c.title, place: c.place || null, story: c.story, what_made_it_memorable: c.memorable,
+      colleagues: c.colleagues || null, source: c.source || null,
+      experience: ex ? { id: ex.id, name: ex.name, line: ex.line_label, stage: ex.stage, link_status: c.experience.sure ? "confirmed" : "proposed" } : null,
+    };
+  });
+  for (const c of customer_stories) if (c.experience) {
+    const x = expById[c.experience.id];
+    (x.customer_stories = x.customer_stories || []).push({ id: c.id, title: c.title, place: c.place, story: c.story, what_made_it_memorable: c.what_made_it_memorable, colleagues: c.colleagues, link_status: c.experience.link_status });
+  }
   const count = (arr, f) => arr.reduce((o, x) => { const k = f(x) ?? "—"; o[k] = (o[k] || 0) + 1; return o; }, {});
   const dataset = {
     generated_at: new Date().toISOString(), site: SITE,
@@ -163,11 +177,13 @@ export function buildDataset(W, full = [], SITE = "https://aldar-signature-exper
       experiences: experiences.length, by_line: count(experiences, (x) => x.line_label), by_stage: count(experiences, (x) => x.stage),
       benchmarks: benchmarks.length, cx_time_editions: cx_time.length, cx_time_stories: cx_time.reduce((n, e) => n + e.stories.length, 0),
       idea_moves: idea_moves.length, asset_folders: Object.keys(folders).length,
+      customer_stories: customer_stories.length, customer_stories_linked: customer_stories.filter((c) => c.experience).length,
     },
-    programmes, experiences, benchmarks, cx_time, idea_moves,
+    programmes, experiences, benchmarks, cx_time, idea_moves, customer_stories,
+    customer_stories_updated: (W.CS_DATA || {}).updated || null,
   };
   return dataset;
 }
 
 // The globals the dataset is built from (what the build snapshots for /mcp).
-export const NATIVE_GLOBALS = ["CP_DATA", "HP_DATA", "RP_DATA", "EDU_DATA", "DEV_DATA", "EST_DATA", "PP_DATA", "HP_IMG", "DEV_IMG", "EST_IMG", "SIG_ASSETS", "IX_ENGINE", "EXP_MOVES", "BM_LINKS", "BM_IMAGES_A", "BM_IMAGES_B", "BM_IMAGES_C", "BM_IMAGES_D", "AT_DATA", "AT_IMG"];
+export const NATIVE_GLOBALS = ["CP_DATA", "HP_DATA", "RP_DATA", "EDU_DATA", "DEV_DATA", "EST_DATA", "PP_DATA", "HP_IMG", "DEV_IMG", "EST_IMG", "SIG_ASSETS", "IX_ENGINE", "EXP_MOVES", "BM_LINKS", "BM_IMAGES_A", "BM_IMAGES_B", "BM_IMAGES_C", "BM_IMAGES_D", "AT_DATA", "AT_IMG", "CS_DATA"];

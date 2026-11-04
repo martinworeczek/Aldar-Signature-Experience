@@ -34,6 +34,7 @@ Not included, because they live only in each visitor's browser: saved boards, au
 | `get_programme` | "What are Estates' journeys and verticals?" |
 | `list_benchmarks` / `get_benchmark` | "Shopping mall benchmarks on loyalty", "Why does JPMorgan 270 Park work?" |
 | `list_cx_time` / `get_cx_time_story` | "Podcasts in the latest edition", "Summarise the Oura TCX story". |
+| `list_customer_stories` / `get_customer_story` | "Customer stories from our schools", "Has Behind the Build worked for a real customer?". Stories from `data/customer-stories.js` (hidden ones left out), each with the experience it expresses and whether that link is confirmed or proposed. `get_experience` also returns an experience's `customer_stories`. |
 | `compare_experiences` | "Compare The W Paws arrival with The note nobody asked for." The hub's AI read of 2 to 4 experiences: verdict, shared and different points by lens (need, mechanism, moment), takeaway. Same read, same cache as the hub's compare view (`/api/compare-read`, `netlify/functions/_lib/compare-read.mjs`). |
 | `get_idea_moves` | *Hidden while `idea_exchange` is false.* "What does 'a named greeting ritual' become in Retail, and who already does it?" |
 
@@ -47,7 +48,7 @@ Every tool is read-only (`readOnlyHint`) and returns both text JSON and `structu
    - **Server description:** Read-only access to Aldar's signature experiences, programmes, deployment, benchmarks and CX Time.
    - **Server URL:** `https://aldar-signature-experience.netlify.app/mcp`
 3. **Authentication:** choose **None**.
-4. Click **Create**. Copilot Studio lists the 11 tools; leave them all enabled.
+4. Click **Create**. Copilot Studio lists the 13 tools; leave them all enabled.
 5. In the agent's instructions, add: "For anything about Aldar signature experiences, CX programmes, benchmarks or CX Time, use the Aldar Signature Experience Hub tools. Call get_overview first if unsure. Quote stages, dates and counts exactly as returned."
 
 If your Copilot Studio tenant offers only the custom-connector route, create a custom connector from an OpenAPI definition with host `aldar-signature-experience.netlify.app`, base path `/`, a POST operation `/mcp` marked `x-ms-agentic-protocol: mcp-streamable-1.0`, and no authentication.
