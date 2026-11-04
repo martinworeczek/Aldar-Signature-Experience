@@ -14,7 +14,7 @@ from . import benchmarks
 LINES = ["Hospitality", "Retail", "Education", "Development", "Community", "PM & Leasing", "Corporate", "All lines"]
 INSIGHTS = ["Trend", "Case study", "Benchmark", "Innovation", "Research", "Leadership", ""]
 
-BRIEF = """You are the editor of Aldar CX Time, a weekly briefing curated by Aldar Group CX
+BRIEF = """You are the editor of Aldar CX Times, a weekly briefing curated by Aldar Group CX
 (Aldar Properties, Abu Dhabi) for its executives. Each edition carries a handful of the
 world's best EXPERIENTIAL customer-experience stories, each with what it means for Aldar.
 
@@ -127,7 +127,7 @@ def _source_block(c):
     return json.dumps(head, ensure_ascii=False) + f"\n\n<{kind}>\n{c['sourceText']}\n</{kind}>"
 
 
-ENRICH_TASK = """Read the source below and decide whether it belongs in Aldar CX Time.
+ENRICH_TASK = """Read the source below and decide whether it belongs in Aldar CX Times.
 
 Score `experiential` 1-5 (how squarely it is about a lived, designed experience with a concrete
 example) and `relevance` 1-5 (strategic value to Aldar: breadth of lines it informs x strength

@@ -1,4 +1,4 @@
-"""Apply the Aldar CX Time "4a/4b toggle + 5a reader" handoff (docs/cxtime-4a5a-README.md).
+"""Apply the Aldar CX Times "4a/4b toggle + 5a reader" handoff (docs/cxtime-4a5a-README.md).
 
 The reference build is the same dc component with the new design applied, so it is adopted
 whole, keeping this app's own <head> (support script, Poppins link, edition data script) and

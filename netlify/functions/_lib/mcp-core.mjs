@@ -133,7 +133,7 @@ export const TOOLS = [
   {
     name: "get_overview",
     title: "Hub overview",
-    description: "Start here. Describes every data category the Aldar Signature Experience Hub holds (signature experiences across 7 business lines, programmes, deployment, benchmarks, CX Time, Idea Exchange, SharePoint asset folders), with live counts, data freshness and which tool answers which question.",
+    description: "Start here. Describes every data category the Aldar Signature Experience Hub holds (signature experiences across 7 business lines, programmes, deployment, benchmarks, CX Times, Idea Exchange, SharePoint asset folders), with live counts, data freshness and which tool answers which question.",
     inputSchema: { type: "object", properties: {} },
     run: (D) => ({
       site: D.site, generated_at: D.generated_at, data_stamps: D.data_stamps, counts: D.counts,
@@ -143,7 +143,7 @@ export const TOOLS = [
         programmes: "Each line's programme definition: vision, pillars, journeys/phases, properties or assets, segments, tiers, research. Tool: get_programme.",
         deployment: "Which assets each experience is in scope for and live at (hotels, malls, schools, communities, HQ). Tools: list_experiences (property / live_at filters), portfolio_breakdown (group_by property).",
         benchmarks: "208 global CX reference cases (brand, industry, why it works, how it transfers to Aldar lines, which Aldar experiences it informed). Tools: list_benchmarks, get_benchmark.",
-        cx_time: "Aldar CX Time editions: curated articles, videos and podcasts with AI summary, why it matters to Aldar and a suggested signature experience. Tools: list_cx_time, get_cx_time_story.",
+        cx_time: "Aldar CX Times editions: curated articles, videos and podcasts with AI summary, why it matters to Aldar and a suggested signature experience. Tools: list_cx_time, get_cx_time_story.",
         idea_exchange: "26 transferable experience moves, what each becomes in every line, and the experiences that embody it. Tool: get_idea_moves.",
         customer_stories: "Customer Stories: short anecdotes, told by the colleagues who delivered them, of how a signature experience was lived by a real customer (title, line, place, the story, what made it memorable, colleagues). Some are linked to the experience they express: confirmed, or proposed and awaiting a line owner's check. Tools: list_customer_stories, get_customer_story; get_experience also returns an experience's stories.",
         search: "Free-text search across all categories at once. Tool: search.",
@@ -158,7 +158,7 @@ export const TOOLS = [
   {
     name: "search",
     title: "Search everything",
-    description: "Free-text search across signature experiences, customer stories, benchmarks, CX Time stories and Idea Exchange moves. Returns the best matches per category with ids to pass to the get_* tools.",
+    description: "Free-text search across signature experiences, customer stories, benchmarks, CX Times stories and Idea Exchange moves. Returns the best matches per category with ids to pass to the get_* tools.",
     inputSchema: { type: "object", required: ["query"], properties: {
       query: { type: "string", description: "What to look for, e.g. 'pet welcome', 'kids check-in', 'survey replacement'." },
       categories: { type: "array", items: { type: "string", enum: ["experiences", "customer_stories", "benchmarks", "cx_time", "idea_moves"] }, description: "Limit to these categories (default all)." },
@@ -267,8 +267,8 @@ export const TOOLS = [
   },
   {
     name: "list_cx_time",
-    title: "List Aldar CX Time stories",
-    description: "Aldar CX Time editions and their curated stories (articles, videos, podcasts). Filter by edition number (default: every edition), format (read/watch/listen), tag, relevant Aldar line or free text.",
+    title: "List Aldar CX Times stories",
+    description: "Aldar CX Times editions and their curated stories (articles, videos, podcasts). Filter by edition number (default: every edition), format (read/watch/listen), tag, relevant Aldar line or free text.",
     inputSchema: { type: "object", properties: {
       edition: { type: "integer", description: "Edition number; omit for all editions." },
       format: { type: "string", enum: ["read", "watch", "listen"] }, tag: { type: "string" },
@@ -287,13 +287,13 @@ export const TOOLS = [
   },
   {
     name: "get_cx_time_story",
-    title: "Get one CX Time story",
-    description: "A full CX Time story: AI summary, key insights, why it matters to Aldar, relevant lines, the suggested signature experience(s), speakers, source and transcript links, image URL.",
+    title: "Get one CX Times story",
+    description: "A full CX Times story: AI summary, key insights, why it matters to Aldar, relevant lines, the suggested signature experience(s), speakers, source and transcript links, image URL.",
     inputSchema: { type: "object", required: ["id"], properties: { id: { type: "string", description: "Story id (e.g. e2-s1) or title." } } },
     run: (D, a) => {
       const n = norm(a.id), all = allStories(D);
       const s = all.find((x) => norm(x.id) === n) || all.find((x) => norm(x.title).includes(n));
-      if (!s) throw new ToolError(`No CX Time story matches "${a.id}".`);
+      if (!s) throw new ToolError(`No CX Times story matches "${a.id}".`);
       return s;
     },
   },
@@ -363,8 +363,8 @@ const IX_OFF = FEATURES.idea_exchange === false;
 if (IX_OFF) {
   const k = TOOLS.findIndex((t) => t.name === "get_idea_moves"); if (k >= 0) TOOLS.splice(k, 1);
   const WORDING = [
-    [", CX Time, Idea Exchange, SharePoint", ", CX Time, SharePoint"],
-    ["benchmarks, CX Time stories and Idea Exchange moves", "benchmarks and CX Time stories"],
+    [", CX Times, Idea Exchange, SharePoint", ", CX Times, SharePoint"],
+    ["benchmarks, CX Times stories and Idea Exchange moves", "benchmarks and CX Times stories"],
     ["target go-live window, Idea Exchange move, or free text", "target go-live window, or free text"],
     ["SharePoint asset folder, Idea Exchange moves and the benchmarks", "SharePoint asset folder and the benchmarks"],
   ];

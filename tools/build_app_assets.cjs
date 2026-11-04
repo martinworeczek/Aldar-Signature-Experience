@@ -57,7 +57,7 @@ const og = (kicker, title1, title2, sub) => `<html><head><style>${fonts}
   await shot(icon(180, 0.70), 180, 180, "apple-touch-icon.png");
   await shot(icon(48, 0.80), 48, 48, "favicon-48.png");
   await shot(icon(32, 0.84), 32, 32, "favicon-32.png");
-  await shot(og("Aldar · Group CX", "Signature Experience", "Hub", "Every signature experience across Aldar's seven business lines, with global benchmarks, Aldar CX Time and the Idea Exchange."), 1200, 630, "og-hub.jpg", "jpeg");
+  await shot(og("Aldar · Group CX", "Signature Experience", "Hub", "Every signature experience across Aldar's seven business lines, with global benchmarks, Aldar CX Times and the Idea Exchange."), 1200, 630, "og-hub.jpg", "jpeg");
   await shot(og("Aldar · Group CX", "Submit &amp;", "Review", "Business-line leads submit new signature experiences and updates. Group CX reviews each one before it goes live on the hub."), 1200, 630, "og-submit.jpg", "jpeg");
   await b.close();
 })();

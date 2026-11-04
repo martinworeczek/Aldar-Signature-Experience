@@ -404,7 +404,7 @@ def write_review(d, st, conf):
     recs = {r["key"]: r for r in st["records"]}
     L = []
     hold = " · HOLD" if p["hold"] else ""
-    L.append(f"# Aldar CX Time · Edition {ed['n']} · {ed['date']}{hold}\n")
+    L.append(f"# Aldar CX Times · Edition {ed['n']} · {ed['date']}{hold}\n")
     counts = Counter(i["format"] for i in ed["items"])
     L.append(f"**{len(ed['items'])} stories** · {counts['read']} read · {counts['watch']} watch · {counts['listen']} listen. "
              f"Caps {conf['edition']['caps']['read']}/{conf['edition']['caps']['watch']}/{conf['edition']['caps']['listen']}; "
@@ -699,7 +699,7 @@ def publish_benchmarks(st, archive):
 
 
 def preview(out, date=None):
-    """Build the standalone CX Time page with the proposed edition, without touching the repo's data."""
+    """Build the standalone CX Times page with the proposed edition, without touching the repo's data."""
     d = run_dir(date) if date else latest_run()
     st = load_state(d)
     archive = store.load()

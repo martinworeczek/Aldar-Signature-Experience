@@ -20,7 +20,7 @@ The job is **to turn it into a data-driven template.** Use a Node build (templat
 **High-fidelity, approved by the client.** The colours, sizes, line-heights, padding and copy rules below are final.
 
 ## Client decisions (do not undo)
-- **The name is "CX Times"** (with the s) in the masthead and the `<title>`. The live Hub still says "CX Time". Leave the Hub as it is unless the client asks.
+- **The name is "CX Times"** (with the s) in the masthead and the `<title>`. The live Hub still says "CX Times". Leave the Hub as it is unless the client asks.
 - **Poppins throughout.** No serif.
 - **No headline or intro under the masthead.** The masthead and date line lead straight into story 01.
 - **The template's moment cards ("moment bubbles") are deliberately left out.** So are its top navigation bar, home button and "Next ›" pill.
@@ -175,10 +175,10 @@ The originals are small, so the 2× output is upscaled and looks slightly soft o
 - `img/`:
   - `top5-01.jpg` to `top5-05.jpg`: the five story boards, with fades baked in.
   - `pat-sadu-mini-clear.png`: the gold Sadu lozenge motif on a transparent ground, used in the masthead and the sign-off.
-- In the project root (not in this folder): `CX Time EDM Options.dc.html` is the review canvas. 5a is under Turn 5, and the Tweaks panel has a 375px mobile toggle.
+- In the project root (not in this folder): `CX Times EDM Options.dc.html` is the review canvas. 5a is under Turn 5, and the Tweaks panel has a 375px mobile toggle.
 
 ## How the pipeline builds it (`pipeline/cxtime/edm.py`, `newsletter.py`)
-- **Links.** Each board's **Read / Watch / Listen to the story** link goes to the **source material** (the record's `sourceUrl`), as Group CX asked. Titles and the Read the edition button go to the CX Time edition, `https://aldar-cx-time.netlify.app`.
+- **Links.** Each board's **Read / Watch / Listen to the story** link goes to the **source material** (the record's `sourceUrl`), as Group CX asked. Titles and the Read the edition button go to the CX Times edition, `https://aldar-cx-time.netlify.app`.
 - **Fits the reading window.** The card fills the reading pane up to **800px** and shrinks to any narrower pane or phone. Board photos are cut at **1600×1000**, the shape of the widest panel (800×500). That way CSS `cover` only ever trims their sides and never the baked top fade, and boards join without a seam at every width. The split's left column is 36% wide. Outlook for Windows gets 800px ghost tables and 800×500 VML panels.
 - **The five stories:** `newsletter.top_five()` takes the lead first, then the highest relevance in edition order. A `/pick` on the review PR takes precedence.
 - **A story without a photograph** gets a green board sized to its pill and title.

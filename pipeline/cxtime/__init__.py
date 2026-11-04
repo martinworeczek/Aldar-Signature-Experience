@@ -1,1 +1,1 @@
-"""Aldar CX Time weekly edition pipeline."""
+"""Aldar CX Times weekly edition pipeline."""

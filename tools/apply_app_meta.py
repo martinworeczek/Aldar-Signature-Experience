@@ -88,7 +88,7 @@ def apply(path, block, restore=False, drop_title=None):
 
 apply("index.html",
       tags("Aldar Signature Experience Hub",
-           "Every signature experience across Aldar's seven business lines, with global benchmarks, Aldar CX Time and the Idea Exchange. Curated by Group CX.",
+           "Every signature experience across Aldar's seven business lines, with global benchmarks, Aldar CX Times and the Idea Exchange. Curated by Group CX.",
            SITE + "/", "/app/og-hub.jpg", "Aldar Signature Experience Hub"),
       restore=True, drop_title="  <title>Bundled Page</title>\n")
 apply("sx/index.html",

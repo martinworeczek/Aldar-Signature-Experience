@@ -136,7 +136,7 @@ export function buildDataset(W, full = [], SITE = "https://aldar-signature-exper
     return r;
   });
 
-  // ---- CX Time ----
+  // ---- CX Times ----
   const cx_time = W.AT_DATA.editions.map((ed) => ({
     edition: ed.n, date: ed.date,
     stories: ed.items.map((s) => ({

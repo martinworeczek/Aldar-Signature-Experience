@@ -1,4 +1,4 @@
-# Aldar CX Time: weekly edition pipeline
+# Aldar CX Times: weekly edition pipeline
 
 This replaces the old three-skill master prompt with a Python pipeline. It runs on its own
 every **Monday at 07:07 Abu Dhabi time** (GitHub Actions) and stops at a **review gate**: a pull
@@ -153,14 +153,14 @@ permanent: correct it in a later edition, never by editing the archive.
 deleted). It then rewrites the live archive, the lock, the hub and the xlsx without them. Their
 stories still count as published, so the weekly run never offers them again. Afterwards, rebuild the
 standalone site and redeploy both sites. Editions 1 and 2 were retired on 4 November 2026;
-CX Time now starts at Edition 3, and the next edition is 4.
+CX Times now starts at Edition 3, and the next edition is 4.
 
 If an edition is still open the next Monday, that run is skipped and the pull request gets a
 reminder. Close the pull request to discard an edition.
 
 ## The announcement email
 
-Every edition gets a designed announcement email (design "5a Top Five", spec in `docs/edm/README.md`). It carries the edition's **five most relevant stories**, the lead first. Each is a full-bleed photo board with *The story* and *Signature Experience opportunity* (the edition's own "why it matters" text, verbatim). Each board's **Read / Watch / Listen to the story** link goes to the source. A **Read the edition** panel leads into CX Time. The email is fluid, so it fits any reading pane or phone.
+Every edition gets a designed announcement email (design "5a Top Five", spec in `docs/edm/README.md`). It carries the edition's **five most relevant stories**, the lead first. Each is a full-bleed photo board with *The story* and *Signature Experience opportunity* (the edition's own "why it matters" text, verbatim). Each board's **Read / Watch / Listen to the story** link goes to the source. A **Read the edition** panel leads into CX Times. The email is fluid, so it fits any reading pane or phone.
 
 - **Words.** The subject is `Aldar CX Times · Edition N — the top five`, and a one-line preheader is written with the proposal. Both are shown on the review page under *Announcement email*; change them with `/subject` or `/preheader` followed by your text. Choose which stories follow the lead with `/pick e3-s4 e3-s5 …` (up to four); the rest fill by relevance. The email is approved together with the edition.
 - **Build.** On publish, the board photographs are cut to JPEG with their fades baked in (Outlook desktop does not show WebP), and the
@@ -179,7 +179,7 @@ Every edition gets a designed announcement email (design "5a Top Five", spec in 
      Without it, the edition still publishes to the repo, and you deploy both sites by hand.
 2. **Let Actions open pull requests:** GitHub → Settings → Actions → General → Workflow
    permissions → tick *Allow GitHub Actions to create and approve pull requests*.
-3. **First run:** Actions → *CX Time · weekly edition* → *Run workflow*. That run shows whether
+3. **First run:** Actions → *CX Times · weekly edition* → *Run workflow*. That run shows whether
    every source in the allow-list is reachable; fix or swap any that report a failure.
 
 ## Running it by hand

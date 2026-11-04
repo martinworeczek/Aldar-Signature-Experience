@@ -1,10 +1,10 @@
-"""Build the standalone Aldar CX Time site (sites/cx-time/) from the hub's index.html.
+"""Build the standalone Aldar CX Times site (sites/cx-time/) from the hub's index.html.
 
 The page is the hub's own "Aldar Times Live" module, opened on its own with an Aldar CX
 Time brand bar, plus only what it needs: the page runtime, the edition data (AT_DATA),
 its photo list (AT_IMG) and photo loader, the shared collection store (Save), the Aldar
 logo and Poppins. It reuses the hub's bundle shell (unpacker, lazy photo loader), so both
-render identically. Re-run after any CX Time change in the hub, then redeploy both sites.
+render identically. Re-run after any CX Times change in the hub, then redeploy both sites.
 Usage: python3 -I tools/build_cx_time.py
 """
 import base64, gzip, json, os, re, shutil
@@ -20,9 +20,9 @@ NEED = {
 }
 
 BRAND = """<div class="cxt-bar">
-  <a class="cxt-brand" href="./" title="Aldar CX Time">
+  <a class="cxt-brand" href="./" title="Aldar CX Times">
     <img src="{logo}" alt="Aldar">
-    <span><b>Aldar CX Time</b><i>Curated by Group CX</i></span>
+    <span><b>Aldar CX Times</b><i>Curated by Group CX</i></span>
   </a>
   <a class="cxt-hub" href="{hub}" target="_blank" rel="noopener"><span class="cxt-long">Signature Experience </span>Hub ↗</a>
 </div>
@@ -102,7 +102,7 @@ def main():
 
     # head: map the module's dev-time paths to bundled assets and add what the hub provided
     mod = mod.replace('<script src="./support.js"></script>',
-                      '<title>Aldar CX Time</title>\n<script src="%s"></script>' % ids["runtime"], 1)
+                      '<title>Aldar CX Times</title>\n<script src="%s"></script>' % ids["runtime"], 1)
     mod = mod.replace('<script src="data/aldar-times-rec.js"></script>',
                       '\n'.join('<script src="%s"></script>' % ids[k] for k in ("cxb", "at_data", "at_img", "img_loader")), 1)
     assert ids["runtime"] in mod and ids["at_data"] in mod
@@ -131,7 +131,7 @@ def main():
     out = re.sub(r'<script type="application/json" id="__sig_state">.*?</script>', '', out, flags=re.S)
     out = re.sub(r'<script id="__sig_ai_netlify">.*?</script>\n?', '', out, flags=re.S)
     out = re.sub(r'<script id="__sig_c2_fit">.*?</script>\n?', '', out, flags=re.S)
-    out = out.replace("<title>Bundled Page</title>", "<title>Aldar CX Time</title>", 1)
+    out = out.replace("<title>Bundled Page</title>", "<title>Aldar CX Times</title>", 1)
 
     if os.path.isdir(OUT + "/img"):
         shutil.rmtree(OUT + "/img")

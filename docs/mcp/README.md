@@ -16,7 +16,7 @@ A read-only [Model Context Protocol](https://modelcontextprotocol.io) server ove
 | 2 | **Programmes** | Per line: programme name, source and last update, vision, pillars, journeys / phases, properties / malls / schools, segments, tiers, tracks, research findings | 7 |
 | 3 | **Deployment** | Per experience: assets in scope, which are live, and which are out of scope. Covers hotels and beach clubs, malls, schools, communities and HQ | inside each experience |
 | 4 | **Benchmarks** | Global CX reference cases: brand, industry, pillar, themes, lead, why it works, how it transfers to each Aldar line, source, and the Aldar experiences it informed | 208 |
-| 5 | **Aldar CX Time** | Editions and stories (articles, videos, podcasts): AI summary, why it matters to Aldar, relevant lines, suggested signature experience, speakers, links | 2 editions, 16 stories |
+| 5 | **Aldar CX Times** | Editions and stories (articles, videos, podcasts): AI summary, why it matters to Aldar, relevant lines, suggested signature experience, speakers, links | 2 editions, 16 stories |
 | 6 | **Idea Exchange** | *Hidden while `idea_exchange` is false in `features.json`.* Transferable experience moves, what each becomes in every line, and the experiences that embody it | 26 moves |
 | 7 | **Asset library** | SharePoint folder per experience (folder, link, photo / film / document counts, file names) | 22 folders, attached to experiences |
 
@@ -27,7 +27,7 @@ Not included, because they live only in each visitor's browser: saved boards, au
 | Tool | Answers questions like |
 |---|---|
 | `get_overview` | "What can you tell me about?" Categories, counts, data stamps, which tool answers what. Agents should call this first. |
-| `search` | "Anything about pet welcomes?" Ranked matches across experiences, benchmarks and CX Time. |
+| `search` | "Anything about pet welcomes?" Ranked matches across experiences, benchmarks and CX Times. |
 | `list_experiences` | "Which Hospitality experiences are live?", "What's live at W Hotel?", "What's due Nov–Dec 2026?", "Flagships in Retail". Filters: line, stage, defining, pillar, journey stage, property, live at, target window, text. Sorting and paging included. |
 | `get_experience` | "Tell me everything about The Golden Coin." The full record, with linked benchmarks. Accepts an id or a name. |
 | `portfolio_breakdown` | "How many experiences per stage in Retail?", "Live experiences by property". Group by line, stage, pillar, journey stage, property, live property, target month or defining, with the same filters as `list_experiences`. |
@@ -45,11 +45,11 @@ Every tool is read-only (`readOnlyHint`) and returns both text JSON and `structu
 1. Open your agent in Copilot Studio → **Tools** → **Add a tool** → **New tool** → **Model Context Protocol**.
 2. Fill in the form:
    - **Server name:** Aldar Signature Experience Hub
-   - **Server description:** Read-only access to Aldar's signature experiences, programmes, deployment, benchmarks and CX Time.
+   - **Server description:** Read-only access to Aldar's signature experiences, programmes, deployment, benchmarks and CX Times.
    - **Server URL:** `https://aldar-signature-experience.netlify.app/mcp`
 3. **Authentication:** choose **None**.
 4. Click **Create**. Copilot Studio lists the 13 tools; leave them all enabled.
-5. In the agent's instructions, add: "For anything about Aldar signature experiences, CX programmes, benchmarks or CX Time, use the Aldar Signature Experience Hub tools. Call get_overview first if unsure. Quote stages, dates and counts exactly as returned."
+5. In the agent's instructions, add: "For anything about Aldar signature experiences, CX programmes, benchmarks or CX Times, use the Aldar Signature Experience Hub tools. Call get_overview first if unsure. Quote stages, dates and counts exactly as returned."
 
 If your Copilot Studio tenant offers only the custom-connector route, create a custom connector from an OpenAPI definition with host `aldar-signature-experience.netlify.app`, base path `/`, a POST operation `/mcp` marked `x-ms-agentic-protocol: mcp-streamable-1.0`, and no authentication.
 

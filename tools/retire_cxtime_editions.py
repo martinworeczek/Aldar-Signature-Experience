@@ -1,4 +1,4 @@
-"""Retire CX Time editions from the live archive, keeping them in data/aldar-times-retired.json.
+"""Retire CX Times editions from the live archive, keeping them in data/aldar-times-retired.json.
 
 The archive (data/aldar-times.json) is append-only and every published edition is fingerprinted in
 data/aldar-times.lock.json. Retiring is the one sanctioned way to take editions off the sites. It

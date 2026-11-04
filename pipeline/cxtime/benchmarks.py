@@ -1,6 +1,6 @@
-"""Feeding the Benchmark Repository from Aldar CX Time.
+"""Feeding the Benchmark Repository from Aldar CX Times.
 
-Some CX Time stories describe one named organisation doing one concrete thing at one moment
+Some CX Times stories describe one named organisation doing one concrete thing at one moment
 of its customer journey - exactly what a benchmark is. Enrichment drafts a benchmark for those
 (in the repository's own shape: brand, industry, line, journey moment, CX pillar, themes,
 three "why it works" points, and how it would travel to other Aldar lines). They are shown on
@@ -19,9 +19,9 @@ from .store import ROOT, HUB, MANIFEST_RE
 
 REGISTRY = ROOT / "data" / "benchmarks-from-times.json"
 MODULE_ID, LINKS_ID, INDEX_ID, IMAGES_ID = "4386a51f", "91ab40fa", "667c05bf", "d6dcdab9"
-MARKER = "  // ---- From Aldar CX Time: appended by pipeline/cxtime on /approve; never edited ----\n"
+MARKER = "  // ---- From Aldar CX Times: appended by pipeline/cxtime on /approve; never edited ----\n"
 
-# CX Time business line -> repository line key
+# CX Times business line -> repository line key
 LINE_KEY = {"Hospitality": "hp", "Retail": "rp", "Education": "edu", "Development": "dev",
             "Community": "est", "PM & Leasing": "est", "Corporate": "cp"}
 LINE_LABEL = {"cp": "Corporate", "dev": "Development", "edu": "Education", "est": "Estates", "hp": "Hospitality", "rp": "Retail"}
@@ -144,7 +144,7 @@ def build(bm, item, edition, taken, month):
         "line": bm["line"], "pillar": bm["pillar"], "themes": bm["themes"][:3], "art": ART[bm["line"]],
         "size": "standard", "added": month, "short": bm["short"], "lead": bm["lead"], "why": bm["why"][:3],
         "informed": [], "transfer": [t for t in bm["transfer"] if LINE_LABEL[bm["line"]] + " Plus" != t["line"]][:3],
-        "source": f"Aldar CX Time, Edition {edition['n']} · {item['source']}, {item['published']}.",
+        "source": f"Aldar CX Times, Edition {edition['n']} · {item['source']}, {item['published']}.",
         "prov": {"kind": "times", "edition": edition["n"], "date": edition["date"], "source": item["source"],
                  "url": item["sourceUrl"], "story": item["id"]},
     }
@@ -222,13 +222,13 @@ def save_registry(reg):
 
 
 def check(hub=HUB):
-    """Every benchmark CX Time ever added must still be in the hub's repository."""
+    """Every benchmark CX Times ever added must still be in the hub's repository."""
     reg = load_registry()
     have = existing_ids(hub)
     missing = [b["id"] for b in reg["benchmarks"] if b["id"] not in have]
     if missing:
         from .store import ArchiveError
-        raise ArchiveError(f"benchmarks added from CX Time are missing from the hub: {missing}")
+        raise ArchiveError(f"benchmarks added from CX Times are missing from the hub: {missing}")
     return len(reg["benchmarks"])
 
 

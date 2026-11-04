@@ -3,7 +3,7 @@
 The five most relevant stories of the edition (the lead first, then the highest relevance in
 edition order), each as a full-bleed photo board fading into forest green, with The story beside
 Signature Experience opportunity (the label; the text is the Hub's own `why`, verbatim). Each board's Read / Watch / Listen
-link goes to the source material; titles and the CTA go to the CX Time edition.
+link goes to the source material; titles and the CTA go to the CX Times edition.
 
 It fits the reading window. The card fills the pane up to 800px and shrinks to any narrower pane
 or phone. Board photos are cut at 1600x1000, the shape of the widest panel (800x500), so CSS

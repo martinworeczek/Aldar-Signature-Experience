@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Aldar CX Time - weekly edition pipeline.
+"""Aldar CX Times - weekly edition pipeline.
 
   python3 pipeline/run.py init                  one-off: create data/aldar-times.json from the hub
   python3 pipeline/run.py propose [--date D]    harvest -> screen -> enrich -> fact-check -> curate
@@ -64,7 +64,7 @@ def main():
             from cxtime import benchmarks
             nb = benchmarks.check()
             print(f"ok: {len(arc['editions'])} editions, all locked and in step with index.html; "
-                  f"{nb} benchmarks from CX Time present in the repository")
+                  f"{nb} benchmarks from CX Times present in the repository")
         elif a.cmd == "review":
             d = pipeline.run_dir(a.date) if a.date else pipeline.latest_run()
             pipeline.write_review(d, pipeline.load_state(d), pipeline.cfg())

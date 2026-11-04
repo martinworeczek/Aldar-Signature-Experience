@@ -1,9 +1,9 @@
-# Aldar CX Time - weekly edition pipeline settings.
+# Aldar CX Times - weekly edition pipeline settings.
 # The editorial rules live here so they can be changed without touching the code.
 # Sources are a curated, global allow-list. Nothing outside this file is ever fetched.
 
 [edition]
-name = "Aldar CX Time"
+name = "Aldar CX Times"
 window_days = 7              # harvest window: what each source published in the last 7 days
 fallback_items = 3           # a source with nothing new offers its newest items instead...
 fallback_max_age_days = 30   # ...but never older than this

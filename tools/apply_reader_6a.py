@@ -1,4 +1,4 @@
-"""Apply the CX Time reader "6a Welcome Home" (docs/cxtime-reader-6a/README.md) to the hub's CX Time
+"""Apply the CX Times reader "6a Welcome Home" (docs/cxtime-reader-6a/README.md) to the hub's CX Times
 module (manifest asset 59c00ad5): replaces the 5a reader block and adds the values it needs.
 Usage: python3 -I tools/apply_reader_6a.py   (idempotent: refuses to run twice)"""
 import base64, gzip, json, re, sys

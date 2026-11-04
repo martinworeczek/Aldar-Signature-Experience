@@ -1,4 +1,4 @@
-# Aldar CX Time - weekly edition, step 1 of 2: propose.
+# Aldar CX Times - weekly edition, step 1 of 2: propose.
 # Every Monday morning (07:07 Abu Dhabi time) this harvests the past week from the source list,
 # screens, enriches and fact-checks with Claude, curates an edition, and opens a pull request
 # for review. Nothing is published here. Approval happens in the review workflow (cxtime-review.yml).
@@ -6,7 +6,7 @@
 # Secrets (Settings > Secrets and variables > Actions):
 #   ANTHROPIC_API_KEY   required
 #   NETLIFY_AUTH_TOKEN  optional here: enables a live preview link of the proposed edition
-name: "CX Time · weekly edition"
+name: "CX Times · weekly edition"
 
 on:
   schedule:
@@ -103,16 +103,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name "Aldar CX Time bot"
+          git config user.name "Aldar CX Times bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data img
-          git commit -m "CX Time: proposed Edition ${{ steps.run.outputs.edition }} (${{ steps.meta.outputs.date }})
+          git commit -m "CX Times: proposed Edition ${{ steps.run.outputs.edition }} (${{ steps.meta.outputs.date }})
 
           Weekly run: harvest, screen, enrich and fact-check, curated into a proposal.
           Not published: the archive and both sites change only after /approve."
           git push -u origin "${{ steps.meta.outputs.branch }}"
-          gh label create cxtime-edition --color E8B96A --description "Aldar CX Time weekly edition" --force
+          gh label create cxtime-edition --color E8B96A --description "Aldar CX Times weekly edition" --force
           hold=""; [ "${{ steps.run.outputs.hold }}" = "true" ] && hold=" · HOLD"
           gh pr create --base main --head "${{ steps.meta.outputs.branch }}" --label cxtime-edition \
-            --title "Aldar CX Time · Edition ${{ steps.run.outputs.edition }} · ${{ steps.meta.outputs.date }}${hold}" \
+            --title "Aldar CX Times · Edition ${{ steps.run.outputs.edition }} · ${{ steps.meta.outputs.date }}${hold}" \
             --body-file "${{ steps.run.outputs.run_dir }}/pr-body.md"

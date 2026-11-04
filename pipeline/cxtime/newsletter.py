@@ -7,7 +7,7 @@ write_copy()  drafts the email's only editorial line, the preheader, and sets th
               with the edition; /subject, /preheader and /pick override it. Everything else in the
               email is the edition's own data: title, dek and the curated "why", verbatim.
 publish_edm() on publish, cuts the board photographs, renders the designed email and writes it to
-              sites/cx-time/email/edition-N/index.html, so it is hosted with the CX Time site. The
+              sites/cx-time/email/edition-N/index.html, so it is hosted with the CX Times site. The
               file is then dropped into OneDrive "CX Times/Outbox", where a Power Automate flow sends
               it as the email body (the pipeline's own mail connector strips images and styling).
 """

@@ -1,13 +1,13 @@
-# Handoff: Aldar CX Time — article reader, "Welcome Home" template (6a)
+# Handoff: Aldar CX Times — article reader, "Welcome Home" template (6a)
 
 ## Overview
-This is the new **article deep-dive** for Aldar CX Time in the Signature Experience Hub, restyled on the client's **"Welcome Home, Every Year"** Signature board template: forest green, pale gold, Poppins only, and a full-bleed photograph that fades up into green.
+This is the new **article deep-dive** for Aldar CX Times in the Signature Experience Hub, restyled on the client's **"Welcome Home, Every Year"** Signature board template: forest green, pale gold, Poppins only, and a full-bleed photograph that fades up into green.
 
 It **replaces the 5a reader** (`[data-atl-reader]` in `Aldar Times Live.dc.html`, documented in `exports/cxtime-4a5a-handoff/`). The library home is unchanged: the 4a/4b shelves and the Cards/List toggle stay as they are.
 
 ## About the design files
-- `CX Time Reader - Welcome Home - Preview.html`: a self-contained preview that opens offline. It is built on real Edition 2 data. Use the Tweaks panel or the `story` prop to switch between the five top stories (`e2-s1`, `e2-s2`, `e2-s4`, `e2-w1`, `e2-l1`).
-- `source/CX Time Reader - Welcome Home.dc.html`: the design source. It is a Design Component with inline styles and a small logic class.
+- `CX Times Reader - Welcome Home - Preview.html`: a self-contained preview that opens offline. It is built on real Edition 2 data. Use the Tweaks panel or the `story` prop to switch between the five top stories (`e2-s1`, `e2-s2`, `e2-s4`, `e2-w1`, `e2-l1`).
+- `source/CX Times Reader - Welcome Home.dc.html`: the design source. It is a Design Component with inline styles and a small logic class.
 
 These are **design references**, not production code. Recreate the reader in the Hub's own environment. For the live Hub, that means replacing the reader block inside `Aldar Times Live.dc.html` and keeping its existing state and handlers: `back`, `cur.dSave`, rail clicks → open story, and "All N stories →" → `back`.
 
@@ -114,7 +114,7 @@ Data note: the Edition 2 lead's `why` still says "PM & Leasing", which is the ol
 - After integrating, **rebuild all three export bases** (`standalone-base.html`, `standalone-base-lines.html`, `standalone-base-catalogue.html`) per `CLAUDE.md`.
 
 ## How it is applied in this repo
-- `tools/apply_reader_6a.py` swaps the 5a reader block in the hub's CX Time module (manifest asset `59c00ad5` in `index.html`) for this design. It adds the values the design reads (`cur.rd*`) beside the existing ones. The existing handlers are kept: `back`, `cur.onSave` (the platform's own save flow), rail cards → open that story, and "All N stories →" → `back`. `data-atl-reader` stays on the root, and the five cards carry `data-atl-card`.
+- `tools/apply_reader_6a.py` swaps the 5a reader block in the hub's CX Times module (manifest asset `59c00ad5` in `index.html`) for this design. It adds the values the design reads (`cur.rd*`) beside the existing ones. The existing handlers are kept: `back`, `cur.onSave` (the platform's own save flow), rail cards → open that story, and "All N stories →" → `back`. `data-atl-reader` stays on the root, and the five cards carry `data-atl-card`.
 - `tools/build_cx_time.py` then rebuilds the standalone site (`sites/cx-time/`) from the hub, so both render the same reader. The "export bases" named above belong to the design project, not to this repo.
 - **Phones and narrow panes** (the open question in "Mobile" above): the reader's layout follows **its own width, through a container query**, because in the hub the sidebar narrows it.
   - Up to 980px: the five cards become a swipeable row with scroll-snap.

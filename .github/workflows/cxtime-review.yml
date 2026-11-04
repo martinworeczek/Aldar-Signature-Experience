@@ -1,4 +1,4 @@
-# Aldar CX Time - weekly edition, step 2 of 2: review and publish.
+# Aldar CX Times - weekly edition, step 2 of 2: review and publish.
 # Reply on the edition's pull request with commands, one per line:
 #   /drop <id>   /add k:<key>   /lead <id>   /rerun <id> <note>   /bench <id>   /nobench <id>   /approve   /approve anyway
 #   /subject <text>   /preheader <text>   /pick <id> [id ...]   (announcement email)
@@ -8,7 +8,7 @@
 #
 # Only the repository owner, members and collaborators can drive this.
 # Secrets: ANTHROPIC_API_KEY (for /rerun), NETLIFY_AUTH_TOKEN (to deploy).
-name: "CX Time · review & publish"
+name: "CX Times · review & publish"
 
 on:
   issue_comment:
@@ -78,11 +78,11 @@ jobs:
           CXTIME_IMG_BASE: https://github.com/${{ github.repository }}/blob/${{ steps.pr.outputs.branch }}
         run: |
           pip install -r pipeline/requirements.txt
-          git config user.name "Aldar CX Time bot"
+          git config user.name "Aldar CX Times bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           python pipeline/run.py revise "$RUNNER_TEMP/comment.txt" | tee "$RUNNER_TEMP/revise.log"
           git add data img
-          git diff --cached --quiet || git commit -m "CX Time: review edits on the proposed edition
+          git diff --cached --quiet || git commit -m "CX Times: review edits on the proposed edition
 
           Applied the reviewer's commands from pull request comment ${{ github.event.comment.id }}."
 
@@ -101,7 +101,7 @@ jobs:
             python pipeline/run.py preview "$RUNNER_TEMP/preview"
             url=$(npx -y netlify-cli@17 deploy --dir "$RUNNER_TEMP/preview" --site "$CX_SITE_ID" --alias "edition-$n" --json | jq -r '.deploy_url')
             CXTIME_PREVIEW_URL="$url" python pipeline/run.py review
-            git add data; git diff --cached --quiet || git commit -m "CX Time: refresh review page"
+            git add data; git diff --cached --quiet || git commit -m "CX Times: refresh review page"
           fi
           git push
           gh pr edit "$PR" --body-file "${run_dir}pr-body.md"
@@ -116,7 +116,7 @@ jobs:
           python pipeline/run.py publish $flag 2>&1 | tee "$RUNNER_TEMP/publish.log"
           python pipeline/run.py check
           git add -A data img index.html sites/cx-time
-          git commit -m "CX Time: publish the approved edition
+          git commit -m "CX Times: publish the approved edition
 
           Appended to data/aldar-times.json (earlier editions locked and verified unchanged),
           written into the hub page, standalone site rebuilt, spreadsheet mirror regenerated."
@@ -145,8 +145,8 @@ jobs:
           [ -n "$NETLIFY_AUTH_TOKEN" ] || { echo "deployed=no" >> "$GITHUB_OUTPUT"; exit 0; }
           npm ci
           mkdir -p "$RUNNER_TEMP/hub" && cp index.html netlify.toml "$RUNNER_TEMP/hub/" && cp -r img "$RUNNER_TEMP/hub/img"
-          npx -y netlify-cli@17 deploy --prod --dir "$RUNNER_TEMP/hub" --functions netlify/functions --site "$HUB_SITE_ID" --message "CX Time edition"
-          npx -y netlify-cli@17 deploy --prod --dir sites/cx-time --site "$CX_SITE_ID" --message "CX Time edition"
+          npx -y netlify-cli@17 deploy --prod --dir "$RUNNER_TEMP/hub" --functions netlify/functions --site "$HUB_SITE_ID" --message "CX Times edition"
+          npx -y netlify-cli@17 deploy --prod --dir sites/cx-time --site "$CX_SITE_ID" --message "CX Times edition"
           echo "deployed=yes" >> "$GITHUB_OUTPUT"
 
       - name: Report

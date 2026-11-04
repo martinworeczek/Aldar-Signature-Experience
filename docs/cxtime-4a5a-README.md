@@ -1,6 +1,6 @@
-# Aldar CX Time — shelves "4a/4b toggle" + article reader "5a Continuous Portrait"
+# Aldar CX Times — shelves "4a/4b toggle" + article reader "5a Continuous Portrait"
 
-Two linked changes to the Aldar CX Time page, bringing it onto the same visual system as the catalogue card (`card-2a-handoff`) and the experience detail (`detail-3a-handoff`). Poppins only. No data, routing or permission changes.
+Two linked changes to the Aldar CX Times page, bringing it onto the same visual system as the catalogue card (`card-2a-handoff`) and the experience detail (`detail-3a-handoff`). Poppins only. No data, routing or permission changes.
 
 Reference build: `Aldar Times Live - 4a5a Preview.html` (open in a browser). It renders the real Edition 2 with gradient fallbacks where it cannot reach the shared image loader; in the app the photographs attach.
 
