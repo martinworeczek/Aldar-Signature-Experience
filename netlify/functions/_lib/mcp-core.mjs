@@ -12,8 +12,11 @@ const LINE_ALIASES = {
 export function lineKey(v) {
   if (v == null || v === "") return null;
   const n = norm(v);
-  for (const [k, al] of Object.entries(LINE_ALIASES)) if (al.includes(n)) return k;
-  throw new ToolError(`Unknown business line "${v}". Use one of: Corporate, Hospitality, Retail, Education, Development, Estates, Project Plus.`);
+  for (const [k, al] of Object.entries(LINE_ALIASES)) if (al.includes(n)) {
+    if (k === "pp" && FEATURES.project_plus === false) throw new ToolError("Project Plus is not part of the hub right now. Use one of: Corporate, Hospitality, Retail, Education, Development, Estates.");
+    return k;
+  }
+  throw new ToolError(`Unknown business line "${v}". Use one of: Corporate, Hospitality, Retail, Education, Development, Estates${FEATURES.project_plus === false ? "" : ", Project Plus"}.`);
 }
 export class ToolError extends Error {}
 
@@ -316,6 +319,34 @@ if (IX_OFF) {
     if (p.categories?.items?.enum) p.categories.items.enum = p.categories.items.enum.filter((c) => c !== "idea_moves");
   }
 }
+const PP_OFF = FEATURES.project_plus === false;
+if (PP_OFF) {
+  const W2 = [["across 7 business lines", "across 6 business lines"], ["Development, Estates or Project Plus (keys cp/hp/rp/edu/dev/est/pp also work)", "Development or Estates (keys cp/hp/rp/edu/dev/est also work)"]];
+  for (const t of TOOLS) {
+    for (const [a, b] of W2) t.description = t.description.split(a).join(b);
+    for (const p of Object.values(t.inputSchema?.properties || {})) if (p && typeof p.description === "string") for (const [a, b] of W2) p.description = p.description.split(a).join(b);
+  }
+}
+// the dataset as the hub shows it: without hidden business lines (cached per dataset object)
+const _vis = new WeakMap();
+function visible(D) {
+  if (!PP_OFF || !D) return D;
+  if (_vis.has(D)) return _vis.get(D);
+  const keep = (x) => x && x.line !== "pp";
+  const experiences = D.experiences.filter(keep);
+  const ids = new Set(experiences.map((x) => x.id));
+  const count = (arr, f) => arr.reduce((o, x) => { const k = f(x) ?? "\u2014"; o[k] = (o[k] || 0) + 1; return o; }, {});
+  const V = {
+    ...D, experiences,
+    programmes: (D.programmes || []).filter(keep),
+    benchmarks: (D.benchmarks || []).filter((b) => b.line !== "pp").map((b) => ({ ...b, informs_experiences: (b.informs_experiences || []).filter((i) => ids.has(i)) })),
+    idea_moves: (D.idea_moves || []).map((m) => ({ ...m, experiences: (m.experiences || []).filter((x) => ids.has(x.id)) })),
+    data_stamps: Object.fromEntries(Object.entries(D.data_stamps || {}).filter(([k]) => k !== "Project Plus")),
+    counts: { ...D.counts, experiences: experiences.length, by_line: count(experiences, (x) => x.line_label), by_stage: count(experiences, (x) => x.stage), benchmarks: (D.benchmarks || []).filter((b) => b.line !== "pp").length },
+  };
+  _vis.set(D, V); return V;
+}
+
 // strip hidden sections from every tool result
 function scrub(v) {
   if (!IX_OFF || v == null || typeof v !== "object") return typeof v === "string" && IX_OFF ? v.split("SharePoint folder, Idea Exchange moves and the benchmarks").join("SharePoint folder and the benchmarks") : v;
@@ -333,7 +364,7 @@ export function callTool(D, name, args) {
   if (!t) throw new ToolError(`Unknown tool "${name}".`);
   const a = { ...(args || {}) };
   if (IX_OFF) { delete a.idea_move; if (Array.isArray(a.categories)) a.categories = a.categories.filter((c) => c !== "idea_moves"); if (!a.categories?.length) delete a.categories; }
-  const out = t.run(D, a);
+  const out = t.run(visible(D), a);
   if (IX_OFF && out && out.idea_moves !== undefined && name === "search") delete out.idea_moves;
   return scrub(out);
 }

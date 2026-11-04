@@ -8,6 +8,9 @@ render, so menus, tabs, buttons, search results and deep links all respect the s
                  Ask Echo (its instructions, list dots and reasons, the Health column, spotlight pill)
   idea_exchange  the Idea Exchange menu item and view, "See it in Idea Exchange" on experience cards
   cx_academy     the "In development · CX Academy" menu item and placeholder view
+  benchmark_editor  the Benchmark Editor tab inside Benchmark (Library · Transfer Viewer · Boards stay)
+  project_plus   Project Plus as a business line: menu, line page, catalogue chips, hero, Portfolio
+                 Discovery counts, Activity feed and search; also /mcp and Submit & review
 
 How: the page reads window.__SIG_OFF (written into <head> from features.json); the template carries
 small guards that check it (inserted once, idempotent). A few fixed sentences that name a hidden
@@ -21,7 +24,8 @@ import base64, gzip, json, re
 PATH = "index.html"
 F = json.load(open("features.json"))
 OFF = {"reportStudio": F.get("report_studio") is False, "rag": F.get("rag_status") is False,
-       "ideaExchange": F.get("idea_exchange") is False, "cxAcademy": F.get("cx_academy") is False}
+       "ideaExchange": F.get("idea_exchange") is False, "cxAcademy": F.get("cx_academy") is False,
+       "benchmarkEditor": F.get("benchmark_editor") is False, "projectPlus": F.get("project_plus") is False}
 O = "(window.__SIG_OFF || {})"
 
 # (old, new, count): guards that read the runtime switches. Applied once; skipped if already there.
@@ -40,7 +44,7 @@ GUARDS = [
      ".filter(p => (window.__SIG_EDITION !== 'alt' && !" + O + ".reportStudio) || p[0] !== 'report-studio')", 1),
     # search everything (⌘K): hidden destinations are not offered
     ("const _ed = window.__SIG_EDITION; views.filter(",
-     "const _ed = window.__SIG_EDITION; const _O5 = " + O + "; views.filter(v => !(_O5.reportStudio && v[0] === 'report-studio') && !(_O5.ideaExchange && v[0] === 'transfer') && !(_O5.cxAcademy && v[0] === 'academy')).filter(", 1),
+     "const _ed = window.__SIG_EDITION; const _O5 = " + O + "; views.filter(v => !(_O5.reportStudio && v[0] === 'report-studio') && !(_O5.ideaExchange && v[0] === 'transfer') && !(_O5.cxAcademy && v[0] === 'academy') && !(_O5.projectPlus && v[0] === 'line-projectplus')).filter(", 1),
     # experience card: "See it in Idea Exchange" and the RAG strip
     ("has: live && window.__SIG_EDITION !== 'cat',", "has: live && window.__SIG_EDITION !== 'cat' && !" + O + ".ideaExchange,", 1),
     ("showRag: !isLines,", "showRag: !isLines && !" + O + ".rag,", 1),
@@ -66,6 +70,23 @@ GUARDS = [
      "      }\n"
      "      const _items = _O.rag ? items.map(i => { const o = Object.assign({}, i); delete o.rag; delete o.reason; delete o.reasonCluster; return o; }) : items;\n"
      "      lines.push('DATA=' + JSON.stringify(_items)); }\n", 1),
+]
+
+GUARDS += [
+    # Project Plus: the hub's own "no Project Plus" switch (menu, line view, catalogue, hero, discovery)
+    ("const noPP = isLines || isAlt;", "const noPP = isLines || isAlt || " + O + ".projectPlus;", 1),
+    ("(this._audience() === 'lines' || window.__SIG_EDITION === 'alt') && x[0] === 'pp')); }", "(this._audience() === 'lines' || window.__SIG_EDITION === 'alt' || " + O + ".projectPlus) && x[0] === 'pp')); }", 1),
+    ("const AE = this._activityEvents();", "const AE = this._activityEvents().filter(e => e.line !== 'pp' || !" + O + ".projectPlus);", 1),
+    ("['est', 'Estates Plus'], ['pp', 'Project Plus']];\n    const _actLine", "['est', 'Estates Plus'], ['pp', 'Project Plus']].filter(l => l[0] !== 'pp' || !" + O + ".projectPlus);\n    const _actLine", 1),
+]
+
+# guards inside bundled modules: (old, new, count)
+ASSET_GUARDS = [
+    # Benchmark: the Benchmark Editor tab (both tab lists) and its view
+    ("{ k: 'curator', label: '\\u270E Benchmark Editor' }].map(t => {", "{ k: 'curator', label: '\\u270E Benchmark Editor' }].filter(t => t.k !== 'curator' || !" + O + ".benchmarkEditor).map(t => {", 1),
+    ("['curator', 'Benchmark Editor'], ['boards', 'Boards']];", "['curator', 'Benchmark Editor'], ['boards', 'Boards']].filter(x => x[0] !== 'curator' || !" + O + ".benchmarkEditor);", 1),
+    ("isGallery: S.view === 'gallery',", "isGallery: S.view === 'gallery' || (S.view === 'curator' && !!" + O + ".benchmarkEditor),", 1),
+    ("isCurator: S.view === 'curator',", "isCurator: S.view === 'curator' && !" + O + ".benchmarkEditor,", 1),
 ]
 
 # (shown, hidden, switch): fixed wording that names a section
@@ -109,6 +130,9 @@ for uid, e in man.items():
         continue
     raw = base64.b64decode(e["data"]); body = (gzip.decompress(raw) if e.get("compressed") else raw).decode("utf-8")
     new = body
+    for old, gnew, n in ASSET_GUARDS:
+        if old.split(".filter(")[0] in new and new.count(gnew) < n:
+            if new.count(old) == n: new = new.replace(old, gnew)
     for shown, hidden, k in ASSET_TEXTS:
         want, other = (hidden, shown) if OFF[k] else (shown, hidden)
         new = new.replace(other, want)

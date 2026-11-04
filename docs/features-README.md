@@ -9,6 +9,8 @@ so switching a section back on brings it back exactly as it was.
 | `report_studio` | The Report Studio tab (Signature Experiences: Catalogue · Activity · ~~Report Studio~~), its view and `#report` links, Ask Echo's "Open in Report Studio" and report-PDF download, and report suggestions in Ask Echo |
 | `rag_status` | The RAG strip on experience cards (On track / On watch / Needs a decision, priority and next action). In Ask Echo: the RAG instructions and counts, RAG reasons and dots in lists and timelines, the Health table column, the spotlight RAG pill, and "Which experiences are Red?" suggestions |
 | `idea_exchange` | The Idea Exchange menu item and view, "See it in Idea Exchange" on experience cards, and Idea Exchange wording in AI disclaimers. In `/mcp` (CX Martin): the `get_idea_moves` tool, the `idea_move` filter, the search category and the `idea_moves` fields |
+| `benchmark_editor` | The Benchmark Editor tab inside Benchmark. Library, Business Line Transfer Viewer and Boards stay |
+| `project_plus` | Project Plus as a business line everywhere: menu and line page, catalogue chips and counts, catalogue hero, Portfolio Discovery (its headline becomes "six programmes"), Activity feed and search. In `/mcp`: its experiences, programme and counts (asking for it returns "not part of the hub right now"). In Submit & review: its lead and code |
 | `cx_academy` | The "In development · CX Academy" menu item and view, and the "CX Academy highlights" panel on Portfolio Discovery. Corporate experiences that mention CX Academy, such as *Aldar Performance Pins*, stay |
 
 Hidden destinations also drop out of "Search everything" (⌘K). A bookmark or link to a hidden view opens

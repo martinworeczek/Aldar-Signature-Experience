@@ -3,5 +3,7 @@
   "report_studio": false,
   "rag_status": false,
   "idea_exchange": false,
-  "cx_academy": false
+  "cx_academy": false,
+  "benchmark_editor": false,
+  "project_plus": false
 }

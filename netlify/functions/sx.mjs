@@ -10,11 +10,12 @@ import { getStore } from "@netlify/blobs";
 import { purgeCache } from "@netlify/functions";
 import { randomUUID, randomBytes, timingSafeEqual } from "node:crypto";
 import options from "./_data/sx-options.json" with { type: "json" };
+import FEATURES from "../../features.json" with { type: "json" };
 import { store, readPublished, liveDataset, invalidate } from "./_lib/live-data.mjs";
 import "../../sx/sx-apply.js";
 
 const SX = globalThis.SX_APPLY;
-const LINES = Object.keys(SX.LINES);
+const LINES = Object.keys(SX.LINES).filter((l) => !(l === "pp" && FEATURES.project_plus === false)); // hidden lines take no submissions
 const photos = () => getStore({ name: "sx-photos", consistency: "strong" });
 const TAG = "sx-published";
 
@@ -43,7 +44,7 @@ async function who(req) {
   const rev = process.env.SX_REVIEWER_CODE;
   if (rev && same(code, rev)) return { role: "reviewer", name: (await getSettings()).reviewer_name || "Group CX" };
   const leads = await getLeads();
-  for (const [line, l] of Object.entries(leads)) if (l.code && same(code, l.code)) return { role: "lead", line, name: l.name || SX.LINES[line].short + " lead" };
+  for (const [line, l] of Object.entries(leads)) if (l.code && LINES.includes(line) && same(code, l.code)) return { role: "lead", line, name: l.name || SX.LINES[line].short + " lead" };
   throw new HttpError(401, "That access code isn't recognised.");
 }
 const needReviewer = (u) => { if (u.role !== "reviewer") throw new HttpError(403, "Only the Group CX reviewer can do that."); };
@@ -215,7 +216,7 @@ export default async (req, context) => {
         assets: (e.deployment?.assets || []).map((x) => ({ name: x.name, live: !!x.live })),
       }));
       const out = { role: u.role, line: u.line || null, name: u.name, options: Object.fromEntries(lines.map((l) => [l, options[l]])), experiences };
-      if (u.role === "reviewer") { out.settings = await getSettings(); out.leads = await getLeads(); }
+      if (u.role === "reviewer") { out.settings = await getSettings(); const L = await getLeads(); out.leads = Object.fromEntries(Object.entries(L).filter(([l]) => LINES.includes(l))); }
       return json(out);
     }
 
