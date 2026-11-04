@@ -1,6 +1,7 @@
 // Aldar Signature Experience Hub — MCP tools over the site dataset.
 // Pure functions: (dataset, args) -> result. The /mcp function wires them to JSON-RPC.
 import FEATURES from "../../../features.json" with { type: "json" };
+import { compareRead, CompareError } from "./compare-read.mjs";
 
 const norm = (s) => String(s ?? "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").trim();
 const LINE_ALIASES = {
@@ -300,6 +301,18 @@ export const TOOLS = [
       return { ...m, becomes_by_line: { [label]: m.becomes_by_line[label] }, experiences: m.experiences.filter((x) => x.line === label) };
     },
   },
+  {
+    name: "compare_experiences",
+    title: "Compare experiences (AI read)",
+    description: "Put 2 to 4 signature experiences side by side and get the hub's AI read of the set: what they share and where they differ, through three lenses (the need, the mechanism, the moment), a verdict (sequence them | consolidate | borrow across | keep apart) and a one-sentence takeaway. This is the same read the hub's compare view shows (same prompt, same cached result for the same set). Accepts ids or names.",
+    inputSchema: { type: "object", required: ["ids"], properties: { ids: { type: "array", minItems: 2, maxItems: 4, items: { type: "string" }, description: "2 to 4 experience ids (from search / list_experiences) or names." } } },
+    run: async (D, a) => {
+      try {
+        const r = await compareRead(D, a.ids);
+        return { experiences: r.experiences, ai_read: r.read, generated_at: r.generated_at, how_to_read: "verdict: what to do with the set. shared / differs: findings, each tagged with its lens (need, mechanism, moment). takeaway: the customer-experience gain from acting on the verdict." };
+      } catch (e) { if (e instanceof CompareError) throw new ToolError(e.message); throw e; }
+    },
+  },
 ];
 
 // ---- sections hidden from the hub (features.json) are hidden here too ----
@@ -365,6 +378,7 @@ export function callTool(D, name, args) {
   const a = { ...(args || {}) };
   if (IX_OFF) { delete a.idea_move; if (Array.isArray(a.categories)) a.categories = a.categories.filter((c) => c !== "idea_moves"); if (!a.categories?.length) delete a.categories; }
   const out = t.run(visible(D), a);
+  if (out && typeof out.then === "function") return out.then(scrub); // async tools (compare_experiences)
   if (IX_OFF && out && out.idea_moves !== undefined && name === "search") delete out.idea_moves;
   return scrub(out);
 }

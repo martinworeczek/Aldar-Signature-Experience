@@ -153,7 +153,7 @@
     }
     if (str(f.essence)) e.essence = str(f.essence);
     if (str(f.narrative)) e.narrative = str(f.narrative);
-    if (str(f.photo)) e.image = str(f.photo);
+    if (str(f.photo)) { e.image = str(f.photo); e.sxPhoto = e.image; }
     var note = str(f.note);
     setNote(line, e, note);
     e.log = (e.log || []).concat([logEntry(rec, esc((note ? note + " " : "") + parts.join(" ")).trim() || "Updated via the hub.")]);
@@ -171,13 +171,12 @@
           if (D.experiences.some(function (x) { return x.id === rec.exp_id; })) return;
           var e = toNative(rec, D);
           D.experiences.push(e);
-          // the hub's image loaders read these maps first
-          if (W && line === "dev" && e.image) { W.DEV_IMG = W.DEV_IMG || {}; W.DEV_IMG[e.id] = e.image; }
-          if (W && line === "hp" && e.image) { W.HP_IMG = W.HP_IMG || {}; W.HP_IMG[e.id] = e.image; }
-          if (W && line === "est" && e.image) { W.EST_IMG = W.EST_IMG || {}; W.EST_IMG[e.id] = e.image; }
+          // The photo rides on e.image. Never create or touch the line photo maps (HP_IMG,
+          // DEV_IMG, EST_IMG) here: this runs before they load, and a map that already exists
+          // tells the hub the line's photographs are in memory, so the real ones never load.
         } else if (rec.kind === "update") {
           var t = D.experiences.filter(function (x) { return x.id === rec.exp_id; })[0];
-          if (t) { applyUpdate(rec, t, D); if (W && str((rec.fields || {}).photo)) { var m = { hp: "HP_IMG", dev: "DEV_IMG", est: "EST_IMG" }[line]; if (m && W[m]) W[m][line === "dev" ? (t.imageKey || t.id) : t.id] = str(rec.fields.photo); } }
+          if (t) applyUpdate(rec, t, D); // a new photo is set on t.image, which the photo loaders never overwrite
         }
       } catch (err) { if (typeof console !== "undefined") console.warn("[sx] could not apply", rec && rec.id, err); }
     });

@@ -9,6 +9,8 @@ render, so menus, tabs, buttons, search results and deep links all respect the s
   idea_exchange  the Idea Exchange menu item and view, "See it in Idea Exchange" on experience cards
   cx_academy     the "In development · CX Academy" menu item and placeholder view
   benchmark_editor  the Benchmark Editor tab inside Benchmark (Library · Transfer Viewer · Boards stay)
+  board_sharing  Boards' file sharing: Save board / Import board, a board's Share sheet, "Shared with me"
+                 and the download-file reminder; Boards are labelled as private to this browser
   project_plus   Project Plus as a business line: menu, line page, catalogue chips, hero, Portfolio
                  Discovery counts, Activity feed and search; also /mcp and Submit & review
 
@@ -16,6 +18,12 @@ How: the page reads window.__SIG_OFF (written into <head> from features.json); t
 small guards that check it (inserted once, idempotent). A few fixed sentences that name a hidden
 section are swapped for neutral wording while it is hidden, and swapped back when it is shown.
 /mcp reads features.json directly (netlify/functions/_lib/mcp-core.mjs).
+
+Always on (not switches), installed by the same pass:
+  - Portfolio Discovery: "Theme of the week" from discovery-themes.json, and the defining moment of the
+    week (the showreel opens on it and the Defining moments rail leads with it); both change every Monday
+  - the compare view's AI read comes from /api/compare-read (one read per set, shared with CX Martin)
+  - the embedded export state carries no one's saved audits or links (userData is emptied)
 
 Usage: python3 tools/apply_features.py    (also run by the Netlify build)
 """
@@ -25,7 +33,9 @@ PATH = "index.html"
 F = json.load(open("features.json"))
 OFF = {"reportStudio": F.get("report_studio") is False, "rag": F.get("rag_status") is False,
        "ideaExchange": F.get("idea_exchange") is False, "cxAcademy": F.get("cx_academy") is False,
-       "benchmarkEditor": F.get("benchmark_editor") is False, "projectPlus": F.get("project_plus") is False}
+       "benchmarkEditor": F.get("benchmark_editor") is False, "projectPlus": F.get("project_plus") is False,
+       "boardSharing": F.get("board_sharing") is False}
+THEMES = [t for t in json.load(open("discovery-themes.json")).get("themes", []) if t.get("title") and t.get("match")]
 O = "(window.__SIG_OFF || {})"
 
 # (old, new, count): guards that read the runtime switches. Applied once; skipped if already there.
@@ -80,6 +90,34 @@ GUARDS += [
     ("['est', 'Estates Plus'], ['pp', 'Project Plus']];\n    const _actLine", "['est', 'Estates Plus'], ['pp', 'Project Plus']].filter(l => l[0] !== 'pp' || !" + O + ".projectPlus);\n    const _actLine", 1),
 ]
 
+RAIL_OLD = "{ key: 'welcome', idx: '03', kicker: 'A theme', accent: '#3D5958', band: 'linear-gradient(118deg,#3D5958 0%,#26403F 100%)', title: 'Arrival & welcome', blurb: 'How we greet people across every business line — one thread running through the portfolio.', "
+GUARDS += [
+    # weekly rotation: the defining moment of the week leads the Defining moments rail ...
+    ("const ddef = this._dShuffle(dall.filter(e => e.defining && e.image), this.state.dSeed + 3);",
+     "const _WK = Math.floor((Date.now() - Date.UTC(2026, 0, 5)) / 604800000); /* weeks since Mon 5 Jan 2026 */\n      const ddef = ((arr, k) => { const g = {}; arr.slice().sort((a, b) => String(a.id).localeCompare(String(b.id))).forEach(e => { (g[e.line] = g[e.line] || []).push(e); }); const ks = Object.keys(g).sort(); if (!ks.length) return arr; const L = g[ks[((k % ks.length) + ks.length) % ks.length]]; const first = L[Math.floor(Math.abs(k) / ks.length) % L.length]; const rr = []; for (let i = 0; rr.length < arr.length; i++) ks.forEach(x => { if (g[x][i]) rr.push(g[x][i]); }); return [first].concat(rr.filter(e => e !== first)); })(dall.filter(e => e.defining), _WK).filter(e => e.image); /* each week: the next business line, then its next flagship */", 1),
+    # ... and opens the showreel
+    ("const def = this._dShuffle(withImg.filter(e => e.defining), this.state.dSeed);",
+     "const _wk = Math.floor((Date.now() - Date.UTC(2026, 0, 5)) / 604800000); const def = ((arr, k) => { const g = {}; arr.slice().sort((a, b) => String(a.id).localeCompare(String(b.id))).forEach(e => { (g[e.line] = g[e.line] || []).push(e); }); const ks = Object.keys(g).sort(); if (!ks.length) return arr; const L = g[ks[((k % ks.length) + ks.length) % ks.length]]; const first = L[Math.floor(Math.abs(k) / ks.length) % L.length]; const rr = []; for (let i = 0; rr.length < arr.length; i++) ks.forEach(x => { if (g[x][i]) rr.push(g[x][i]); }); return [first].concat(rr.filter(e => e !== first)); })(this._dAll().filter(e => e.defining), _wk).filter(e => e.image); /* opens on the defining moment of the week */", 1),
+    ("if (n0 > 1) { this.setState({ dReelIdx: Math.floor(Math.random() * n0) }); return; }",
+     "if (n0 > 1) { this.setState({ dReelIdx: 0 }); return; } /* opens on the defining moment of the week */", 1),
+    # the showreel waits behind the welcome screen, then opens on the defining moment of the week
+    ("_endIntro() { if (!this.state.intro) return; clearTimeout(this._introT); this.setState({ intro: false }); }",
+     "_endIntro() { if (!this.state.intro) return; clearTimeout(this._introT); this.setState({ intro: false, dReelIdx: 0 }); }", 1),
+    ("if (this.state.view !== 'discover' || !this.state.dReelPlaying) return;", "if (this.state.view !== 'discover' || !this.state.dReelPlaying || this.state.intro) return;", 1),
+    # theme of the week (discovery-themes.json -> window.__SIG_THEMES)
+    ("const dwelRe = /welcom|arriv|first|onboard|greet|check-in|check in/i;\n      const dwel = this._dShuffle(dall.filter(e => e.image && dwelRe.test(e.name + ' ' + e.essence)), this.state.dSeed + 17);",
+     "const _TH = (window.__SIG_THEMES && window.__SIG_THEMES.length) ? window.__SIG_THEMES : [{ title: 'Arrival & welcome', blurb: 'How we greet people across every business line, one thread running through the portfolio.', match: 'welcom|arriv|first|onboard|greet|check-in|check in', accent: '#3D5958', deep: '#26403F' }];\n"
+     "      const _thOk = _TH.map(th => { let re; try { re = new RegExp(th.match, 'i'); } catch (e) { re = /(?!)/; } return { th: th, items: dall.filter(e => e.image && re.test(e.name + ' ' + e.essence)) }; }).filter(x => x.items.length >= 4);\n"
+     "      const _thPick = _thOk.length ? _thOk[((_WK % _thOk.length) + _thOk.length) % _thOk.length] : { th: _TH[0], items: [] };\n"
+     "      const dwelTheme = Object.assign({ accent: '#3D5958', deep: '#26403F', blurb: '' }, _thPick.th);\n"
+     "      const dwel = this._dShuffle(_thPick.items, this.state.dSeed + 17);", 1),
+    ("welcome: { title: 'Arrival & welcome', accent: '#3D5958', items: dwel }", "welcome: { title: dwelTheme.title, accent: dwelTheme.accent, items: dwel }", 1),
+    (RAIL_OLD, "{ key: 'welcome', idx: '03', kicker: 'Theme of the week', accent: dwelTheme.accent, band: 'linear-gradient(118deg,' + dwelTheme.accent + ' 0%,' + dwelTheme.deep + ' 100%)', title: dwelTheme.title, blurb: dwelTheme.blurb, ", 1),
+    # compare view: the AI read comes from the site (shared with CX Martin); the in-page reader is the fallback
+    ("Promise.resolve(cc({ system: sys, messages: [{ role: 'user', content: JSON.stringify(recs, null, 1) }], max_tokens: 700 })).then(txt => {",
+     "Promise.resolve((/^https?:$/.test(location.protocol) ? fetch('/api/compare-read', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ids: ids, refresh: !!force }) }).then(r => r.ok ? r.text() : Promise.reject(new Error('remote'))) : Promise.reject(new Error('local'))).catch(() => cc({ system: sys, messages: [{ role: 'user', content: JSON.stringify(recs, null, 1) }], max_tokens: 700 }))).then(txt => {", 1),
+]
+
 # guards inside bundled modules: (old, new, count)
 ASSET_GUARDS = [
     # Benchmark: the Benchmark Editor tab (both tab lists) and its view
@@ -87,13 +125,19 @@ ASSET_GUARDS = [
     ("['curator', 'Benchmark Editor'], ['boards', 'Boards']];", "['curator', 'Benchmark Editor'], ['boards', 'Boards']].filter(x => x[0] !== 'curator' || !" + O + ".benchmarkEditor);", 1),
     ("isGallery: S.view === 'gallery',", "isGallery: S.view === 'gallery' || (S.view === 'curator' && !!" + O + ".benchmarkEditor),", 1),
     ("isCurator: S.view === 'curator',", "isCurator: S.view === 'curator' && !" + O + ".benchmarkEditor,", 1),
+    # Boards: file sharing (Shared with me, Share sheet, download-file reminder, shelf tab)
+    ("bHasShared: bShared.length > 0,", "bHasShared: bShared.length > 0 && !" + O + ".boardSharing,", 1),
+    ("sh: sh, hasSh: !!sh,", "sh: sh, hasSh: !!sh && !" + O + ".boardSharing,", 1),
+    ("dirty: !!S.dirty, onSaveRepo", "dirty: !!S.dirty && !" + O + ".boardSharing, onSaveRepo", 1),
+    ("[['all', 'All'], ['mine', 'Mine'], ['shared', 'Shared with me']].map(", "[['all', 'All'], ['mine', 'Mine'], ['shared', 'Shared with me']].filter(p => p[0] !== 'shared' || !" + O + ".boardSharing).map(", 1),
 ]
 
 # (shown, hidden, switch): fixed wording that names a section
 TEXTS = [
     ("summarise the portfolio, or download the report \u2014 every answer", "or summarise the portfolio \u2014 every answer", "reportStudio"),
 ]
-ASSET_TEXTS = [  # inside bundled modules
+ASSET_TEXTS = [(p["shown"], p["hidden"], "boardSharing") for p in json.load(open("tools/board-sharing.json"))["pairs"]]
+ASSET_TEXTS += [  # inside bundled modules
     ("this read, the benchmark recommendations and the Idea Exchange translations", "this read and the benchmark recommendations", "ideaExchange"),
     ("Ask Echo, the comparison reads and Idea Exchange generation call a language model", "Ask Echo and the comparison reads call a language model", "ideaExchange"),
 ]
@@ -102,7 +146,8 @@ html = open(PATH, encoding="utf-8").read()
 
 # 1. runtime switches in <head>
 html = re.sub(r'<script id="__sig_features">.*?</script>\n', "", html)
-tag = '<script id="__sig_features">window.__SIG_OFF=' + json.dumps(OFF, separators=(",", ":")) + ';</script>\n'
+tag = ('<script id="__sig_features">window.__SIG_OFF=' + json.dumps(OFF, separators=(",", ":")) + ';window.__SIG_THEMES='
+       + json.dumps([{k: t.get(k) for k in ("title", "blurb", "match", "accent", "deep") if t.get(k)} for t in THEMES], separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/") + ';</script>\n')
 i = html.find('<script id="__sig_edition">')
 assert i > 0, "edition hook not found"
 html = html[:i] + tag + html[i:]
@@ -140,6 +185,14 @@ for uid, e in man.items():
         b = new.encode("utf-8"); e["data"] = base64.b64encode(gzip.compress(b, 9, mtime=0) if e.get("compressed") else b).decode("ascii"); changed = True
 if changed:
     html = html[:mm.start(2)] + json.dumps(man, separators=(",", ":")) + html[mm.end(2):]
+
+# 4. the embedded export state carries no one's personal saves (audits, links); status overrides stay
+ms = re.search(r'(<script type="application/json" id="__sig_state">)(.*?)(</script>)', html, re.S)
+if ms:
+    st = json.loads(ms.group(2))
+    if st.get("userData"):
+        st["userData"] = {}
+        html = html[:ms.start(2)] + json.dumps(st, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/") + html[ms.end(2):]
 
 open(PATH, "w", encoding="utf-8").write(html)
 print("features:", {k: ("hidden" if v else "shown") for k, v in OFF.items()})

@@ -1,0 +1,30 @@
+{
+ "_about": "Board-sharing wording and buttons in the Benchmark module, swapped by tools/apply_features.py while board_sharing is false. 'shown' is the original markup; 'hidden' replaces it.",
+ "pairs": [
+  {
+   "name": "boards hero: how saving works",
+   "shown": "<div style=\"display:flex;align-items:center;justify-content:center;gap:11px;flex-wrap:wrap;margin-top:15px;font-size:11px;color:rgba(246,243,236,.5)\">\n          <span>Boards live in this browser as you work</span>\n          <span style=\"color:#E8B96A\">&rarr;</span>\n          <span><strong style=\"font-weight:600;color:rgba(246,243,236,.78)\">Download updated file</strong> puts them inside a file</span>\n          <span style=\"color:#E8B96A\">&rarr;</span>\n          <span>Reopen that file to carry on, then download again</span>\n        </div>",
+   "hidden": "<div style=\"display:flex;align-items:center;justify-content:center;gap:11px;flex-wrap:wrap;margin-top:15px;font-size:11px;color:rgba(246,243,236,.5)\"><!--sx:boards-private--><span><strong style=\"font-weight:600;color:rgba(246,243,236,.78)\">Your boards are private</strong>: they are kept in this browser, on this device, and nobody else can see them.</span></div>"
+  },
+  {
+   "name": "boards hero: the Share strip",
+   "shown": "<div style=\"font-size:7.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#E8B96A\">Share</div>\n            <div style=\"font-size:12px;font-weight:500;color:#F6F3EC;margin-top:4px;line-height:1.25\">As a file or a PDF</div>\n            <div style=\"font-size:10px;color:rgba(246,243,236,.55);margin-top:2px;line-height:1.35\">Export when it is ready to travel</div>",
+   "hidden": "<div style=\"font-size:7.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#E8B96A\">Private</div>\n            <div style=\"font-size:12px;font-weight:500;color:#F6F3EC;margin-top:4px;line-height:1.25\">Only you see them</div>\n            <div style=\"font-size:10px;color:rgba(246,243,236,.55);margin-top:2px;line-height:1.35\"><!--sx:boards-private-strip-->Kept in this browser, on this device</div>"
+  },
+  {
+   "name": "boards header label",
+   "shown": "Kept in this browser &middot; {{ savedLabel }}",
+   "hidden": "My boards &middot; private to this browser &middot; {{ savedLabel }}"
+  },
+  {
+   "name": "boards header: Save board / Import board",
+   "shown": "<button onClick=\"{{ onSaveRepo }}\" style=\"white-space:nowrap;font-family:inherit;font-size:10.5px;font-weight:600;color:#F6F3EC;background:rgba(246,243,236,.08);border:1px solid rgba(246,243,236,.2);border-radius:999px;padding:9px 15px;cursor:pointer\" style-hover=\"border-color:#E8B96A;color:#E8B96A\">Save board</button>\n            <button onClick=\"{{ onImportClick }}\" style=\"white-space:nowrap;font-family:inherit;font-size:10.5px;font-weight:600;color:#F6F3EC;background:rgba(246,243,236,.08);border:1px solid rgba(246,243,236,.2);border-radius:999px;padding:9px 15px;cursor:pointer\" style-hover=\"border-color:#E8B96A;color:#E8B96A\">Import board</button>",
+   "hidden": "<!--sx:board-file-buttons-->"
+  },
+  {
+   "name": "board page: Share button",
+   "shown": "<button onClick=\"{{ bd.onShareSheet }}\" style=\"white-space:nowrap;font-family:inherit;font-size:10.5px;font-weight:600;color:#F6F3EC;background:rgba(246,243,236,.08);border:1px solid rgba(246,243,236,.2);border-radius:999px;padding:9px 15px;cursor:pointer\" style-hover=\"border-color:#E8B96A;color:#E8B96A\">Share &amp; PDF</button>",
+   "hidden": "<!--sx:board-share-button-->"
+  }
+ ]
+}

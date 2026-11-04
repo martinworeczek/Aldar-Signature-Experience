@@ -18,7 +18,7 @@ const json = (body, status = 200, extra = {}) =>
 const empty = (status) => new Response(null, { status, headers: CORS });
 const rpcError = (id, code, message) => ({ jsonrpc: "2.0", id: id ?? null, error: { code, message } });
 
-function handle(msg, dataset) {
+async function handle(msg, dataset) {
   if (!msg || msg.jsonrpc !== "2.0" || typeof msg.method !== "string") return rpcError(msg?.id, -32600, "Invalid request");
   const { id, method, params = {} } = msg;
   const isNotification = id === undefined || id === null;
@@ -33,7 +33,7 @@ function handle(msg, dataset) {
       return { jsonrpc: "2.0", id, result: { tools: toolList() } };
     case "tools/call": {
       try {
-        const out = callTool(dataset, params.name, params.arguments);
+        const out = await callTool(dataset, params.name, params.arguments);
         console.log(JSON.stringify({ mcp: "call", tool: params.name, args: params.arguments || {} }));
         return { jsonrpc: "2.0", id, result: { content: [{ type: "text", text: JSON.stringify(out) }], structuredContent: out, isError: false } };
       } catch (e) {
@@ -57,10 +57,10 @@ export default async (req) => {
   try { body = await req.json(); } catch { return json(rpcError(null, -32700, "Parse error"), 400); }
   if (Array.isArray(body)) {
     const dataset = await liveDataset();
-    const out = body.map((m) => handle(m, dataset)).filter(Boolean);
+    const out = (await Promise.all(body.map((m) => handle(m, dataset)))).filter(Boolean);
     return out.length ? json(out) : empty(202);
   }
-  const out = handle(body, body && body.method === "tools/call" ? await liveDataset() : null);
+  const out = await handle(body, body && body.method === "tools/call" ? await liveDataset() : null);
   return out ? json(out) : empty(202);
 };
 

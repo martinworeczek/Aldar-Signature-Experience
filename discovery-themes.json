@@ -1,0 +1,15 @@
+{
+  "_about": "Portfolio Discovery's 'Theme of the week' rotates through these, one per week (weeks start on Monday). 'match' is a case-insensitive pattern tested against each experience's name and one-line essence; a theme is used only when at least 4 experiences with photos match it. Edit, add or reorder freely and redeploy.",
+  "themes": [
+    { "title": "Arrival & welcome", "blurb": "How we greet people across every business line, one thread running through the portfolio.", "match": "welcom|arriv|first|onboard|greet|check-in|check in", "accent": "#3D5958", "deep": "#26403F" },
+    { "title": "Celebrations & milestones", "blurb": "Birthdays, anniversaries and the moments worth marking, wherever people live, stay, learn or work with Aldar.", "match": "birthday|anniversar|celebrat|milestone|graduat|congratul|ceremon", "accent": "#B0863F", "deep": "#7A5A28" },
+    { "title": "Families & children", "blurb": "Experiences designed with the youngest guests, students and residents in mind, and the parents beside them.", "match": "kid|child|famil|parent|little ones|young", "accent": "#E18454", "deep": "#9C5532" },
+    { "title": "Known by name", "blurb": "Recognition that makes people feel remembered: names, preferences and the details that show we were listening.", "match": "by name|personal|remember|recogni|known|preference|tailor", "accent": "#2D2459", "deep": "#1B1538" },
+    { "title": "Gifts & keepsakes", "blurb": "Small, considered objects that carry a moment home and keep it alive long after it has passed.", "match": "gift|keepsake|souvenir|hamper|token|memento|coin|pin", "accent": "#7B916C", "deep": "#55684B" },
+    { "title": "Farewells & handovers", "blurb": "How we close a chapter well: goodbyes, departures and the handing over of keys.", "match": "farewell|goodbye|departure|handover|hand over|keys|exit|alumni|move-out|move out", "accent": "#742418", "deep": "#4A160F" },
+    { "title": "Culture & heritage", "blurb": "Emirati hospitality, local traditions and the cultural calendar, expressed across the portfolio.", "match": "emirati|heritage|cultur|ramadan|eid|national day|arabic|majlis|tradition", "accent": "#B86952", "deep": "#7E4535" },
+    { "title": "Wellbeing & calm", "blurb": "Moments that slow people down, look after them and leave them feeling better than when they arrived.", "match": "well-?being|wellness|calm|spa|health|mindful|quiet|relax|rest", "accent": "#5B7F8C", "deep": "#3B5560" },
+    { "title": "Surprise & delight", "blurb": "The unexpected gestures nobody asked for, and the ones people remember and retell.", "match": "surprise|unexpected|delight|gesture|treat|nobody asked", "accent": "#C9A24A", "deep": "#8A6C2A" },
+    { "title": "Community & belonging", "blurb": "Bringing neighbours, colleagues and guests together so a place feels like theirs.", "match": "communit|neighbo|belong|together|social|gather|club", "accent": "#3E7C8C", "deep": "#28525D" }
+  ]
+}

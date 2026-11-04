@@ -38,11 +38,11 @@ export function buildDataset(W, full = [], SITE = "https://aldar-signature-exper
 
   const LINES = {
     cp: { label: "Corporate Plus", data: W.CP_DATA, img: (e) => e.image },
-    hp: { label: "Hospitality Plus", data: W.HP_DATA, img: (e) => (W.HP_IMG || {})[e.id] || e.image },
+    hp: { label: "Hospitality Plus", data: W.HP_DATA, img: (e) => e.sxPhoto || (W.HP_IMG || {})[e.id] || e.image },
     rp: { label: "Retail Plus", data: W.RP_DATA, img: (e) => e.image },
     edu: { label: "Education Plus", data: W.EDU_DATA, img: (e) => e.image },
-    dev: { label: "Development Plus", data: W.DEV_DATA, img: (e) => (W.DEV_IMG || {})[e.imageKey] || e.image },
-    est: { label: "Estates Plus", data: W.EST_DATA, img: (e) => (W.EST_IMG || {})[e.id] || e.image },
+    dev: { label: "Development Plus", data: W.DEV_DATA, img: (e) => e.sxPhoto || (W.DEV_IMG || {})[e.imageKey] || e.image },
+    est: { label: "Estates Plus", data: W.EST_DATA, img: (e) => e.sxPhoto || (W.EST_IMG || {})[e.id] || e.image },
     pp: { label: "Project Plus", data: W.PP_DATA, img: (e) => e.image },
   };
   const HP_J = { pre: "Pre-arrival & Arrival", stay: "During Stay", post: "Check-Out & Post-Departure" };
