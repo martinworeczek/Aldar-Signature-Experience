@@ -1,0 +1,232 @@
+<!-- Benchmark v3 uplift — extracted from the live "Benchmark Gallery.dc.html" (4 Nov 2026).
+     Template block sits inside the gallery view (<sc-if value="{{ isGallery }}">), directly after the hero.
+     renderVals adds:  u3: this._u3(S, RDY)  -->
+
+  <!-- 01 SHOWREEL · 2a (v3 uplift 4 Nov 2026) -->
+  <div id="bm-newly" data-bm-reel="1" style="padding:40px 28px 0"><div style="max-width:1860px;margin:0 auto">
+    <div style="position:relative;height:640px;border-radius:20px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.25);container-type:inline-size">
+      <div key="{{ u3.reel.cur.id }}" style="{{ u3.reel.cur.imgFade }}"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 40%,rgba(0,0,0,.6) 62%,rgba(0,0,0,.92) 100%)"></div>
+      <div style="position:absolute;top:32px;left:40px;right:40px;display:flex;align-items:center;gap:14px">
+        <span style="font-size:10.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#E8B96A;white-space:nowrap">01 &middot; Newly added</span>
+        <div style="flex:1;display:flex;gap:4px"><sc-for list="{{ u3.reel.ticks }}" as="t" hint-placeholder-count="8"><button onClick="{{ t.go }}" style="{{ t.css }}"></button></sc-for></div>
+        <span style="font-size:12px;color:rgba(255,255,255,.7);letter-spacing:.08em">{{ u3.reel.pos }}</span>
+      </div>
+      <div style="position:absolute;left:40px;bottom:40px;width:min(620px,calc(100% - 520px));min-width:min(440px,calc(100% - 80px));display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:8px"><span style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#0A1014;background:#E8B96A;border-radius:999px;padding:5px 10px">New</span><span style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.66);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px">{{ u3.reel.cur.industry }}</span></div>
+        <div style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#fff">{{ u3.reel.cur.brand }}</div>
+        <div style="font-family:Fraunces,serif;font-size:48px;line-height:52px;color:#fff;text-wrap:pretty">{{ u3.reel.cur.title }}</div>
+        <div style="font-size:15px;line-height:1.6;color:rgba(255,255,255,.85);max-width:54ch">{{ u3.reel.cur.short }}</div>
+        <div style="display:flex;gap:8px;margin-top:8px"><button onClick="{{ u3.reel.cur.open }}" style="font-family:inherit;font-size:12px;font-weight:600;color:#0A1014;background:#E8B96A;border:0;border-radius:999px;padding:11px 20px;cursor:pointer" style-hover="background:#F0CE93">Read the benchmark &#8594;</button><button onClick="{{ u3.reel.cur.act.onCmp }}" style="{{ u3.reel.cur.cmpCssL }}">{{ u3.reel.cur.act.cmpLabel }}</button><button onClick="{{ u3.reel.cur.act.onSave }}" style="{{ u3.reel.cur.saveCssL }}">{{ u3.reel.cur.act.saveLabel }}</button></div>
+      </div>
+      <div style="{{ u3.upNextCss }}">
+        <span style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.6)">Up next</span>
+        <div style="display:flex;gap:10px"><sc-for list="{{ u3.reel.next }}" as="n" hint-placeholder-count="3"><button onClick="{{ n.go }}" style="position:relative;width:120px;height:160px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.2);padding:0;cursor:pointer;background:#111"><div style="{{ n.img }}"></div><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.85))"></div><span style="position:absolute;left:10px;right:10px;bottom:10px;font-family:Poppins,sans-serif;font-size:11.5px;line-height:15px;color:#fff;text-align:left;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">{{ n.title }}</span></button></sc-for></div>
+        <div style="display:flex;gap:8px"><button onClick="{{ u3.reel.prev }}" style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.4);color:#fff;font-size:18px;cursor:pointer">&#8249;</button><button onClick="{{ u3.reel.nextFn }}" style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.4);color:#fff;font-size:18px;cursor:pointer">&#8250;</button></div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- 02 LIBRARY · Browse by (3c) + All benchmarks (cards / list), v3 uplift 4 Nov 2026 -->
+  <sc-if value="{{ showChapters }}" hint-placeholder-val="{{ true }}">
+  <div id="bm-explore" data-bm-library="1" style="padding:40px 28px 80px"><div style="max-width:1860px;margin:0 auto">
+    <div style="background:#0A0A0A;border-radius:20px;padding:40px;color:#fff;box-shadow:0 30px 80px rgba(0,0,0,.25)">
+      <div style="display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap">
+        <div><div style="font-size:10.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#E8B96A">02 &middot; The library</div><div style="font-size:34px;font-weight:300;margin-top:8px">The library</div></div>
+        <div style="display:flex;gap:3px;background:rgba(255,255,255,.07);border-radius:999px;padding:4px"><sc-for list="{{ u3.lib.modes }}" as="m" hint-placeholder-count="2"><button onClick="{{ m.go }}" style="{{ m.css }}">{{ m.label }}</button></sc-for></div>
+      </div>
+
+      <sc-if value="{{ u3.lib.isBrowse }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;justify-content:flex-end;margin-top:20px"><div style="display:flex;gap:3px;border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:3px;flex-wrap:wrap"><sc-for list="{{ u3.ix.lenses }}" as="l" hint-placeholder-count="5"><button onClick="{{ l.go }}" style="{{ l.css }}">{{ l.label }}</button></sc-for></div></div>
+      <div style="display:grid;grid-template-columns:minmax(200px,280px) minmax(0,1fr);gap:32px;margin-top:20px">
+        <div style="display:flex;flex-direction:column;max-height:600px;overflow-y:auto;padding-right:16px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent"><sc-for list="{{ u3.ix.rows }}" as="r" hint-placeholder-count="8"><div onMouseEnter="{{ r.go }}" onClick="{{ r.go }}" style="{{ r.css }}"><span style="{{ r.bar }}"></span><span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.label }}</span><span style="font-size:11px;opacity:.55">{{ r.n }}</span></div></sc-for></div>
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><span style="font-size:22px;font-weight:300">{{ u3.ix.label }}</span><button onClick="{{ u3.ix.seeAllGo }}" style="font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#E8B96A;background:transparent;border:1px solid rgba(232,185,106,.45);border-radius:999px;padding:8px 14px;cursor:pointer;white-space:nowrap" style-hover="background:rgba(232,185,106,.12)">{{ u3.ix.seeAll }}</button></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px">
+            <sc-for list="{{ u3.ix.p3 }}" as="c" hint-placeholder-count="3">
+              <div data-bm-card="1" key="{{ c.id }}" onClick="{{ c.open }}" style="position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:#000;cursor:pointer;content-visibility:auto;contain-intrinsic-size:auto 400px;animation:bgFade .4s ease both;transition:transform .25s" style-hover="transform:translateY(-4px)">
+                <div style="{{ c.img }}"></div><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 18%,rgba(0,0,0,0) 36%,rgba(0,0,0,.58) 54%,rgba(0,0,0,.84) 72%,rgba(0,0,0,.92) 100%)"></div>
+                <span style="position:absolute;top:14px;left:14px;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.66);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px;white-space:nowrap;max-width:80%;overflow:hidden;text-overflow:ellipsis">{{ c.industry }}</span>
+                <div style="position:absolute;left:0;right:0;bottom:0;padding:0 20px 18px;color:#fff"><div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.brand }}</div><div style="height:58px;margin-top:10px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end"><div style="font-family:Fraunces,serif;font-size:24px;line-height:29px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ c.title }}</div></div><div style="font-size:12px;line-height:18px;height:36px;margin-top:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ c.short }}</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid rgba(246,243,236,.18)"><div style="display:flex;gap:6px"><button onClick="{{ c.act.onCmp }}" style="{{ c.cmpCss }}">{{ c.act.cmpLabel }}</button><button onClick="{{ c.act.onSave }}" style="{{ c.saveCss }}">{{ c.act.saveLabel }}</button></div><span style="font-size:11px;font-weight:500;color:#E8B96A">Open &#8594;</span></div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ u3.lib.isAll }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:22px;padding:10px 12px 10px 18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px">
+        <span style="font-size:15px;color:#E8B96A">&#8981;</span>
+        <input value="{{ u3.lib.q }}" onChange="{{ u3.lib.onQ }}" placeholder="Search benchmarks, brands, ideas" style="flex:1 1 200px;min-width:0;background:transparent;border:0;outline:none;color:#fff;font-family:inherit;font-size:14px;padding:6px 0">
+        <span style="font-size:12px;color:rgba(255,255,255,.55);white-space:nowrap">{{ u3.lib.count }}</span>
+        <button onClick="{{ u3.lib.unusedGo }}" style="{{ u3.lib.unusedCss }}">Not yet drawn on &middot; {{ u3.lib.unusedN }}</button>
+        <div style="display:flex;gap:2px;background:rgba(255,255,255,.07);border-radius:999px;padding:3px"><sc-for list="{{ u3.lib.sorts }}" as="v" hint-placeholder-count="2"><button onClick="{{ v.go }}" style="{{ v.css }}">{{ v.label }}</button></sc-for></div>
+        <div style="display:flex;gap:2px;background:rgba(255,255,255,.07);border-radius:999px;padding:3px"><sc-for list="{{ u3.lib.views }}" as="v" hint-placeholder-count="2"><button onClick="{{ v.go }}" style="{{ v.css }}">{{ v.label }}</button></sc-for></div>
+      </div>
+      <sc-if value="{{ u3.lib.noRail }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+        <sc-for list="{{ u3.lib.groups }}" as="g" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="flex:0 0 120px;font-size:9.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.45)">{{ g.label }}</span><sc-for list="{{ g.items }}" as="it" hint-placeholder-count="4"><button onClick="{{ it.go }}" style="{{ it.css }}">{{ it.label }}<span style="opacity:.55">{{ it.n }}</span></button></sc-for></div></sc-for>
+      </div>
+      </sc-if>
+      <sc-if value="{{ u3.lib.hasPills }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px"><sc-for list="{{ u3.lib.pills }}" as="pl" hint-placeholder-count="1"><button onClick="{{ pl.clear }}" style="font-family:inherit;display:inline-flex;align-items:center;gap:8px;font-size:12px;color:#0A1014;background:#E8B96A;border:0;border-radius:999px;padding:6px 12px;cursor:pointer;white-space:nowrap">{{ pl.label }} <span style="font-size:13px">&times;</span></button></sc-for><button onClick="{{ u3.lib.clearAll }}" style="font-family:inherit;font-size:12px;color:rgba(255,255,255,.6);background:transparent;border:0;cursor:pointer;text-decoration:underline">Clear all</button></div>
+      </sc-if>
+      <div style="{{ u3.lib.bodyCss }}">
+        <sc-if value="{{ u3.lib.rail }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:22px;position:sticky;top:20px;align-self:start;max-height:640px;overflow-y:auto;padding-right:16px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent">
+          <sc-for list="{{ u3.lib.groups }}" as="g" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:9.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.45);padding-bottom:4px">{{ g.label }}</div>
+              <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="4"><button onClick="{{ it.go }}" style="{{ it.css }}"><span style="flex:1;min-width:0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.label }}</span><span style="opacity:.55">{{ it.n }}</span></button></sc-for>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+        <div style="min-width:0">
+          <sc-if value="{{ u3.lib.isCards }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px">
+            <sc-for list="{{ u3.lib.items }}" as="c" hint-placeholder-count="8">
+              <div data-bm-card="1" key="{{ c.id }}" onClick="{{ c.open }}" style="position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:#000;cursor:pointer;content-visibility:auto;contain-intrinsic-size:auto 400px;animation:bgFade .4s ease both;transition:transform .25s" style-hover="transform:translateY(-4px)">
+                <div style="{{ c.img }}"></div><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 18%,rgba(0,0,0,0) 36%,rgba(0,0,0,.58) 54%,rgba(0,0,0,.84) 72%,rgba(0,0,0,.92) 100%)"></div>
+                <span style="position:absolute;top:14px;left:14px;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.66);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px;white-space:nowrap;max-width:80%;overflow:hidden;text-overflow:ellipsis">{{ c.industry }}</span>
+                <div style="position:absolute;left:0;right:0;bottom:0;padding:0 20px 18px;color:#fff"><div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.brand }}</div><div style="height:58px;margin-top:10px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end"><div style="font-family:Fraunces,serif;font-size:24px;line-height:29px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ c.title }}</div></div><div style="font-size:12px;line-height:18px;height:36px;margin-top:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ c.short }}</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid rgba(246,243,236,.18)"><div style="display:flex;gap:6px"><button onClick="{{ c.act.onCmp }}" style="{{ c.cmpCss }}">{{ c.act.cmpLabel }}</button><button onClick="{{ c.act.onSave }}" style="{{ c.saveCss }}">{{ c.act.saveLabel }}</button></div><span style="font-size:11px;font-weight:500;color:#E8B96A">Open &#8594;</span></div></div>
+              </div>
+            </sc-for>
+          </div>
+          </sc-if>
+          <sc-if value="{{ u3.lib.isList }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ u3.lib.items }}" as="r" hint-placeholder-count="8">
+              <div onClick="{{ r.open }}" style="display:grid;grid-template-columns:36px 64px minmax(0,1fr) auto;gap:16px;align-items:center;padding:12px 8px;border-top:1px solid rgba(255,255,255,.08);cursor:pointer;transition:background .15s" style-hover="background:rgba(255,255,255,.04)">
+                <span style="font-size:12px;color:rgba(255,255,255,.4)">{{ r.num }}</span>
+                <div style="position:relative;width:64px;height:64px;border-radius:8px;overflow:hidden;background:#111"><div style="{{ r.img }}"></div></div>
+                <div style="min-width:0"><div style="display:flex;gap:12px;flex-wrap:wrap"><span style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#E8B96A;white-space:nowrap">{{ r.brand }}</span><span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);white-space:nowrap">{{ r.industry }}</span><span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);white-space:nowrap">{{ r.added }}</span></div><div style="font-size:17px;font-weight:300;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.title }}</div></div>
+                <div style="display:flex;gap:6px;align-items:center"><button onClick="{{ r.act.onCmp }}" style="{{ r.cmpCss }}">{{ r.act.cmpLabel }}</button><button onClick="{{ r.act.onSave }}" style="{{ r.saveCss }}">{{ r.act.saveLabel }}</button><span style="color:#E8B96A;margin-left:6px">&#8594;</span></div>
+              </div>
+            </sc-for>
+          </div>
+          </sc-if>
+          <sc-if value="{{ u3.lib.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:60px 8px;font-size:20px;font-weight:300;color:rgba(255,255,255,.5)">Nothing matches that yet</div></sc-if>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+  </div></div>
+
+  </sc-if>
+
+  <!-- 1c QUICK DETAIL (gallery only; other views still open the full feature story) -->
+  <sc-if value="{{ u3.hasDetail }}" hint-placeholder-val="{{ false }}">
+  <div data-bm-quick="1" onClick="{{ u3.close }}" style="position:fixed;inset:0;z-index:110;background:rgba(21,38,50,.42);backdrop-filter:blur(5px);display:flex;justify-content:center;overflow-y:auto;padding:40px 20px">
+    <div onClick="{{ u3.stop }}" style="position:relative;width:min(940px,100%);height:max-content;background:#0A0A0A;border-radius:14px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.5);color:#fff">
+      <div style="position:relative;min-height:520px;display:flex;flex-direction:column;justify-content:flex-end">
+        <div style="{{ u3.d.img }}"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 40%,rgba(10,10,10,.75) 70%,#0A0A0A 100%)"></div>
+        <div style="position:absolute;top:20px;left:24px;right:24px;display:flex;gap:8px;align-items:center"><span style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#0A1014;background:#E8B96A;border-radius:999px;padding:5px 10px;white-space:nowrap">Benchmark</span><span style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;background:rgba(0,0,0,.66);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px;white-space:nowrap">{{ u3.d.industry }}</span><button onClick="{{ u3.close }}" style="margin-left:auto;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.4);color:#fff;cursor:pointer">&#10005;</button></div>
+        <div style="position:relative;padding:0 40px 30px"><div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.75)">{{ u3.d.brand }} &nbsp;&middot;&nbsp; {{ u3.d.moment }}</div><div style="font-size:clamp(30px,3.6vw,44px);font-weight:300;line-height:1.08;letter-spacing:-.02em;margin-top:10px;max-width:20ch">{{ u3.d.title }}</div><div style="font-size:15px;font-weight:300;line-height:1.6;color:rgba(255,255,255,.85);margin-top:12px;max-width:60ch">{{ u3.d.short }}</div><div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap"><button onClick="{{ u3.d.onAdapt }}" style="font-family:inherit;font-size:12px;font-weight:600;color:#0A1014;background:#E8B96A;border:0;border-radius:999px;padding:10px 18px;cursor:pointer" style-hover="background:#F0CE93">Adapt in Idea Exchange &#8594;</button><button onClick="{{ u3.d.act.onSave }}" style="{{ u3.d.saveCssL }}">{{ u3.d.act.saveLabel }}</button><button onClick="{{ u3.d.act.onCmp }}" style="{{ u3.d.cmpCssL }}">{{ u3.d.act.cmpLabel }}</button></div></div>
+      </div>
+      <div style="padding:8px 40px 40px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-wrap:wrap;gap:20px 32px;padding:28px 32px;background:#161616;border:1px solid rgba(255,255,255,.08);border-radius:14px"><div style="flex:0 0 170px"><div style="font-size:34px;font-weight:300;color:#E8B96A;line-height:1">01</div><div style="font-size:15px;font-weight:500;margin-top:10px">What they do</div></div><div style="flex:1 1 420px;min-width:0;font-size:15px;line-height:1.7;color:rgba(255,255,255,.85)">{{ u3.d.lead }}</div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:20px 32px;padding:28px 32px;background:#161616;border:1px solid rgba(255,255,255,.08);border-radius:14px"><div style="flex:0 0 170px"><div style="font-size:34px;font-weight:300;color:#E8B96A;line-height:1">02</div><div style="font-size:15px;font-weight:500;margin-top:10px">Why it works</div></div><div style="flex:1 1 420px;min-width:0"><sc-for list="{{ u3.d.why }}" as="w" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;padding:14px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="font-size:12px;color:#E8B96A;font-weight:500">{{ w.n }}</span><div><div style="font-size:15px;font-weight:500">{{ w.head }}</div><div style="font-size:13.5px;line-height:1.6;color:rgba(255,255,255,.7);margin-top:4px">{{ w.body }}</div></div></div></sc-for></div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:20px 32px;padding:28px 32px;background:#161616;border:1px solid rgba(255,255,255,.08);border-radius:14px"><div style="flex:0 0 170px"><div style="font-size:34px;font-weight:300;color:#E8B96A;line-height:1">03</div><div style="font-size:15px;font-weight:500;margin-top:10px">Where it could land at Aldar</div></div><div style="flex:1 1 420px;min-width:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px"><sc-for list="{{ u3.d.transfer }}" as="t" hint-placeholder-count="3"><div style="padding:16px 18px;border-radius:12px;background:#1E1E1E;border:1px solid rgba(255,255,255,.08)"><div style="display:inline-flex;align-items:center;gap:7px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#E8B96A;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:{{ t.dot }}"></span>{{ t.line }}</div><div style="font-size:13px;line-height:1.55;color:rgba(255,255,255,.82);margin-top:8px">{{ t.how }}</div></div></sc-for></div></div>
+        <sc-if value="{{ u3.d.hasInf }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:20px 32px;padding:28px 32px;background:#161616;border:1px solid rgba(255,255,255,.08);border-radius:14px"><div style="flex:0 0 170px"><div style="font-size:34px;font-weight:300;color:#E8B96A;line-height:1">04</div><div style="font-size:15px;font-weight:500;margin-top:10px">Already informs</div><div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:6px;line-height:1.5">Signature Experiences this benchmark shaped.</div></div><div style="flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:8px"><sc-for list="{{ u3.d.informed }}" as="ie" hint-placeholder-count="1"><div onClick="{{ ie.onOpen }}" style="display:flex;align-items:center;gap:14px;padding:10px 16px 10px 10px;border-radius:12px;background:#1E1E1E;border:1px solid rgba(255,255,255,.08);cursor:pointer" style-hover="border-color:rgba(232,185,106,.45)"><div style="position:relative;flex:0 0 64px;height:64px;border-radius:8px;overflow:hidden;background:#111"><div style="{{ ie.img }}"></div></div><span style="width:7px;height:7px;border-radius:50%;background:{{ ie.dot }};flex-shrink:0"></span><span style="flex:1;min-width:0;font-size:14px">{{ ie.name }}</span><span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5)">{{ ie.line }}</span><span style="font-size:11px;font-weight:600;color:#E8B96A">Open &#8599;</span></div></sc-for></div></div></sc-if>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);padding:4px 8px 0">Source &middot; {{ u3.d.source }}</div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+
+</div>
+
+
+<script>
+  // ---- v3 uplift (4 Nov 2026): 2a showreel · 3c Browse by + All benchmarks library · 1a cards · 1c quick detail ----
+  _u3(S, RDY) {
+    const LC = { Corporate: '#4FB58C', Development: '#C9A24A', Education: '#5A82B5', Estates: '#A5443A', Hospitality: '#D08A4C', Retail: '#D9786A' };
+    const ln = x => String(x || '').replace(/\s*Plus$/, '').replace(/^(Community|PM).*/, 'Estates');
+    const LBL = {}; LINES.forEach(l => { LBL[l.key] = l.label; });
+    const IM = window.BM_IMAGES || {};
+    const R = (S.line && S.line !== 'all') ? DATA.filter(b => b.line === S.line) : DATA.slice();
+    const img = b => { const u = RDY && b ? (IM[b.id] || BMX_IMG[b.id] || '') : ''; return { position: 'absolute', inset: 0, backgroundImage: u ? 'url("' + u + '")' : (G[b && b.art] || 'linear-gradient(160deg,#2B3136,#0E1418)'), backgroundSize: 'cover', backgroundPosition: 'center 35%' }; };
+    const fade = b => Object.assign(img(b), { animation: 'bgFade .6s ease both' });
+    const open = b => (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ u3Open: b.id }); };
+    const pill = (on, onBg, big) => ({ fontFamily: 'inherit', fontSize: big ? '12px' : '11px', fontWeight: on ? 600 : 400, cursor: 'pointer', whiteSpace: 'nowrap', borderRadius: '999px', padding: big ? '11px 18px' : '6px 13px', color: on ? '#0A1014' : '#fff', background: on ? onBg : 'transparent', border: '1px solid ' + (on ? onBg : 'rgba(246,243,236,.3)') });
+    const inB = id => (S.boards || []).some(bd => (bd.items || []).some(it => it.id === id));
+    const inC = id => (S.cmp || []).indexOf(id) !== -1;
+    const base = b => ({ id: b.id, img: img(b), title: b.title, brand: b.brand, industry: b.industry, short: b.short, open: open(b), act: this._actCol(b.id),
+      cmpCss: pill(inC(b.id), '#9BB48C'), saveCss: pill(inB(b.id), '#E8B96A'), cmpCssL: pill(inC(b.id), '#9BB48C', 1), saveCssL: pill(inB(b.id), '#E8B96A', 1) });
+    // 01 showreel: the eight newest additions
+    const reelSet = R.filter(b => b.added).sort((x, y) => String(y.added).localeCompare(String(x.added))).concat(R.filter(b => !b.added && b.feat)).slice(0, 8);
+    const ri = (S.u3Reel || 0) % (reelSet.length || 1), go = k => () => this.setState({ u3Reel: k }), cr = reelSet[ri] || {};
+    if (!this._u3rs) { this._u3w = window.innerWidth >= 1100; this._u3rs = () => { const w = window.innerWidth >= 1100; if (w !== this._u3w) { this._u3w = w; this.forceUpdate(); } }; window.addEventListener('resize', this._u3rs); }
+    const wide = this._u3w;
+    const reel = { cur: Object.assign(base(cr.id ? cr : (R[0] || {})), { imgFade: fade(cr) }), pos: String(ri + 1).padStart(2, '0') + ' / ' + String(reelSet.length).padStart(2, '0'),
+      ticks: reelSet.map((b, k) => ({ go: go(k), css: { flex: 1, height: '3px', border: 0, padding: 0, borderRadius: '2px', cursor: 'pointer', background: k === ri ? '#E8B96A' : k < ri ? 'rgba(232,185,106,.5)' : 'rgba(255,255,255,.25)' } })),
+      next: wide ? [1, 2, 3].map(o => { const k = (ri + o) % reelSet.length, b = reelSet[k]; return b && k !== ri ? Object.assign(base(b), { go: go(k) }) : null; }).filter(Boolean) : [],
+      prev: go((ri - 1 + reelSet.length) % (reelSet.length || 1)), nextFn: go((ri + 1) % (reelSet.length || 1)) };
+    const upNextCss = { position: 'absolute', right: '40px', bottom: wide ? '40px' : 'auto', top: wide ? 'auto' : '72px', display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-end' };
+    // 02 library
+    const LENS = [['brand', 'Brand A–Z', b => [String(b.brand || '').charAt(0).toUpperCase()]], ['theme', 'Theme', b => b.themes || []], ['industry', 'Industry', b => [b.industry]], ['geo', 'Geography', b => [bmGeo(b).regionLabel]], ['pillar', 'Signature pillar', b => [(bmPillar(b) || {}).short]], ['line', 'Business line', b => [LBL[b.line]]]];
+    const lensFn = k => (LENS.find(l => l[0] === k) || LENS[0])[2];
+    const L = LENS.find(l => l[0] === (S.u3Lens || 'theme')) || LENS[1];
+    const o = {}; R.forEach(b => L[2](b).forEach(v => { if (v) o[v] = (o[v] || 0) + 1; }));
+    const arr = Object.entries(o); L[0] === 'brand' ? arr.sort((x, y) => x[0] < y[0] ? -1 : 1) : arr.sort((x, y) => y[1] - x[1]);
+    const v = S.u3Val && o[S.u3Val] ? S.u3Val : (arr[0] || [''])[0];
+    const pick = R.filter(b => L[2](b).indexOf(v) >= 0);
+    const seg = on => ({ fontFamily: 'inherit', fontSize: '12px', fontWeight: 500, border: 0, borderRadius: '999px', padding: '8px 16px', cursor: 'pointer', whiteSpace: 'nowrap', background: on ? '#E8B96A' : 'transparent', color: on ? '#0A1014' : 'rgba(255,255,255,.75)' });
+    const fs = S.u3Sel || {};
+    const ix = { lenses: LENS.map(l => ({ label: l[1], css: Object.assign(seg(l[0] === L[0]), { padding: '8px 15px' }), go: () => this.setState({ u3Lens: l[0], u3Val: null }) })),
+      rows: arr.map(([val, n]) => { const on = val === v; return { label: val, n,
+        go: () => { clearTimeout(this._u3h); this._u3h = setTimeout(() => { if (this.state.u3Val !== val) this.setState({ u3Val: val }); }, 90); },
+        css: { display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 10px', fontSize: on ? '17px' : '15px', fontWeight: on ? 400 : 300, color: on ? '#fff' : 'rgba(255,255,255,.6)', borderTop: '1px solid rgba(255,255,255,.07)', cursor: 'pointer', transition: '.2s' },
+        bar: { width: on ? '22px' : '0px', height: '1px', background: '#E8B96A', transition: 'width .3s', flexShrink: 0 } }; }),
+      label: v, seeAll: 'See all ' + pick.length + ' →', p3: pick.concat(R.filter(b => pick.indexOf(b) < 0)).slice(0, 3).map(base),
+      seeAllGo: () => this.setState({ u3Mode: 'all', u3Sel: { [L[0]]: [v] }, u3Unused: false, u3Q: '' }) };
+    const mode = S.u3Mode || 'browse', view = S.u3View || 'cards', q = String(S.u3Q || '').toLowerCase(), sort = S.u3Sort || 'brand';
+    const setF = (lk, val) => { const cur = (fs[lk] || []).slice(); const i = cur.indexOf(val); i >= 0 ? cur.splice(i, 1) : cur.push(val); this.setState({ u3Sel: Object.assign({}, fs, { [lk]: cur }) }); };
+    let items = R.filter(b => Object.keys(fs).every(lk => !(fs[lk] || []).length || lensFn(lk)(b).some(x => fs[lk].indexOf(x) >= 0)));
+    if (S.u3Unused) items = items.filter(b => !(b.informed || []).length);
+    if (q) items = items.filter(b => (b.title + ' ' + b.brand + ' ' + b.industry + ' ' + b.short + ' ' + (b.themes || []).join(' ')).toLowerCase().indexOf(q) >= 0);
+    items.sort(sort === 'new' ? (x, y) => bmRecency(y.added) - bmRecency(x.added) || (x.brand + x.title).localeCompare(y.brand + y.title) : (x, y) => (x.brand + ' ' + x.title).localeCompare(y.brand + ' ' + y.title));
+    const railOn = (this.props.allLayout ?? 'Filter rail') === 'Filter rail';
+    const ORDER = { geo: BM_REGIONS.map(x => x.label), pillar: BM_PILLARS.map(x => x.short) };
+    const groups = ['industry', 'geo', 'pillar', 'theme', 'line'].map(lk => { const LL = LENS.find(l => l[0] === lk); const c = {}; R.forEach(b => LL[2](b).forEach(x => { if (x) c[x] = (c[x] || 0) + 1; }));
+      const ent = Object.entries(c); ORDER[lk] ? ent.sort((x, y) => ORDER[lk].indexOf(x[0]) - ORDER[lk].indexOf(y[0])) : ent.sort((x, y) => y[1] - x[1]);
+      return { label: LL[1], items: ent.slice(0, lk === 'theme' ? 10 : 14).map(([x, n]) => { const on = (fs[lk] || []).indexOf(x) >= 0; return { label: x, n, go: () => setF(lk, x),
+        css: railOn ? { fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '10px', width: '100%', fontSize: '13px', padding: '7px 10px', borderRadius: '8px', border: 0, cursor: 'pointer', background: on ? 'rgba(232,185,106,.16)' : 'transparent', color: on ? '#E8B96A' : 'rgba(255,255,255,.75)' }
+          : { fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '12px', padding: '6px 12px', borderRadius: '999px', cursor: 'pointer', whiteSpace: 'nowrap', border: '1px solid ' + (on ? '#E8B96A' : 'rgba(255,255,255,.16)'), background: on ? 'rgba(232,185,106,.16)' : 'transparent', color: on ? '#E8B96A' : 'rgba(255,255,255,.8)' } }; }) }; });
+    const pills = [];
+    Object.keys(fs).forEach(lk => (fs[lk] || []).forEach(x => pills.push({ label: x, clear: () => setF(lk, x) })));
+    if (S.u3Unused) pills.push({ label: 'Not yet drawn on', clear: () => this.setState({ u3Unused: false }) });
+    const nice = a => { if (!a) return ''; const p = String(a).split('-'); const M = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][parseInt(p[1], 10)] || ''; return 'Added ' + (M ? M + ' ' : '') + p[0]; };
+    const lib = { isBrowse: mode === 'browse', isAll: mode === 'all', isCards: view === 'cards', isList: view === 'list', rail: railOn, noRail: !railOn,
+      modes: [['browse', 'Browse by'], ['all', 'All benchmarks · ' + R.length]].map(([k, l]) => ({ label: l, css: seg(mode === k), go: () => this.setState({ u3Mode: k }) })),
+      views: [['cards', 'Cards'], ['list', 'List']].map(([k, l]) => ({ label: l, css: seg(view === k), go: () => this.setState({ u3View: k }) })),
+      sorts: [['brand', 'Brand A–Z'], ['new', 'Newest first']].map(([k, l]) => ({ label: l, css: seg(sort === k), go: () => this.setState({ u3Sort: k }) })),
+      unusedCss: seg(!!S.u3Unused), unusedGo: () => this.setState({ u3Unused: !S.u3Unused }), unusedN: R.filter(b => !(b.informed || []).length).length,
+      q: S.u3Q || '', onQ: e => this.setState({ u3Q: e.target.value }),
+      pills, hasPills: pills.length > 0, clearAll: () => this.setState({ u3Sel: {}, u3Unused: false, u3Q: '' }),
+      count: items.length + ' of ' + R.length, empty: items.length === 0, groups,
+      bodyCss: { display: 'grid', gridTemplateColumns: railOn ? 'minmax(190px,240px) minmax(0,1fr)' : 'minmax(0,1fr)', gap: '28px', marginTop: '18px' },
+      items: items.map((b, k) => Object.assign(base(b), { num: String(k + 1).padStart(2, '0'), added: nice(b.added) })) };
+    // 1c quick detail
+    const x = S.view === 'gallery' ? DATA.find(b => b.id === S.u3Open) : null;
+    let d = {};
+    if (x) {
+      const bx = base(x);
+      d = { img: img(x), title: x.title, brand: x.brand, industry: x.industry, moment: bmStage(x) || bmPlace(x), short: x.short, lead: x.lead, source: x.source || x.src || bmPlace(x),
+        act: bx.act, cmpCssL: bx.cmpCssL, saveCssL: bx.saveCssL,
+        onAdapt: () => { this.setState({ u3Open: null }); try { if (window.__SIG_GO) window.__SIG_GO('transfer'); } catch (e) {} },
+        why: (x.why || []).map((w, i) => ({ n: String(i + 1).padStart(2, '0'), head: w.head, body: w.body })),
+        transfer: (x.transfer || []).map(t => ({ line: ln(t.line), how: t.how, dot: LC[ln(t.line)] || '#E8B96A' })),
+        informed: (x.informed || []).map(eid => { const e2 = this._expMeta(eid) || {}; const meta = EXPN[eid] || {}; const lnm = ln(e2.line || meta.line);
+          return { name: e2.name || meta.name || eid.replace(/-/g, ' '), line: lnm, dot: LC[lnm] || '#E8B96A',
+            onOpen: (ev) => { if (ev && ev.stopPropagation) ev.stopPropagation(); this.setState({ u3Open: null }); this._openExpFull(eid, x.id); },
+            img: { position: 'absolute', inset: 0, backgroundImage: e2.image ? 'url("' + e2.image + '")' : 'linear-gradient(160deg,#2B3136,#0E1418)', backgroundSize: 'cover', backgroundPosition: 'center' } }; }),
+        hasInf: (x.informed || []).length > 0 };
+    }
+    return { reel, ix, lib, d, upNextCss, hasDetail: !!x, close: () => this.setState({ u3Open: null }), stop: e => e.stopPropagation() };
+  }
+
+</script>

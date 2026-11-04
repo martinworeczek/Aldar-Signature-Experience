@@ -35,3 +35,37 @@
   .sn-shell{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .sn-shell::-webkit-scrollbar{display:none}
 }
+
+/* Benchmark v3 (showreel, library, quick detail) on phones */
+@media (max-width:700px){
+  html [data-bm-reel]{padding:24px 12px 0!important}
+  html [data-bm-reel] [style*="height: 640px"]{height:600px!important}
+  html [data-bm-reel] [style*="top: 32px"][style*="left: 40px"]{top:18px!important;left:18px!important;right:18px!important}
+  html [data-bm-reel] [style*="left: 40px"][style*="bottom: 40px"]{left:18px!important;right:18px!important;bottom:22px!important;width:auto!important;min-width:0!important}
+  html [data-bm-reel] [style*="font-size: 48px"]{font-size:30px!important;line-height:34px!important}
+  html [data-bm-reel] [style*="font-size: 15px"]{font-size:13.5px!important;line-height:1.5!important;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+  html [data-bm-reel] button{white-space:nowrap}
+  html [data-bm-reel] [style*="right: 40px"]{right:18px!important;top:52px!important}
+  html [data-bm-reel] [style*="right: 40px"] [style*="width: 44px"]{width:38px!important;height:38px!important}
+  html [data-bm-library]{padding:24px 12px 48px!important}
+  html [data-bm-library] [style*="padding: 40px"]{padding:22px 16px!important}
+  html [data-bm-library] [style*="minmax(200px, 280px)"],html [data-bm-library] [style*="minmax(190px, 240px)"]{grid-template-columns:minmax(0,1fr)!important;gap:18px!important}
+  html [data-bm-library] [style*="max-height: 600px"]{max-height:230px!important}
+  html [data-bm-library] [style*="position: sticky"]{position:static!important;max-height:260px!important}
+  html [data-bm-library] [style*="minmax(230px, 1fr)"]{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  html [data-bm-library] [data-bm-card] [style*="padding: 0px 20px 18px"]{padding:0 12px 12px!important}
+  html [data-bm-library] [data-bm-card] [style*="font-size: 24px"]{font-size:17px!important;line-height:21px!important}
+  html [data-bm-library] [data-bm-card] [style*="height: 58px"]{height:42px!important}
+  html [data-bm-library] [data-bm-card] [style*="height: 36px"]{display:none!important}
+  html [data-bm-library] [data-bm-card] [style*="border-top: 1px solid"]{margin-top:10px!important;padding-top:10px!important}
+  html [data-bm-library] [data-bm-card] [style*="border-top: 1px solid"] button{padding:5px 9px!important;font-size:10px!important}
+  html [data-bm-library] [data-bm-card] [style*="border-top: 1px solid"]>span{display:none}
+  html [data-bm-library] [style*="36px 64px"]{grid-template-columns:52px minmax(0,1fr)!important;gap:12px!important}
+  html [data-bm-library] [style*="36px 64px"]>span:first-child{display:none}
+  html [data-bm-library] [style*="36px 64px"]>div:last-child{grid-column:1/-1;justify-content:flex-end}
+  html [data-bm-quick]{padding:72px 8px 12px!important}
+  html [data-bm-quick] [style*="padding: 0px 40px 30px"]{padding:0 20px 22px!important}
+  html [data-bm-quick] [style*="padding: 8px 40px 40px"]{padding:6px 12px 20px!important}
+  html [data-bm-quick] [style*="padding: 28px 32px"]{padding:20px 18px!important}
+  html [data-bm-quick] [style*="min-height: 520px"]{min-height:440px!important}
+}
