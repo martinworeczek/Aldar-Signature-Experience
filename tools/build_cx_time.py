@@ -46,9 +46,6 @@ html,body{overflow-x:clip}
 """ + """
 /* Phones and small tablets. The module is laid out with inline styles for the desktop hub,
    so these rules reach it through the data-m hooks that MOBILE_HOOKS adds at build time. */
-@media (max-width:900px){
- [data-m=rail]{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-}
 @media (max-width:700px){
  .atl{border-radius:0!important;min-height:0!important}
  [data-m=pad]{padding:12px 12px 40px!important}
@@ -69,27 +66,6 @@ html,body{overflow-x:clip}
  [data-atl-row]{grid-template-columns:92px minmax(0,1fr)!important;gap:14px!important;padding:14px 0!important}
  [data-atl-row] > span:last-child{display:none!important}
  [data-atl-row] > div:nth-child(2) > div:nth-child(2){font-size:16px!important}
- [data-atl-reader]{border-radius:12px!important}
- [data-m=rhero]{height:auto!important;min-height:520px!important;display:flex;flex-direction:column;justify-content:flex-end}
- [data-m=rtop]{left:14px!important;right:14px!important;top:14px!important;align-items:flex-start!important}
- [data-m=rchips]{flex-wrap:wrap!important;flex-shrink:1!important;min-width:0}
- [data-m=rbot]{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;padding:96px 18px 22px}
- [data-m=rbot] > div:nth-child(2){font-size:28px!important;line-height:1.12!important}
- [data-m=rbody]{padding:4px 12px 28px!important}
- [data-m=panel]{padding:20px 18px!important;gap:14px!important}
- [data-m=panel] > div:first-child{flex:1 1 100%!important}
- [data-m=panel] > div:last-child{flex:1 1 100%!important}
- [data-m=panel] > div:last-child[style*="grid"]{grid-template-columns:minmax(0,1fr)!important}
- [data-m=rbody] > div[style*="36ch"]{margin:26px auto!important}
- [data-m=rbody] > div[style*="36ch"] > div:first-child{font-size:21px!important}
- [data-m=railhead]{flex-wrap:wrap;gap:6px 12px!important;margin-top:26px!important}
- [data-m=railhead] > span:nth-child(3){flex:1 1 100%;order:3}
- [data-m=railhead] > button{order:2}
- [data-m=rail]{gap:10px!important}
- [data-m=rail] [data-atl-card] > div:last-child{padding:0 12px 12px!important}
- [data-m=rail] [data-atl-card] > div:last-child > div:last-child{font-size:15px!important;line-height:1.25!important}
- [data-m=rail] [data-atl-card] > div:nth-child(3){top:10px!important;left:10px!important;right:10px!important}
- [data-m=rail] [data-atl-card] > div:nth-child(3) > span:nth-child(2){display:none}
 }
 """
 
@@ -105,16 +81,6 @@ MOBILE_HOOKS = [
     ('<div style="position:absolute;top:18px;left:18px;display:flex;gap:8px;flex-wrap:nowrap', "leadchips", 1),
     ('<div style="position:absolute;left:28px;right:28px;bottom:26px', "leadtx", 1),
     ('<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px', "grid", 1),
-    ('<div style="position:relative;height:min(520px,62vh);min-height:420px', "rhero", 1),
-    ('<div style="position:absolute;top:22px;left:28px;right:28px', "rtop", 1),
-    ('<div style="display:flex;gap:8px;align-items:center;flex-wrap:nowrap;flex-shrink:0', "rchips", 1),
-    ('<div style="position:absolute;left:40px;right:40px;bottom:30px', "rbot", 1),
-    ('<div style="padding:6px 32px 36px', "rbody", 1),
-    ('<div style="display:flex;flex-wrap:wrap;gap:20px 32px;padding:28px 32px', "panel", 1),
-    ('<div data-atl-why="1" style=', "panel", 1),
-    ('<div data-atl-se="1" style=', "panel", 1),
-    ('<div style="margin-top:16px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px', "rail", 1),
-    ('<div style="margin-top:32px;display:flex;align-items:baseline;gap:14px', "railhead", 1),
 ]
 
 
