@@ -17,7 +17,7 @@ A read-only [Model Context Protocol](https://modelcontextprotocol.io) server ove
 | 3 | **Deployment** | Per experience: assets in scope, which are live, and which are out of scope. Covers hotels and beach clubs, malls, schools, communities and HQ | inside each experience |
 | 4 | **Benchmarks** | Global CX reference cases: brand, industry, pillar, themes, lead, why it works, how it transfers to each Aldar line, source, and the Aldar experiences it informed | 208 |
 | 5 | **Aldar CX Time** | Editions and stories (articles, videos, podcasts): AI summary, why it matters to Aldar, relevant lines, suggested signature experience, speakers, links | 2 editions, 16 stories |
-| 6 | **Idea Exchange** | Transferable experience moves, what each becomes in every line, and the experiences that embody it | 26 moves |
+| 6 | **Idea Exchange** | *Hidden while `idea_exchange` is false in `features.json`.* Transferable experience moves, what each becomes in every line, and the experiences that embody it | 26 moves |
 | 7 | **Asset library** | SharePoint folder per experience (folder, link, photo / film / document counts, file names) | 22 folders, attached to experiences |
 
 Not included, because they live only in each visitor's browser: saved boards, audits recorded in the browser, and Ask Echo chats.
@@ -27,14 +27,14 @@ Not included, because they live only in each visitor's browser: saved boards, au
 | Tool | Answers questions like |
 |---|---|
 | `get_overview` | "What can you tell me about?" Categories, counts, data stamps, which tool answers what. Agents should call this first. |
-| `search` | "Anything about pet welcomes?" Ranked matches across experiences, benchmarks, CX Time and Idea Exchange. |
-| `list_experiences` | "Which Hospitality experiences are live?", "What's live at W Hotel?", "What's due Nov–Dec 2026?", "Flagships in Retail". Filters: line, stage, defining, pillar, journey stage, property, live at, target window, Idea Exchange move, text. Sorting and paging included. |
+| `search` | "Anything about pet welcomes?" Ranked matches across experiences, benchmarks and CX Time. |
+| `list_experiences` | "Which Hospitality experiences are live?", "What's live at W Hotel?", "What's due Nov–Dec 2026?", "Flagships in Retail". Filters: line, stage, defining, pillar, journey stage, property, live at, target window, text. Sorting and paging included. |
 | `get_experience` | "Tell me everything about The Golden Coin." The full record, with linked benchmarks. Accepts an id or a name. |
 | `portfolio_breakdown` | "How many experiences per stage in Retail?", "Live experiences by property". Group by line, stage, pillar, journey stage, property, live property, target month or defining, with the same filters as `list_experiences`. |
 | `get_programme` | "What are Estates' journeys and verticals?" |
 | `list_benchmarks` / `get_benchmark` | "Shopping mall benchmarks on loyalty", "Why does JPMorgan 270 Park work?" |
 | `list_cx_time` / `get_cx_time_story` | "Podcasts in the latest edition", "Summarise the Oura TCX story". |
-| `get_idea_moves` | "What does 'a named greeting ritual' become in Retail, and who already does it?" |
+| `get_idea_moves` | *Hidden while `idea_exchange` is false.* "What does 'a named greeting ritual' become in Retail, and who already does it?" |
 
 Every tool is read-only (`readOnlyHint`) and returns both text JSON and `structuredContent`.
 
@@ -43,11 +43,11 @@ Every tool is read-only (`readOnlyHint`) and returns both text JSON and `structu
 1. Open your agent in Copilot Studio → **Tools** → **Add a tool** → **New tool** → **Model Context Protocol**.
 2. Fill in the form:
    - **Server name:** Aldar Signature Experience Hub
-   - **Server description:** Read-only access to Aldar's signature experiences, programmes, deployment, benchmarks, CX Time and Idea Exchange.
+   - **Server description:** Read-only access to Aldar's signature experiences, programmes, deployment, benchmarks and CX Time.
    - **Server URL:** `https://aldar-signature-experience.netlify.app/mcp`
 3. **Authentication:** choose **None**.
-4. Click **Create**. Copilot Studio lists the 11 tools; leave them all enabled.
-5. In the agent's instructions, add: "For anything about Aldar signature experiences, CX programmes, benchmarks, CX Time or the Idea Exchange, use the Aldar Signature Experience Hub tools. Call get_overview first if unsure. Quote stages, dates and counts exactly as returned."
+4. Click **Create**. Copilot Studio lists the 10 tools; leave them all enabled.
+5. In the agent's instructions, add: "For anything about Aldar signature experiences, CX programmes, benchmarks or CX Time, use the Aldar Signature Experience Hub tools. Call get_overview first if unsure. Quote stages, dates and counts exactly as returned."
 
 If your Copilot Studio tenant offers only the custom-connector route, create a custom connector from an OpenAPI definition with host `aldar-signature-experience.netlify.app`, base path `/`, a POST operation `/mcp` marked `x-ms-agentic-protocol: mcp-streamable-1.0`, and no authentication.
 
@@ -56,3 +56,7 @@ If your Copilot Studio tenant offers only the custom-connector route, create a c
 - **New data in the hub:** nothing to do. The next deploy rebuilds the dataset.
 - **A new field or category:** add it in `tools/build_mcp_data.mjs` (dataset) and `netlify/functions/_lib/mcp-core.mjs` (tools).
 - **Local test:** run `node tools/build_mcp_data.mjs`, then call the default export of `netlify/functions/mcp.mjs` with a `Request`. Calls are logged as `{"mcp":"call",…}` lines in the Netlify function log.
+
+## Hidden sections
+
+`features.json` switches hub sections off without deleting them (see `docs/features-README.md`). While `idea_exchange` is false, `/mcp` drops `get_idea_moves`, the `idea_move` filter, the `idea_moves` search category, and every `idea_moves` field in results.

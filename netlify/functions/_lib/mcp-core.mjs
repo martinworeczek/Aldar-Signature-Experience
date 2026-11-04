@@ -1,5 +1,6 @@
 // Aldar Signature Experience Hub — MCP tools over the site dataset.
 // Pure functions: (dataset, args) -> result. The /mcp function wires them to JSON-RPC.
+import FEATURES from "../../../features.json" with { type: "json" };
 
 const norm = (s) => String(s ?? "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").trim();
 const LINE_ALIASES = {
@@ -298,12 +299,42 @@ export const TOOLS = [
   },
 ];
 
+// ---- sections hidden from the hub (features.json) are hidden here too ----
+const IX_OFF = FEATURES.idea_exchange === false;
+if (IX_OFF) {
+  const k = TOOLS.findIndex((t) => t.name === "get_idea_moves"); if (k >= 0) TOOLS.splice(k, 1);
+  const WORDING = [
+    [", CX Time, Idea Exchange, SharePoint", ", CX Time, SharePoint"],
+    ["benchmarks, CX Time stories and Idea Exchange moves", "benchmarks and CX Time stories"],
+    ["target go-live window, Idea Exchange move, or free text", "target go-live window, or free text"],
+    ["SharePoint asset folder, Idea Exchange moves and the benchmarks", "SharePoint asset folder and the benchmarks"],
+  ];
+  for (const t of TOOLS) {
+    for (const [a, b] of WORDING) t.description = t.description.split(a).join(b);
+    const p = t.inputSchema?.properties || {};
+    delete p.idea_move;
+    if (p.categories?.items?.enum) p.categories.items.enum = p.categories.items.enum.filter((c) => c !== "idea_moves");
+  }
+}
+// strip hidden sections from every tool result
+function scrub(v) {
+  if (!IX_OFF || v == null || typeof v !== "object") return typeof v === "string" && IX_OFF ? v.split("SharePoint folder, Idea Exchange moves and the benchmarks").join("SharePoint folder and the benchmarks") : v;
+  if (Array.isArray(v)) return v.map(scrub);
+  const o = {};
+  for (const [k, x] of Object.entries(v)) if (k !== "idea_moves" && k !== "idea_exchange" && k !== "idea_move") o[k] = scrub(x);
+  return o;
+}
+
 export const SERVER_INFO = { name: "aldar-signature-experience-hub", title: "Aldar Signature Experience Hub", version: "1.0.0" };
 export const INSTRUCTIONS = "Read-only access to the Aldar Signature Experience Hub. Call get_overview first to see the data categories and counts. Use search for open questions, list_experiences/portfolio_breakdown for filtered views and counts, and the get_* tools for full records. Quote stages, dates and counts exactly as returned; never invent experiences.";
 
 export function callTool(D, name, args) {
   const t = TOOLS.find((x) => x.name === name);
   if (!t) throw new ToolError(`Unknown tool "${name}".`);
-  return t.run(D, args || {});
+  const a = { ...(args || {}) };
+  if (IX_OFF) { delete a.idea_move; if (Array.isArray(a.categories)) a.categories = a.categories.filter((c) => c !== "idea_moves"); if (!a.categories?.length) delete a.categories; }
+  const out = t.run(D, a);
+  if (IX_OFF && out && out.idea_moves !== undefined && name === "search") delete out.idea_moves;
+  return scrub(out);
 }
 export const toolList = () => TOOLS.map(({ run, ...t }) => ({ ...t, annotations: { readOnlyHint: true, openWorldHint: false } }));
