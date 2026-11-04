@@ -16,14 +16,8 @@ READER = r'''<!-- ============ READER · 6a Welcome Home ============ -->
 
         <button onClick="{{ back }}" title="Back to the library" aria-label="Back to the library" style="position:absolute;left:24px;top:18px;z-index:5;width:52px;height:52px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(18,14,10,.68);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(243,223,164,.5);color:#F3DFA4;font-family:inherit;font-size:20px;line-height:1;cursor:pointer;box-shadow:0 8px 24px rgba(12,10,8,.25);transition:background .15s" style-hover="background:rgba(217,179,92,.25)">←</button>
 
-        <sc-if value="{{ cur.rdHasNext }}" hint-placeholder-val="{{ true }}">
-        <div data-atl-rdnext="1" onClick="{{ cur.rdNext.select }}" title="Next story" style="position:absolute;right:28px;top:36%;z-index:4;display:flex;flex-direction:row-reverse;align-items:center;gap:14px;padding:8px 8px 8px 20px;border-radius:999px;background:rgba(18,14,10,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(243,223,164,.35);opacity:.9;cursor:pointer;transition:opacity .15s" style-hover="opacity:1">
-          <span style="position:relative;width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid rgba(243,223,164,.6);flex-shrink:0"><div style="{{ cur.rdNext.img }}"></div></span>
-          <span style="display:flex;flex-direction:column;gap:2px;text-align:right"><span style="font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#F3DFA4;white-space:nowrap">Next · {{ cur.rdNext.n }} ›</span><span style="font-size:14px;color:#FFFFFF;white-space:nowrap;max-width:300px;overflow:hidden;text-overflow:ellipsis">{{ cur.rdNext.title }}</span></span>
-        </div>
-        </sc-if>
 
-        <div data-atl-rdbody="1" style="position:relative;z-index:3;padding:96px clamp(24px,6vw,120px) clamp(36px,6vh,72px);display:flex;flex-direction:column;gap:20px">
+        <div data-atl-rdbody="1" style="position:relative;z-index:3;padding:96px clamp(24px,6vw,120px) 28px;display:flex;flex-direction:column;gap:20px">
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
             <span style="display:inline-flex;align-items:center;gap:8px;padding:6px 13px;border-radius:999px;border:1px solid rgba(243,223,164,.6);background:rgba(18,14,10,.45);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#F3DFA4;white-space:nowrap"><span style="width:7px;height:7px;border-radius:50%;background:#D9B35C;box-shadow:0 0 10px #D9B35C"></span>{{ cur.rdPill }}</span>
             <span style="font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:rgba(243,223,164,.75)">{{ cur.rdMeta }}</span>
@@ -40,7 +34,7 @@ READER = r'''<!-- ============ READER · 6a Welcome Home ============ -->
         </div>
       </div>
 
-      <section style="padding:clamp(40px,6vh,72px) clamp(24px,6vw,120px)">
+      <section style="padding:32px clamp(24px,6vw,120px) clamp(40px,6vh,72px)">
         <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:20px"><span style="font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:#F3DFA4">More in this edition</span><button onClick="{{ back }}" style="margin-left:auto;font-family:inherit;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#F3DFA4;background:transparent;border:1px solid rgba(243,223,164,.35);border-radius:999px;padding:8px 16px;cursor:pointer;white-space:nowrap" style-hover="background:rgba(243,223,164,.1)">{{ allStoriesLabel }}</button></div>
         <div data-atl-rdrail="1" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px">
           <sc-for list="{{ cur.rdRail }}" as="r" hint-placeholder-count="5">
@@ -61,14 +55,9 @@ CSS = '''
   /* 6a reader. Its layout follows the reader's own width (a container query), not the window:
      in the hub the sidebar narrows it, so window breakpoints would misjudge it.
      - five cards across while there is room; narrower, they become a swipeable row
-     - the Next pill moves up beside the back button once it would meet the title, and steps
-       aside on phones
      - once the two columns stack, the opportunity column takes a top rule instead of a left one
      - once stacked, the hero's green fade climbs higher, because the text makes the hero tall */
   [data-atl-reader6a] { container-type: inline-size; }
-  @container (max-width: 1240px) {
-    [data-atl-rdnext] { top: 18px !important; right: 24px !important; }
-  }
   @container (max-width: 980px) {
     [data-atl-rdrail] { grid-template-columns: none !important; grid-auto-flow: column; grid-auto-columns: minmax(190px, 31%); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
     [data-atl-rdrail] > div { scroll-snap-align: start; }
@@ -78,7 +67,6 @@ CSS = '''
     [data-atl-rdhero] > div:nth-child(2) { background: linear-gradient(0deg, rgba(18,34,22,.97) 0%, rgba(18,34,22,.9) 48%, rgba(18,34,22,.62) 68%, rgba(18,34,22,0) 90%) !important; }
   }
   @container (max-width: 640px) {
-    [data-atl-rdnext] { display: none !important; }
     [data-atl-rdbody] { padding-top: 240px !important; }
     [data-atl-rdrail] { grid-auto-columns: 62%; }
   }

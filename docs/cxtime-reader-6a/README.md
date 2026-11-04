@@ -114,10 +114,11 @@ Data note: the Edition 2 lead's `why` still says "PM & Leasing", which is the ol
 - After integrating, **rebuild all three export bases** (`standalone-base.html`, `standalone-base-lines.html`, `standalone-base-catalogue.html`) per `CLAUDE.md`.
 
 ## How it is applied in this repo
-- `tools/apply_reader_6a.py` swaps the 5a reader block in the hub's CX Time module (manifest asset `59c00ad5` in `index.html`) for this design. It adds the values the design reads (`cur.rd*`) beside the existing ones. The existing handlers are kept: `back`, `cur.onSave` (the platform's own save flow), rail and Next → open that story, and "All N stories →" → `back`. `data-atl-reader` stays on the root, and the five cards carry `data-atl-card`.
+- `tools/apply_reader_6a.py` swaps the 5a reader block in the hub's CX Time module (manifest asset `59c00ad5` in `index.html`) for this design. It adds the values the design reads (`cur.rd*`) beside the existing ones. The existing handlers are kept: `back`, `cur.onSave` (the platform's own save flow), rail cards → open that story, and "All N stories →" → `back`. `data-atl-reader` stays on the root, and the five cards carry `data-atl-card`.
 - `tools/build_cx_time.py` then rebuilds the standalone site (`sites/cx-time/`) from the hub, so both render the same reader. The "export bases" named above belong to the design project, not to this repo.
 - **Phones and narrow panes** (the open question in "Mobile" above): the reader's layout follows **its own width, through a container query**, because in the hub the sidebar narrows it.
-  - Up to 1240px: the Next pill moves up beside the back button, so it can never sit on the title.
   - Up to 980px: the five cards become a swipeable row with scroll-snap.
   - Up to 880px: once the columns stack, the opportunity column takes a top rule, and the hero's green fade climbs higher, so the title stays legible over bright photos.
-  - Up to 640px: the Next pill is hidden.
+- **Group CX follow-up (4 Nov 2026):**
+  - **The Next pill is removed.** The back button is the reader's only navigation.
+  - **The space between the story and "More in this edition" is tightened.** The hero's foot padding (up to 72px) and the section's top padding (up to 72px) stacked to about 144px and left the two parts feeling disconnected. They are now 28px and 32px, about 60px together.
