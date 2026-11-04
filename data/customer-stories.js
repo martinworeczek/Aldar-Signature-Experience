@@ -27,7 +27,9 @@ window.CS_DATA = {
     "id": "dev-behind-the-build",
     "name": "Behind the Build",
     "sure": true
-   }
+   },
+   "photo": "/img/stories/cs-01-4229074b1e.webp",
+   "photo_position": "center 20%"
   },
   {
    "id": "cs-02",
@@ -40,7 +42,9 @@ window.CS_DATA = {
    "memorable": "In that moment, the most important thing to the customer had nothing to do with her property. The team recognised this and responded to her as a parent, not simply as a customer completing a transaction.",
    "colleagues": "Rehab Alawlaqi",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/stories/cs-02-272236a9c8.webp",
+   "photo_position": "center 30%"
   },
   {
    "id": "cs-03",
@@ -53,7 +57,9 @@ window.CS_DATA = {
    "memorable": "The team solved problems that had nothing to do with the home itself, so every visit ended without a moment of stress.",
    "colleagues": "Community Management team",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/stories/cs-03-cf61b0b603.webp",
+   "photo_position": "center 30%"
   },
   {
    "id": "cs-04",
@@ -66,7 +72,9 @@ window.CS_DATA = {
    "memorable": "Comfort was planned for everyone on the visit, not just the buyer: children, drivers, and the colleague who completed eight orientations in one day and was given lunch at the midday break.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/stories/cs-04-48a3dcd186.webp",
+   "photo_position": "center 21%"
   },
   {
    "id": "cs-05",
@@ -565,7 +573,9 @@ window.CS_DATA = {
     "id": "welcome-week",
     "name": "Welcome Week",
     "sure": false
-   }
+   },
+   "photo": "/img/stories/cs-40-556de365f4.webp",
+   "photo_position": "center 30%"
   },
   {
    "id": "cs-41",
