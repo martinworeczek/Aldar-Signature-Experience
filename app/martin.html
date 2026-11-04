@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask CX Martin</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Branded chat for CX Martin (Copilot Studio over Direct Line). Embedded by the hub's Ask page. */
+:root{--bg:#0A1014;--panel:#111B22;--panel2:#16232B;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);--ink:#F2EFE8;--ink2:#B9C2C9;--ink3:#7E8A93;--gold:#C9A24A;--gold2:#E8C97E;--goldbg:rgba(201,162,74,.12)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.6 Poppins,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.app{display:flex;flex-direction:column;height:100%}
+.bar{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0E171D,#0A1014)}
+.av{width:34px;height:34px;border-radius:9px;background:#05080A url(/app/aldar-logo.png) center/78% no-repeat;border:1px solid rgba(201,162,74,.45);flex-shrink:0}
+.bar b{display:block;font-size:14px;font-weight:600;line-height:1.2}
+.bar span{font-size:11px;color:var(--ink3)}
+.bar .sp{flex:1}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--ink3)}
+.st i{width:7px;height:7px;border-radius:50%;background:#6FBF8E;box-shadow:0 0 0 3px rgba(111,191,142,.15)}
+.st.off i{background:#C98A6E;box-shadow:0 0 0 3px rgba(201,138,110,.15)}
+.btn{border:1px solid var(--line2);background:transparent;color:var(--ink2);border-radius:999px;padding:7px 13px;font:500 12px Poppins,sans-serif;cursor:pointer}
+.btn:hover{border-color:var(--gold);color:var(--gold2)}
+.log{flex:1;overflow-y:auto;padding:22px 18px 10px;scroll-behavior:smooth}
+.row{display:flex;gap:10px;margin:0 auto 16px;max-width:860px;align-items:flex-start}
+.row.me{justify-content:flex-end}
+.msg{max-width:min(720px,88%);border-radius:14px;padding:11px 15px;word-wrap:break-word;overflow-wrap:anywhere}
+.row.bot .msg{background:var(--panel);border:1px solid var(--line);border-top-left-radius:4px}
+.row.me .msg{background:linear-gradient(180deg,#D4AF5C,#C29A42);color:#0A1014;font-weight:500;border-top-right-radius:4px}
+.row.bot .av{width:30px;height:30px;margin-top:2px}
+.msg p{margin:0 0 8px}.msg p:last-child{margin-bottom:0}
+.msg strong{color:#fff;font-weight:600}
+.msg ul,.msg ol{margin:4px 0 8px;padding-left:20px}.msg li{margin:2px 0}
+.msg a{color:var(--gold2)}
+.msg h1,.msg h2,.msg h3,.msg h4{font-size:14px;font-weight:600;color:var(--gold2);margin:10px 0 4px;letter-spacing:.01em}
+.msg code{background:rgba(255,255,255,.08);border-radius:4px;padding:1px 5px;font-size:12.5px}
+.tw{overflow-x:auto;margin:8px 0;border:1px solid var(--line2);border-radius:10px}
+.msg table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:420px}
+.msg th{text-align:left;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);background:rgba(201,162,74,.08);padding:8px 10px;border-bottom:1px solid var(--line2)}
+.msg td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+.msg tr:last-child td{border-bottom:0}
+.msg td strong{color:var(--ink)}
+.msg sup.ref{font-size:9px;color:var(--ink3);margin-left:1px}
+.src{margin-top:8px;font-size:10.5px;color:var(--ink3)}
+.typing{display:inline-flex;gap:4px;padding:4px 2px}.typing i{width:6px;height:6px;border-radius:50%;background:var(--ink3);animation:b 1.2s infinite ease-in-out}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;max-width:860px;margin:4px auto 14px;padding-left:40px}
+.chip{border:1px solid rgba(201,162,74,.4);background:var(--goldbg);color:var(--gold2);border-radius:999px;padding:7px 13px;font:500 12px Poppins,sans-serif;cursor:pointer;text-align:left}
+.chip:hover{background:rgba(201,162,74,.2)}
+.foot{border-top:1px solid var(--line);padding:12px 14px 14px;background:#0C1419}
+.box{display:flex;gap:10px;align-items:flex-end;max-width:860px;margin:0 auto;background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:6px 6px 6px 14px}
+.box:focus-within{border-color:rgba(201,162,74,.6)}
+textarea{flex:1;resize:none;border:0;outline:0;background:transparent;color:var(--ink);font:14px/1.5 Poppins,sans-serif;padding:8px 0;max-height:140px}
+textarea::placeholder{color:var(--ink3)}
+.send{width:40px;height:40px;border-radius:10px;border:0;background:linear-gradient(180deg,#D9B560,#C29A42);color:#0A1014;font-size:17px;cursor:pointer;flex-shrink:0}
+.send:disabled{opacity:.45;cursor:default}
+.note{max-width:860px;margin:7px auto 0;font-size:10.5px;color:var(--ink3);text-align:center}
+.err{max-width:860px;margin:0 auto 14px;background:rgba(201,138,110,.12);border:1px solid rgba(201,138,110,.35);color:#F0C4B2;border-radius:12px;padding:12px 14px;font-size:13px}
+.err a{color:#F6D9CC}
+@media (max-width:640px){.log{padding:16px 10px 8px}.chips{padding-left:0}.msg{max-width:92%}.bar{padding:12px}.bar span{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="bar">
+    <div class="av" aria-hidden="true"></div>
+    <div><b>CX Martin</b><span>Aldar&rsquo;s CX agent &middot; answers live from the hub</span></div>
+    <div class="sp"></div>
+    <span class="st" id="st"><i></i><em style="font-style:normal" id="stt">Connecting…</em></span>
+    <button class="btn" id="new" type="button" title="Start a new conversation">New chat</button>
+  </div>
+  <div class="log" id="log" aria-live="polite"></div>
+  <div class="foot">
+    <form class="box" id="f">
+      <textarea id="q" rows="1" placeholder="Ask CX Martin about any signature experience, line, property or benchmark…" aria-label="Your question"></textarea>
+      <button class="send" id="go" type="submit" aria-label="Send" disabled>&#10148;</button>
+    </form>
+    <div class="note">CX Martin runs on Microsoft Copilot Studio and reads the hub&rsquo;s live data. Check important figures in the hub.</div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script>
+(function () {
+  "use strict";
+  var DL = "https://directline.botframework.com/v3/directline";
+  var STARTERS = ["What is live at W Hotel?", "Give me a two-minute summary of Hospitality Plus", "Compare The Golden Coin and The Sundown Ceremony", "What launches in the next three months?", "Which defining experiences are in Retail Plus?", "Show me Estates experiences for move-in"];
+  var $ = function (s) { return document.querySelector(s); };
+  var log = $("#log"), q = $("#q"), go = $("#go");
+  var S = { token: null, conv: null, ws: null, wm: null, user: null, waiting: false, typingEl: null, alive: true, poll: null };
+  // the visitor id comes with the token: Direct Line ties each token to one user id
+
+  function status(ok, text) { $("#st").classList.toggle("off", !ok); $("#stt").textContent = text; }
+  function scroll() { log.scrollTop = log.scrollHeight; }
+  function md(text) {
+    // Copilot Studio appends its sources as reference lines ([1]: cite:1 "{raw tool data}"); drop them
+    var t = String(text || "").replace(/^\s*\[\d{1,2}\]:\s*cite:[^\n]*$/gm, "").replace(/\n{3,}/g, "\n\n").trim();
+    t = t.replace(/\[(\d{1,2})\](?!\()/g, "<sup class=\"ref\">$1</sup>");
+    var html = window.marked ? window.marked.parse(t, { gfm: true, breaks: false }) : t.replace(/</g, "&lt;").replace(/\n/g, "<br>");
+    html = window.DOMPurify ? window.DOMPurify.sanitize(html, { ADD_ATTR: ["target"] }) : html;
+    var d = document.createElement("div"); d.innerHTML = html;
+    d.querySelectorAll("table").forEach(function (tb) { var w = document.createElement("div"); w.className = "tw"; tb.parentNode.insertBefore(w, tb); w.appendChild(tb); });
+    d.querySelectorAll("a").forEach(function (a) { a.target = "_blank"; a.rel = "noopener"; });
+    return d.innerHTML;
+  }
+  function add(who, html, extra) {
+    var r = document.createElement("div"); r.className = "row " + who;
+    r.innerHTML = (who === "bot" ? '<div class="av" aria-hidden="true"></div>' : "") + '<div class="msg">' + html + (extra || "") + "</div>";
+    log.appendChild(r); scroll(); return r;
+  }
+  function typing(on) {
+    if (on && !S.typingEl) S.typingEl = add("bot", '<span class="typing"><i></i><i></i><i></i></span>');
+    if (!on && S.typingEl) { S.typingEl.remove(); S.typingEl = null; }
+  }
+  function chips(list) {
+    var c = document.createElement("div"); c.className = "chips"; c.id = "chips";
+    list.forEach(function (t) { var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = t; b.onclick = function () { send(t); }; c.appendChild(b); });
+    log.appendChild(c); scroll();
+  }
+  function fail(msg) {
+    status(false, "Offline"); typing(false);
+    var e = document.createElement("div"); e.className = "err";
+    e.innerHTML = msg + (window.parent && window.parent.__SIG_MARTIN_MS_URL ? ' You can also <a href="' + window.parent.__SIG_MARTIN_MS_URL + '" target="_blank" rel="noopener">open CX Martin in Microsoft’s chat</a>.' : "");
+    log.appendChild(e); scroll();
+  }
+  function api(method, path, body) {
+    return fetch(DL + path, { method: method, headers: { Authorization: "Bearer " + S.token, "content-type": "application/json" }, body: body ? JSON.stringify(body) : undefined })
+      .then(function (r) { if (!r.ok) throw new Error("Direct Line " + r.status); return r.status === 204 ? {} : r.json(); });
+  }
+  function onActivity(a) {
+    if (!a || (a.from && a.from.id === S.user)) return;
+    if (a.type === "typing") { typing(true); return; }
+    if (a.type === "event" && a.name === "turn.complete") { typing(false); S.waiting = false; go.disabled = !q.value.trim(); return; }
+    if (a.type !== "message") return;
+    typing(false);
+    var text = a.text || "";
+    (a.attachments || []).forEach(function (at) { if (at.contentType === "application/vnd.microsoft.card.adaptive" && at.content && at.content.body) { at.content.body.forEach(function (b) { if (b.text) text += "\n\n" + b.text; }); } });
+    var cites = ((a.entities || []).filter(function (e) { return e.citation; })[0] || {}).citation || [];
+    add("bot", md(text), cites.length ? '<div class="src">From the hub&rsquo;s live data' + (cites.length > 1 ? " · " + cites.length + " look-ups" : "") + "</div>" : "");
+    if (a.suggestedActions && a.suggestedActions.actions && a.suggestedActions.actions.length) chips(a.suggestedActions.actions.map(function (x) { return x.title || x.value; }));
+    else if (!S.greeted) { S.greeted = true; if (!document.getElementById("chips")) chips(STARTERS); } // starters follow the greeting
+    if (S.waiting) typing(true); // more may follow until turn.complete
+  }
+  function stream(url) {
+    try {
+      var ws = new WebSocket(url); S.ws = ws;
+      ws.onmessage = function (ev) { if (!ev.data) return; try { var j = JSON.parse(ev.data); if (j.watermark) S.wm = j.watermark; (j.activities || []).forEach(onActivity); } catch (e) {} };
+      ws.onclose = function () { if (S.alive && S.ws === ws) startPolling(); };
+      ws.onerror = function () {};
+    } catch (e) { startPolling(); }
+  }
+  function startPolling() {
+    if (S.poll) return;
+    S.poll = setInterval(function () {
+      api("GET", "/conversations/" + S.conv + "/activities" + (S.wm ? "?watermark=" + S.wm : "")).then(function (j) { if (j.watermark) S.wm = j.watermark; (j.activities || []).forEach(onActivity); }).catch(function () {});
+    }, 2500);
+  }
+  function connect() {
+    status(false, "Connecting…"); log.innerHTML = ""; S.typingEl = null; S.greeted = false; typing(true);
+    return fetch("/api/martin-token", { method: "POST" }).then(function (r) { if (!r.ok) throw new Error("token"); return r.json(); })
+      .then(function (t) { S.token = t.token; if (t.userId) S.user = t.userId; return api("POST", "/conversations"); })
+      .then(function (c) {
+        S.conv = c.conversationId; if (c.token) S.token = c.token; S.wm = null; status(true, "Online");
+        if (c.streamUrl) stream(c.streamUrl); else startPolling();
+        S.waiting = true;
+        return api("POST", "/conversations/" + S.conv + "/activities", { type: "event", name: "startConversation", from: { id: S.user }, locale: "en-GB" });
+      })
+      .then(function () { setTimeout(function () { if (!S.greeted && !document.getElementById("chips")) { S.greeted = true; typing(false); chips(STARTERS); } }, 9000); })
+      .catch(function () { fail("CX Martin couldn’t be reached just now. Try again in a moment."); });
+  }
+  function send(text) {
+    text = String(text || "").trim(); if (!text || !S.conv) return;
+    var c = document.getElementById("chips"); if (c) c.remove(); S.greeted = true;
+    add("me", md(text).replace(/<\/?p>/g, ""));
+    q.value = ""; q.style.height = ""; go.disabled = true; S.waiting = true; typing(true);
+    api("POST", "/conversations/" + S.conv + "/activities", { type: "message", text: text, from: { id: S.user }, locale: "en-GB", textFormat: "plain" })
+      .catch(function () { typing(false); S.waiting = false; fail("That message didn’t go through. Start a new chat and try again."); });
+  }
+  $("#f").onsubmit = function (e) { e.preventDefault(); send(q.value); };
+  q.addEventListener("input", function () { go.disabled = !q.value.trim(); q.style.height = "auto"; q.style.height = Math.min(140, q.scrollHeight) + "px"; });
+  q.addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(q.value); } });
+  $("#new").onclick = function () { S.alive = false; try { S.ws && S.ws.close(); } catch (e) {} clearInterval(S.poll); S.poll = null; S.ws = null; S.alive = true; connect(); };
+  // keep the token fresh for long sessions (Direct Line tokens last about an hour)
+  setInterval(function () { if (S.token) api("POST", "/tokens/refresh").then(function (j) { if (j.token) S.token = j.token; }).catch(function () {}); }, 25 * 60 * 1000);
+  connect();
+})();
+</script>
+</body>
+</html>
