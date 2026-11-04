@@ -147,6 +147,14 @@ Reply on the edition's pull request, one command per line:
 Only the repository owner and collaborators can run commands. A published edition is
 permanent: correct it in a later edition, never by editing the archive.
 
+**Retiring editions** is the one exception, and only when Group CX asks for it.
+`python3 -I tools/retire_cxtime_editions.py <n> …` moves editions, unchanged, into
+`data/aldar-times-retired.json` (with their lock records and photo refs; nothing in `img/` is
+deleted). It then rewrites the live archive, the lock, the hub and the xlsx without them. Their
+stories still count as published, so the weekly run never offers them again. Afterwards, rebuild the
+standalone site and redeploy both sites. Editions 1 and 2 were retired on 4 November 2026;
+CX Time now starts at Edition 3, and the next edition is 4.
+
 If an edition is still open the next Monday, that run is skipped and the pull request gets a
 reminder. Close the pull request to discard an edition.
 

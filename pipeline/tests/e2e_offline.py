@@ -190,7 +190,7 @@ def main():
 
     # tamper with a past edition: everything must refuse to proceed
     bad = json.loads((repo / "data" / "aldar-times.json").read_text())
-    bad["editions"][2]["items"][0]["title"] = "Rewritten history"
+    bad["editions"][-1]["items"][0]["title"] = "Rewritten history"
     (repo / "data" / "aldar-times.json").write_text(json.dumps(bad))
     r = run(py + ["check"], repo, env, ok=False)
     assert r.returncode != 0 and "ARCHIVE PROTECTION" in (r.stdout + r.stderr), "tampering detected"

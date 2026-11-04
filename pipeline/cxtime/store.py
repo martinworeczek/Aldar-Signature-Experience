@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 ARCHIVE = ROOT / "data" / "aldar-times.json"
 LOCK = ROOT / "data" / "aldar-times.lock.json"
+RETIRED = ROOT / "data" / "aldar-times-retired.json"   # editions taken off the sites (tools/retire_cxtime_editions.py)
 HUB = ROOT / "index.html"
 AT_DATA_ID, AT_IMG_ID = "9b89dde2", "87c04e48"
 MANIFEST_RE = re.compile(r'(<script type="__bundler/manifest">\s*)(\{.*?\})(\s*</script>)', re.S)
@@ -129,12 +130,19 @@ def check_hub_matches(archive, hub=HUB):
         raise ArchiveError("index.html photo list differs from data/aldar-times.json")
 
 
+def _all_editions(archive):
+    """Live editions plus retired ones: a retired story still counts as published, so the weekly
+    pipeline never offers it again."""
+    retired = json.loads(RETIRED.read_text()).get("editions", []) if RETIRED.exists() else []
+    return list(archive["editions"]) + retired
+
+
 def seen_urls(archive):
-    return {canon_url(it["sourceUrl"]) for e in archive["editions"] for it in e["items"] if it.get("sourceUrl")}
+    return {canon_url(it["sourceUrl"]) for e in _all_editions(archive) for it in e["items"] if it.get("sourceUrl")}
 
 
 def seen_titles(archive):
-    return [it["title"] for e in archive["editions"] for it in e["items"]]
+    return [it["title"] for e in _all_editions(archive) for it in e["items"]]
 
 
 def canon_url(u):
