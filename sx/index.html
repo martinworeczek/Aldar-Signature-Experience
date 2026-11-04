@@ -147,6 +147,7 @@ table.t input{padding:7px 9px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1b2730;border:1px solid var(--line2);padding:10px 16px;border-radius:10px;font-size:13px;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.filters select,.filters input{width:auto;min-width:160px}
 ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-bottom:8px}
+.ipgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:10px}.ipgrid .ip{position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--line2);background:var(--panel2)}.ipgrid .ip img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}.ipgrid .ip span{display:block;font-size:10.5px;color:var(--ink2);padding:5px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ipgrid .ip button{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;cursor:pointer;font-size:12px;line-height:22px;padding:0}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:var(--gold);border-radius:50%;animation:s .8s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
 </style>
 </head>
@@ -230,7 +231,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
       return shell(queueView());
     }
     if (tab === "new") return shell(formHTML("new"), function () { bindForm("new"); });
-    if (tab === "update") return shell(updatePicker(), bindUpdatePicker);
+    if (tab === "update") { S.editing = null; return shell(updatePicker(), bindUpdatePicker); }
     return shell(mineView());
   }
   // phone menu: the tabs, back to the hub and sign out
@@ -332,7 +333,8 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
         '<h2 style="font-size:22px;font-weight:500;margin:16px 0 6px">' + esc(s.exp_name || exp.name) + '</h2><p class="muted" style="margin:0">' + esc(lineLabel(s.line)) + " · currently " + esc(exp.stage || "") + "</p></div><div>" +
         '<div class="flabel">Update note</div><p style="margin-top:0;white-space:pre-wrap">' + esc(f.note) + "</p>" +
         (rows.length ? '<div class="diff"><div class="h">Field</div><div class="h">Now</div><div class="h">Proposed</div>' + rows.map(function (r) { return "<div class=\"muted\">" + r[0] + '</div><div class="old">' + esc(r[1]) + '</div><div class="new">' + esc(r[2]) + "</div>"; }).join("") + "</div>" : '<p class="muted">Note only: no other changes.</p>') +
-        (f.photo ? '<p class="hint">Includes a new photo.</p>' : "") + "</div></div>";
+        (f.photo ? '<p class="hint">Includes a new photo.</p>' : "") +
+        ((f.impl_photos || []).length ? '<div class="flabel" style="margin-top:14px">Photos from the live experience</div><div class="ipgrid">' + f.impl_photos.map(function (p) { return '<div class="ip"><img src="' + esc(p.src) + '" alt=""><span>' + esc(p.asset || "General") + (p.caption ? " · " + esc(p.caption) : "") + "</span></div>"; }).join("") + "</div>" : "") + "</div></div>";
     }
     var hist = '<div class="sep"></div><div class="flabel">History</div><div class="hist">' + (s.history || []).map(function (h) {
       return "<div><b>" + esc(h.by) + "</b> " + esc(h.action) + " · " + esc(fmtDate(h.at)) + (h.comment ? '<div style="color:var(--ink);margin:2px 0 4px">“' + esc(h.comment) + "”</div>" : "") + "</div>";
@@ -378,6 +380,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
     };
   }
   function editView(s, onSubmit, label) {
+    S.editing = s.fields || null;
     app.innerHTML = '<p style="margin:26px 0 0"><a href="#s/' + esc(s.id) + '">← Back</a></p><h1>' + (s.kind === "new" ? "Edit experience" : "Edit update") + '</h1><p class="lede">' + esc(lineLabel(s.line)) + " · from " + esc(s.lead) + "</p>" +
       (s.kind === "new" ? formHTML("new", s.line, s.fields, label) : updateFormHTML(s.line, S.me.experiences.filter(function (e) { return e.id === s.exp_id; })[0], s.fields, label));
     bindForm(s.kind, s.line, s.kind === "update" ? s.exp_id : null, onSubmit);
@@ -443,7 +446,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
       $("#ul").innerHTML = m.map(function (e) { return '<div class="row" data-id="' + esc(e.id) + '">' + (e.image_url ? '<img class="thumb" src="' + esc(e.image_url) + '" alt="" loading="lazy">' : '<div class="thumb"></div>') + '<div class="t"><b>' + esc(e.name) + "</b><span>" + esc(e.stage) + " · " + esc(e.target) + "</span></div></div>"; }).join("") || '<div class="empty">No match.</div>';
       $("#ul").querySelectorAll(".row").forEach(function (r) { r.onclick = function () {
         var e = list.filter(function (x) { return x.id === r.dataset.id; })[0];
-        $("#ul").innerHTML = ""; $("#uq").value = e.name;
+        S.editing = null; $("#ul").innerHTML = ""; $("#uq").value = e.name;
         $("#uf").innerHTML = '<div style="height:14px"></div>' + updateFormHTML(S.me.line, e, {});
         bindForm("update", S.me.line, e.id);
       }; });
@@ -459,6 +462,12 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
     if (O.stages.length > 1) h += '<div class="f" style="margin-bottom:16px"><div class="flabel">Stage</div>' + stagePills(O, stage) + "</div>";
     if (O.has.target) h += '<label class="f" id="tgt"><span>Target go-live <i>· leave empty to keep the current one</i></span><input type="month" name="target" value="' + esc(f.target || (e.target_sort || "")) + '" style="max-width:240px"></label>';
     if (O.has.assets && (O.assets.length || assets.length)) h += '<div class="f" style="margin-bottom:16px"><div class="flabel">Assets in scope <i id="livehint">· mark <b>Live</b> where it is now running</i></div>' + assetPicker(O, assets) + "</div>";
+    var _ipAssets = (assets || []).map(function (a) { return a.name; }).filter(Boolean);
+    h += '<div class="f" style="margin-bottom:18px"><div class="flabel">Photos from the live experience <i>· choose the asset, then add photos; they appear in the card detail once approved</i></div>' +
+      '<div class="two" style="align-items:end"><label class="f" style="margin:0"><span>Asset</span><select id="ipAsset">' + _ipAssets.map(function (n) { return '<option>' + esc(n) + '</option>'; }).join("") + '<option value="">General (no specific asset)</option></select></label>' +
+      '<label class="f" style="margin:0"><span>Caption <i>· optional, applies to the next photos you add</i></span><input type="text" id="ipCap" maxlength="200"></label></div>' +
+      '<div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><input type="file" id="ipFile" accept="image/*" multiple><span class="hint" id="ipStat" style="margin:0"></span></div>' +
+      '<div class="ipgrid" id="ipList"></div></div>';
     h += '<details' + (f.essence || f.narrative || f.photo ? " open" : "") + ' style="margin-bottom:16px"><summary style="cursor:pointer;color:var(--ink2);font-size:13px;margin-bottom:12px">Also change the description or photo</summary>' +
       '<label class="f"><span>Essence</span><input type="text" name="essence" maxlength="260" value="' + esc(f.essence) + '" placeholder="' + esc(e.essence) + '"></label>' +
       '<label class="f"><span>Narrative</span><textarea name="narrative" placeholder="Leave empty to keep the current narrative">' + esc(f.narrative) + "</textarea></label>" +
@@ -529,6 +538,23 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
         fe("photo").value = j.url; var im = $("#pimg"); im.src = j.url; im.style.visibility = ""; $("#pstat").textContent = "Uploaded.";
       }).catch(function (e) { $("#pstat").textContent = e.message; });
     };
+    // photos from the live experience (update form)
+    form._ip = ((S.editing && S.editing.impl_photos) || []).slice();
+    var drawIp = function () {
+      var el = $("#ipList"); if (!el) return;
+      el.innerHTML = form._ip.map(function (p, i) { return '<div class="ip"><img src="' + esc(p.src) + '" alt=""><span>' + esc(p.asset || "General") + (p.caption ? " · " + esc(p.caption) : "") + '</span><button type="button" data-i="' + i + '" title="Remove">✕</button></div>'; }).join("");
+      el.querySelectorAll("button").forEach(function (b) { b.onclick = function () { form._ip.splice(+b.dataset.i, 1); drawIp(); }; });
+    };
+    drawIp();
+    var ipf = $("#ipFile");
+    if (ipf) ipf.onchange = function () {
+      var files = [].slice.call(ipf.files || []); if (!files.length) return;
+      var asset = $("#ipAsset").value, cap = $("#ipCap").value.trim(), done = 0;
+      $("#ipStat").innerHTML = '<span class="spin"></span> Uploading ' + files.length + '…';
+      files.reduce(function (p, file) {
+        return p.then(function () { return resize(file).then(function (blob) { return api("photo", { method: "POST", body: blob, type: "image/jpeg" }); }).then(function (j) { form._ip.push({ src: j.url, asset: asset, caption: cap }); done++; drawIp(); }); });
+      }, Promise.resolve()).then(function () { $("#ipStat").textContent = done + " uploaded."; ipf.value = ""; }).catch(function (e) { $("#ipStat").textContent = e.message; });
+    };
     form.onsubmit = function (ev) {
       ev.preventDefault();
       var f = {};
@@ -539,7 +565,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
       f.stage = stageNow();
       if (!(f.stage === "rev" || f.stage === "impl")) delete f.target;
       if (form.querySelector("#assets")) f.assets = [].filter.call(form.querySelectorAll(".asset"), function (a) { return a.querySelector("input").checked; }).map(function (a) { return { name: a.dataset.n, live: f.stage === "live" && a.querySelector(".lv").classList.contains("on") }; });
-      if (kind === "update") { Object.keys(f).forEach(function (k) { if (f[k] === "") delete f[k]; }); }
+      if (kind === "update") { Object.keys(f).forEach(function (k) { if (f[k] === "") delete f[k]; }); if (form._ip && form._ip.length) f.impl_photos = form._ip.slice(); }
       var btn = form.querySelector("[type=submit]"); btn.disabled = true; var old = btn.innerHTML; btn.innerHTML = '<span class="spin"></span> Sending…';
       var p = onSubmit ? Promise.resolve(onSubmit(f)) : api("submissions", { body: { kind: kind, line: line, exp_id: expId, fields: f } }).then(function (j) {
         toast("Submitted. Group CX will review it" + (j.notified ? " and has been notified." : "."));

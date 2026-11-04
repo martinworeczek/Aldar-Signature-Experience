@@ -105,6 +105,7 @@ export function buildDataset(W, full = [], SITE = "https://aldar-signature-exper
         audit: audited(au) ? { enps: au.enps ?? null, csat: au.csat ?? null, summary: au.summary || "", when: au.when || "", report: au.report || "" } : null,
         history: (e.log || []).map((x) => ({ when: x.when, author: x.author || L.label, text: strip(x.text) })),
         image_url: abs(L.img(e)),
+      implementation_photos: [].concat(e.photos || [], (W.SIG_IMPL || {})[e.id] || []).map((x) => (typeof x === "string" ? { src: x } : x)).filter((x) => x && x.src).map((x) => ({ asset: x.asset || null, url: abs(x.src), caption: x.caption || null, when: x.when || null })),
         asset_folder: folders[e.id] || (e.sx && e.sx.folder_url ? { folder: "SharePoint", url: e.sx.folder_url } : null),
         ...(e.sx ? { submitted_via_hub: { lead: e.sx.lead, approved_at: e.sx.approved_at } } : {}),
         ...(e.sx_updated ? { last_hub_update: e.sx_updated } : {}),

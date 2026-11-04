@@ -72,6 +72,12 @@
     e.deployedAssets = assets;
     if (line === "hp") e.cells = hpCells(D, assets);
   }
+  // photos of the experience as implemented, each tagged with its asset
+  function implPhotos(rec) {
+    return arr((rec.fields || {}).impl_photos).map(function (p) {
+      return p && str(p.src) ? { src: str(p.src), asset: str(p.asset) || "At the experience", caption: str(p.caption), when: when(rec.approved_at) } : null;
+    }).filter(Boolean);
+  }
   function logEntry(rec, text) {
     return { when: when(rec.approved_at), author: LINES[rec.line].label + (rec.lead ? " · " + rec.lead : ""), text: text };
   }
@@ -116,6 +122,7 @@
     if ((line === "rp" || line === "dev" || line === "est" || line === "edu") && (f.moment || f.customer_benefit)) {
       if (!e.moment) e.moment = str(f.moment); if (!e.customerBenefit) e.customerBenefit = str(f.customer_benefit); if (!e.aldarBenefit) e.aldarBenefit = str(f.aldar_benefit);
     }
+    var ip0 = implPhotos(rec); if (ip0.length) e.photos = ip0;
     setStage(line, e, stage, D);
     setAssets(line, e, D, assets);
     Object.keys(e).forEach(function (k) { if (e[k] === undefined) delete e[k]; });
@@ -154,6 +161,8 @@
     if (str(f.essence)) e.essence = str(f.essence);
     if (str(f.narrative)) e.narrative = str(f.narrative);
     if (str(f.photo)) { e.image = str(f.photo); e.sxPhoto = e.image; }
+    var ip = implPhotos(rec);
+    if (ip.length) { e.photos = (Array.isArray(e.photos) ? e.photos : []).concat(ip); parts.push(ip.length + (ip.length === 1 ? " photo" : " photos") + " from the live experience."); }
     var note = str(f.note);
     setNote(line, e, note);
     e.log = (e.log || []).concat([logEntry(rec, esc((note ? note + " " : "") + parts.join(" ")).trim() || "Updated via the hub.")]);

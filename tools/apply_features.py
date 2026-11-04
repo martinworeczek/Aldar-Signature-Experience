@@ -36,6 +36,7 @@ OFF = {"reportStudio": F.get("report_studio") is False, "rag": F.get("rag_status
        "benchmarkEditor": F.get("benchmark_editor") is False, "projectPlus": F.get("project_plus") is False,
        "boardSharing": F.get("board_sharing") is False}
 THEMES = [t for t in json.load(open("discovery-themes.json")).get("themes", []) if t.get("title") and t.get("match")]
+IMPL = {k: [p for p in v if isinstance(p, dict) and p.get("src")] for k, v in json.load(open("data/implementation-photos.json")).get("photos", {}).items() if isinstance(v, list)}
 O = "(window.__SIG_OFF || {})"
 
 # (old, new, count): guards that read the runtime switches. Applied once; skipped if already there.
@@ -78,7 +79,8 @@ GUARDS = [
      "        for (let i = 0; i < lines.length; i++) { if (_O.rag) lines[i] = lines[i].replace(/; by RAG health \\{[^}]*\\}/, '').replace(/,? ?Health\\/RAG/g, '').replace(/ \\+ a RAG health dot/, '').replace(/,? the RAG split/g, '').replace(/,? ?RAG \\+ reason/g, '').replace(/\\(the RAG or lifecycle split\\)/g, '(the lifecycle split)').replace(/\\|\"rag\"/g, '').replace(/, Reds needing attention/g, '').replace(/, Reds,/g, ',').replace(/ all Red,/g, ''); if (_O.reportStudio) lines[i] = lines[i].replace(/ These match the Report Studio board exactly\\./, ''); }\n"
      "        lines.push('NOT PART OF THE HUB RIGHT NOW: ' + [_O.rag ? 'RAG / Red-Amber-Green health ratings' : '', _O.reportStudio ? 'Report Studio and report downloads' : '', _O.ideaExchange ? 'the Idea Exchange' : ''].filter(Boolean).join(', ') + '. Never mention, rate, group or filter by them, and never offer them. Describe status only by lifecycle stage (In Review, In Implementation, Deployed & Live, Audited).');\n"
      "      }\n"
-     "      const _items = _O.rag ? items.map(i => { const o = Object.assign({}, i); delete o.rag; delete o.reason; delete o.reasonCluster; return o; }) : items;\n"
+     "      const _slim = cfg.key === 'all'; /* every line in one prompt: send the essentials */\n"
+     "      const _items = (_O.rag || _slim) ? items.map(i => { const o = Object.assign({}, i); if (_O.rag) { delete o.rag; delete o.reason; delete o.reasonCluster; } if (_slim) { o.narrative = String(o.narrative || '').slice(0, 140); o.note = String(o.note || '').slice(0, 220); delete o.trail; Object.keys(o).forEach(k => { const v = o[k]; if (v == null || v === '' || v === false || (Array.isArray(v) && !v.length)) delete o[k]; }); } return o; }) : items;\n"
      "      lines.push('DATA=' + JSON.stringify(_items)); }\n", 1),
 ]
 
@@ -118,6 +120,27 @@ GUARDS += [
      "Promise.resolve((/^https?:$/.test(location.protocol) ? fetch('/api/compare-read', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ids: ids, refresh: !!force }) }).then(r => r.ok ? r.text() : Promise.reject(new Error('remote'))) : Promise.reject(new Error('local'))).catch(() => cc({ system: sys, messages: [{ role: 'user', content: JSON.stringify(recs, null, 1) }], max_tokens: 700 }))).then(txt => {", 1),
 ]
 
+GUARDS += [
+    # catalogue cards: the pillar shows in the card detail only
+    ("c2Pillar: pillar || '',", "c2Pillar: '',", 1),
+    # card detail: implementation photos grouped by asset replace the SharePoint asset library
+    ('      <div class="{{ modal.ch.assets.cls }}">', '      <sc-if value="{{ modal.showAssetLib }}" hint-placeholder-val="{{ false }}"><div class="{{ modal.ch.assets.cls }}">', 1),
+    ('\n\n      <sc-if value="{{ modal.hasPhotos }}" hint-placeholder-val="{{ false }}">\n      <div class="{{ modal.ch.photos.cls }}"><div class="d3-ch-head"><div class="d3-num">{{ modal.ch.photos.n }}</div><div class="d3-lbl">Implementation photos</div></div>\n        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">\n          <sc-for list="{{ modal.photos }}" as="p" hint-placeholder-count="0"><div style="{{ p.d3 }}"></div></sc-for>\n        </div>\n      </div>\n      </sc-if>', '\n      </sc-if>\n\n      <div class="{{ modal.ch.photos.cls }}"><div class="d3-ch-head"><div class="d3-num">{{ modal.ch.photos.n }}</div><div class="d3-lbl">Implementation photos</div></div>\n        <div>\n          <sc-if value="{{ modal.hasPhotos }}" hint-placeholder-val="{{ false }}">\n          <sc-for list="{{ modal.photoGroups }}" as="pg" hint-placeholder-count="1">\n            <div style="margin-bottom:18px">\n              <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:9px"><span style="font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#E8B96A">{{ pg.asset }}</span><span style="font-size:11px;color:rgba(255,255,255,.5)">{{ pg.countLabel }}</span></div>\n              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px">\n                <sc-for list="{{ pg.items }}" as="p" hint-placeholder-count="2"><a href="{{ p.src }}" target="_blank" rel="noopener" title="{{ p.title }}" style="{{ p.d3 }}"></a></sc-for>\n              </div>\n            </div>\n          </sc-for>\n          </sc-if>\n          <sc-if value="{{ modal.noPhotos }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.6;border:1px dashed rgba(255,255,255,.18);border-radius:10px;padding:16px 18px">No photos from the live experience yet. Business-line leads can add them, asset by asset, through <b style="color:#fff;font-weight:600">Submit &amp; review</b>.</div></sc-if>\n        </div>\n      </div>\n', 1),
+    ("['audit', true], ['assets', true], ['photos', !!modal.hasPhotos]]", "['audit', true], ['assets', !!modal.showAssetLib], ['photos', true]]", 1),
+    ("hasPhotos: !!(tgt.photos && tgt.photos.length), photos: (tgt.photos) ? tgt.photos.map(p => ({ bg: { aspectRatio: '4 / 3', borderRadius: '10px', backgroundImage: 'url(' + p + ')', backgroundSize: 'cover', backgroundPosition: 'center 32%' } })) : [],", 'hasPhotos: (function () { const L = [].concat(tgt.photos || [], ((window.__SIG_IMPL || {})[tgt.id]) || []).filter(Boolean); return L.length > 0; })(), photos: [], photoGroups: (function () { const L = [].concat(tgt.photos || [], ((window.__SIG_IMPL || {})[tgt.id]) || []).filter(Boolean).map(p => typeof p === \'string\' ? { src: p } : p).filter(p => p && p.src); const G = {}; const order = []; L.forEach(p => { const k = p.asset || \'At the experience\'; if (!G[k]) { G[k] = []; order.push(k); } G[k].push(p); }); return order.map(k => ({ asset: k, countLabel: G[k].length + (G[k].length === 1 ? \' photo\' : \' photos\'), items: G[k].map(p => ({ src: p.src, title: [p.caption, p.when].filter(Boolean).join(\' \\u00b7 \') || k, bg: { display: \'block\', aspectRatio: \'4 / 3\', borderRadius: \'8px\', backgroundImage: \'url("\' + p.src + \'")\', backgroundSize: \'cover\', backgroundPosition: \'center 32%\', backgroundColor: \'rgba(255,255,255,.06)\' } })) })); })(),', 1),
+    ("(modal.photos || []).forEach(p => { p.d3 = Object.assign({}, p.bg, { borderRadius: '8px' }); });", "(modal.photoGroups || []).forEach(g => (g.items || []).forEach(p => { p.d3 = Object.assign({}, p.bg, { borderRadius: '8px' }); })); modal.noPhotos = !modal.hasPhotos;", 1),
+    # Ask Echo: one knowledge base across every line (Hospitality's capabilities everywhere), no tabs
+    ("asstScope: 'Education',", "asstScope: 'All',", 1),
+    ("scope = scope || this.state.asstScope || 'Corporate';", "scope = scope || this.state.asstScope || 'All';", 1),
+    ('    const _c = CFG[scope] || CFG.Corporate;', '    { const LN = [\'Corporate\', \'Hospitality\', \'Retail\', \'Education\', \'Development\', \'Estates\'].filter(k => CFG[k]);\n      CFG.All = { label: \'All lines\', key: \'all\', slug: \'group\', short: \'the Signature Experience Hub (every business line)\', data: null,\n        pillarsLine: LN.length + \' business lines (\' + LN.map(k => CFG[k].short + \': \' + CFG[k].pillarsLine).join(\'; \') + \')\',\n        note: LN.map(k => CFG[k].short + \': \' + CFG[k].note).join(\' \'),\n        intro: \'Echo answers from the live Signature Experience Hub, every business line in one knowledge base. Every answer is factual and grounded in the data: Echo retrieves, summarises and surfaces; it does not give opinions or recommendations.\',\n        docs: [].concat.apply([], LN.map(k => CFG[k].docs || [])),\n        extra: CFG.Hospitality.extra.concat([\'ALL BUSINESS LINES: DATA holds every line and each item carries its "line". When a question names a line, property, mall, school or community, answer for it; otherwise answer across all lines and say which lines are involved. Supporting documents belong to a line: only surface documents from the experience\\u2019s own line.\']),\n        samples: [\'Give me a two-minute executive summary across every line\', \'Show me every defining Signature Experience in Hospitality\', \'Compare Golden Coin and Sundown Ceremony\', \'What is live at Yas Mall?\', \'Show me the Kids Perfume Creation Room video\', \'What is launching in the next three months?\'] };\n    }\n    const _c = CFG[scope] || CFG.Corporate;', 1),
+    ('    const cfg = this._asstScopeCfg(scope);\n    let rows = this.reportRows().filter(r => r.lineLabel === cfg.label);', "    const cfg = this._asstScopeCfg(scope);\n    if (cfg.key === 'all') return ['Corporate', 'Hospitality', 'Retail', 'Education', 'Development', 'Estates'].reduce((acc, sc) => acc.concat(this._asstRepo(sc)), []);\n    let rows = this.reportRows().filter(r => r.lineLabel === cfg.label);", 1),
+    ("    (cfg.extra || []).forEach(x => lines.push(x));\n", '    (cfg.extra || []).forEach(x => lines.push(x));\n    if (cfg.key === \'all\') {\n      const uq = a => [...new Set(a.filter(Boolean))];\n      lines.push(\'FILTER TAXONOMY across every line: retrieve and combine experiences by these facets exactly as the repository filters do. Facets are listed per line (item field "line"). Journey Stage is DISTINCT from Lifecycle stage.\');\n      uq(items.map(i => i.line)).forEach(ln => { const its = items.filter(i => i.line === ln); const js = uq(its.map(i => i.journeyStage)), pl = uq(its.map(i => i.pillar)), at = uq([].concat(...its.map(i => i.assetTypes || []))), pr = uq([].concat(...its.map(i => i.properties || []))), sg = uq([].concat(...its.map(i => [].concat(i.segment || [], i.segments || [], i.verticals || [])))); lines.push(\'\\u2022 \' + ln + \': journey stages \' + (js.join(\' \\u00b7 \') || \'\\u2014\') + (pl.length ? \'; pillars \' + pl.join(\' \\u00b7 \') : \'\') + (sg.length ? \'; segments / verticals \' + sg.join(\' \\u00b7 \') : \'\') + (at.length ? \'; asset types \' + at.join(\' \\u00b7 \') : \'\') + (pr.length ? \'; properties \' + pr.slice(0, 40).join(\' \\u00b7 \') : \'\') + \'.\'); });\n      lines.push(\'PROPERTY / ASSET questions ("what is live at <property>", "scorecard for <property>"): match the item fields "properties" and "liveAssets"; count only the matching items; never rank one property against another as better or worse.\');\n    }\n', 1),
+    ("(cfg.key === 'hp' ? ('; by journey stage {'", "((cfg.key === 'hp' || cfg.key === 'all') ? ('; by journey stage {'", 1),
+    ("      asstScopeTabs = [['Corporate', 'Corporate Plus'],", "      asstScopeTabs = asstCfg.key === 'all' ? [] : [['Corporate', 'Corporate Plus'],", 1),
+    ('const spDocs = spWantDocs ? asstDocs.map(', "const spDocs = spWantDocs ? ((asstCfg.key === 'all' && sp) ? ((this._asstScopeCfg(sp.line) || {}).docs || []) : asstDocs).map(", 1),
+    ('padding-left:12px">Knowledge base</span>', 'padding-left:12px">Knowledge base &middot; every business line</span>', 1),
+]
+
 # guards inside bundled modules: (old, new, count)
 ASSET_GUARDS = [
     # Benchmark: the Benchmark Editor tab (both tab lists) and its view
@@ -128,7 +151,7 @@ ASSET_GUARDS = [
     # Boards: file sharing (Shared with me, Share sheet, download-file reminder, shelf tab)
     ("bHasShared: bShared.length > 0,", "bHasShared: bShared.length > 0 && !" + O + ".boardSharing,", 1),
     ("sh: sh, hasSh: !!sh,", "sh: sh, hasSh: !!sh && !" + O + ".boardSharing,", 1),
-    ("dirty: !!S.dirty, onSaveRepo", "dirty: !!S.dirty && !" + O + ".boardSharing, onSaveRepo", 1),
+    ("dirty: !!S.dirty, onSaveRepo", "dirty: false && !!S.dirty, onSaveRepo", 1),  # boards save automatically: no "download updated file" reminder
     ("[['all', 'All'], ['mine', 'Mine'], ['shared', 'Shared with me']].map(", "[['all', 'All'], ['mine', 'Mine'], ['shared', 'Shared with me']].filter(p => p[0] !== 'shared' || !" + O + ".boardSharing).map(", 1),
 ]
 
@@ -136,7 +159,9 @@ ASSET_GUARDS = [
 TEXTS = [
     ("summarise the portfolio, or download the report \u2014 every answer", "or summarise the portfolio \u2014 every answer", "reportStudio"),
 ]
-ASSET_TEXTS = [(p["shown"], p["hidden"], "boardSharing") for p in json.load(open("tools/board-sharing.json"))["pairs"]]
+_BS = json.load(open("tools/board-sharing.json"))
+OFF["always"] = True  # wording that always applies
+ASSET_TEXTS = [(p["shown"], p["hidden"], "always") for p in _BS["autosave"]] + [(p["shown"], p["hidden"], "boardSharing") for p in _BS["sharing_off"]]
 ASSET_TEXTS += [  # inside bundled modules
     ("this read, the benchmark recommendations and the Idea Exchange translations", "this read and the benchmark recommendations", "ideaExchange"),
     ("Ask Echo, the comparison reads and Idea Exchange generation call a language model", "Ask Echo and the comparison reads call a language model", "ideaExchange"),
@@ -147,7 +172,8 @@ html = open(PATH, encoding="utf-8").read()
 # 1. runtime switches in <head>
 html = re.sub(r'<script id="__sig_features">.*?</script>\n', "", html)
 tag = ('<script id="__sig_features">window.__SIG_OFF=' + json.dumps(OFF, separators=(",", ":")) + ';window.__SIG_THEMES='
-       + json.dumps([{k: t.get(k) for k in ("title", "blurb", "match", "accent", "deep") if t.get(k)} for t in THEMES], separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/") + ';</script>\n')
+       + json.dumps([{k: t.get(k) for k in ("title", "blurb", "match", "accent", "deep") if t.get(k)} for t in THEMES], separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/")
+       + ';window.__SIG_IMPL=' + json.dumps(IMPL, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/") + ';</script>\n')
 i = html.find('<script id="__sig_edition">')
 assert i > 0, "edition hook not found"
 html = html[:i] + tag + html[i:]

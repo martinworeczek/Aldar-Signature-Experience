@@ -11,7 +11,7 @@ so switching a section back on brings it back exactly as it was.
 | `idea_exchange` | The Idea Exchange menu item and view, "See it in Idea Exchange" on experience cards, and Idea Exchange wording in AI disclaimers. In `/mcp` (CX Martin): the `get_idea_moves` tool, the `idea_move` filter, the search category and the `idea_moves` fields |
 | `benchmark_editor` | The Benchmark Editor tab inside Benchmark. Library, Business Line Transfer Viewer and Boards stay |
 | `project_plus` | Project Plus as a business line everywhere: menu and line page, catalogue chips and counts, catalogue hero, Portfolio Discovery (its headline becomes "six programmes"), Activity feed and search. In `/mcp`: its experiences, programme and counts (asking for it returns "not part of the hub right now"). In Submit & review: its lead and code |
-| `board_sharing` | Boards' file sharing: Save board and Import board, a board's Share sheet, the "Shared with me" shelf and the download-file reminder. Boards are labelled *My boards · private to this browser* (wording in `tools/board-sharing.json`) |
+| `board_sharing` | Board sharing. When `true` (now): **Export board** downloads a `.board.json` file, and a colleague uses **Import board** to add it to their own browser, credited to you, where it appears under *Shared with me*. When `false`: Export, Import and *Shared with me* are hidden. Either way, boards save automatically in each person's browser, and there is no whole-hub "Save board" download or "Download updated file" reminder (wording in `tools/board-sharing.json`) |
 | `cx_academy` | The "In development · CX Academy" menu item and view, and the "CX Academy highlights" panel on Portfolio Discovery. Corporate experiences that mention CX Academy, such as *Aldar Performance Pins*, stay |
 
 Hidden destinations also drop out of "Search everything" (⌘K). A bookmark or link to a hidden view opens
@@ -35,3 +35,16 @@ The same tool also installs three things that aren't switches:
 - **Defining moment of the week.** The showreel opens on it once the welcome screen closes, and the Defining moments rail leads with it.
   - Each week moves to the next business line, then to that line's next flagship.
 - **One comparison read.** The compare view asks `/api/compare-read` for its AI read, and CX Martin's `compare_experiences` uses the same code and the same cache. The hub and CX Martin give the same read for the same set, until one of the experiences changes.
+
+## Always on: Ask Echo, catalogue cards and implementation photos
+
+- **Ask Echo** is one knowledge base across every visible business line, with no line tabs.
+  - Every line gets Hospitality's capabilities: the factual-answer rules, supporting documents from the experience's own line, video, a filter taxonomy for each line's journeys, pillars, segments, asset types and properties, property questions, and breakdowns by journey stage, pillar, asset type and property.
+  - The AI receives a slimmer copy of each experience: the full essence, a short narrative and the latest note, with empty fields dropped. That's about 60k tokens per question; follow-ups in the same conversation reuse the cached instructions.
+  - Answer cards keep the full record.
+- **Catalogue cards** no longer show the pillar, only the scope and stage. The pillar stays in the card detail.
+- **Implementation photos** replace the SharePoint asset-library section in the card detail. Photos are grouped by asset (for example *W Hotel · 4 photos*) and open full size. They come from two places:
+  - leads: an update in Submit & review has a *Photos from the live experience* section (choose the asset, add photos, optional caption), and photos appear once approved;
+  - batches: `data/implementation-photos.json`, keyed by experience id, `{ asset, src, caption, when }`; files go in `img/impl/`.
+
+  When an experience has none yet, the section says so and points to Submit & review. CX Martin returns them as `implementation_photos` on `get_experience`.

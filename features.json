@@ -6,5 +6,5 @@
   "cx_academy": false,
   "benchmark_editor": false,
   "project_plus": false,
-  "board_sharing": false
+  "board_sharing": true
 }

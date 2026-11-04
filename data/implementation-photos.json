@@ -1,0 +1,4 @@
+{
+  "_about": "Photos of signature experiences as actually implemented, shown in the card detail under 'Implementation photos', grouped by asset. Keyed by experience id; each photo is { asset, src, caption?, when? }. src is a site path (put files in img/impl/) or a full URL. Photos approved through Submit & review are added on top of these automatically. Redeploy after editing.",
+  "photos": {}
+}

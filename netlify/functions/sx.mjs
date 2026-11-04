@@ -101,6 +101,12 @@ async function cleanFields(kind, line, exp_id, f = {}) {
     pick("note", 1200); pick("essence", 260); pick("narrative", 2000); pick("photo", 300);
     if (f.stage) oneOf("stage", stageKeys);
     if (O.has.target && f.target !== undefined && f.target !== null && f.target !== "") { if (/^\d{4}-\d{2}$/.test(str(f.target))) out.target = str(f.target); else errs.push("Target go-live must be a month."); }
+    if (Array.isArray(f.impl_photos)) {
+      out.impl_photos = f.impl_photos.map((x) => ({ src: str(x && x.src, 300), asset: str(x && x.asset, 120), caption: str(x && x.caption, 200) }))
+        .filter((x) => /^\/api\/sx\/photo\/[a-f0-9]{32}$/.test(x.src)).slice(0, 24);
+      if (!out.impl_photos.length) delete out.impl_photos;
+    }
+    if (!out.note && out.impl_photos) out.note = out.impl_photos.length + (out.impl_photos.length === 1 ? " photo" : " photos") + " from the live experience.";
     if (!out.note) errs.push("Add an update note: what changed?");
   }
   if (O.has.assets && Array.isArray(f.assets)) {

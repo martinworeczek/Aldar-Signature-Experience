@@ -58,6 +58,7 @@ if (dm >= 0) {
 // ---- snapshot the native data (for /mcp to re-apply submissions) and build the dataset ----
 const native = { full };
 for (const g of NATIVE_GLOBALS) if (W[g] !== undefined) native[g] = W[g];
+try { native.SIG_IMPL = JSON.parse(fs.readFileSync("data/implementation-photos.json", "utf8")).photos || {}; } catch { native.SIG_IMPL = {}; } // photos sent in batches
 const dataset = buildDataset(JSON.parse(JSON.stringify(native)), full, SITE);
 fs.mkdirSync(path.dirname(OUT), { recursive: true });
 fs.writeFileSync(OUT, JSON.stringify(dataset));
