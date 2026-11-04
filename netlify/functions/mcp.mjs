@@ -2,7 +2,10 @@
 // Microsoft Copilot Studio and other MCP clients connect to https://<site>/mcp.
 // The dataset is generated from index.html on every deploy (tools/build_mcp_data.mjs), plus
 // submissions approved through /sx/ (read live from Netlify Blobs).
-// Open and public: no authentication. Read-only, rate limited per client.
+// Read-only, rate limited per client. Protected by a key: MCP_API_KEY (Netlify env), sent as the
+// x-api-key header (Copilot Studio: API key, header), or as Authorization: Bearer <key>.
+// While MCP_KEY_REQUIRED is not "true", calls without the key are still answered and logged,
+// so CX Martin keeps working while its connection is being switched over.
 import { liveDataset } from "./_lib/live-data.mjs";
 import { callTool, toolList, ToolError, SERVER_INFO, INSTRUCTIONS } from "./_lib/mcp-core.mjs";
 
@@ -10,7 +13,7 @@ const PROTOCOLS = ["2025-06-18", "2025-03-26", "2024-11-05"];
 const CORS = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, DELETE, OPTIONS",
-  "access-control-allow-headers": "content-type, accept, mcp-protocol-version, mcp-session-id, authorization",
+  "access-control-allow-headers": "content-type, accept, mcp-protocol-version, mcp-session-id, authorization, x-api-key",
   "access-control-expose-headers": "mcp-session-id",
 };
 const json = (body, status = 200, extra = {}) =>
@@ -48,8 +51,20 @@ async function handle(msg, dataset) {
   }
 }
 
+// constant-time comparison
+const same = (a, b) => { a = String(a || ""); b = String(b || ""); let d = a.length ^ b.length; for (let i = 0; i < Math.max(a.length, b.length); i++) d |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0); return d === 0; };
+function keyOk(req) {
+  const want = process.env.MCP_API_KEY;
+  const auth = req.headers.get("authorization") || "";
+  const given = req.headers.get("x-api-key") || (/^Bearer\s+/i.test(auth) ? auth.replace(/^Bearer\s+/i, "") : "") || new URL(req.url).searchParams.get("key") || "";
+  return { has: !!want, ok: !!want && same(given.trim(), want), sent: !!given };
+}
+
 export default async (req) => {
   if (req.method === "OPTIONS") return empty(204);
+  const k = keyOk(req), required = process.env.MCP_KEY_REQUIRED === "true";
+  if (req.method === "POST") console.log(JSON.stringify({ mcp: "auth", key: k.ok ? "valid" : k.sent ? "wrong" : "none", required }));
+  if (required && !k.ok) return json(rpcError(null, -32001, "Unauthorized: this MCP server needs an API key (x-api-key header)."), 401, { "www-authenticate": 'Bearer realm="aldar-hub-mcp"' });
   if (req.method === "GET") return json({ error: "This MCP endpoint accepts POST (Streamable HTTP, no SSE stream)." }, 405, { allow: "POST" });
   if (req.method === "DELETE") return empty(204);
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405, { allow: "POST" });
