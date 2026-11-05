@@ -48,6 +48,14 @@ FOLLOWUPS = [
      '<div id="bm-newly" data-bm-reel="1" style="padding:40px 28px 0"><div style="max-width:1280px;margin:0 auto">'),
     ('<div style="position:relative;height:640px;border-radius:20px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.25);container-type:inline-size">',
      '<div style="position:relative;height:560px;border-radius:20px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.25);container-type:inline-size">'),
+    # Browse by: the three cards share the full width of the panel
+    ('<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px">\n            <sc-for list="{{ u3.ix.p3 }}"',
+     '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">\n            <sc-for list="{{ u3.ix.p3 }}"'),
+    # All benchmarks: the rail is a set of categories to move between, not stacking filters.
+    # One click shows that category; clicking it again (or another one) moves on; no filter pills.
+    ("const setF = (lk, val) => { const cur = (fs[lk] || []).slice(); const i = cur.indexOf(val); i >= 0 ? cur.splice(i, 1) : cur.push(val); this.setState({ u3Sel: Object.assign({}, fs, { [lk]: cur }) }); };",
+     "const setF = (lk, val) => { const on = (fs[lk] || []).indexOf(val) >= 0; this.setState({ u3Sel: on ? {} : { [lk]: [val] } }); };"),
+    ("pills, hasPills: pills.length > 0,", "pills, hasPills: false,"),
     # the quick detail clears the hub's sticky top bar
     ("backdrop-filter:blur(5px);display:flex;justify-content:center;overflow-y:auto;padding:40px 20px\"",
      "backdrop-filter:blur(5px);display:flex;justify-content:center;overflow-y:auto;padding:84px 20px 40px\""),
