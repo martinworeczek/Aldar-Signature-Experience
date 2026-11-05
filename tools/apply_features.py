@@ -11,7 +11,7 @@ render, so menus, tabs, buttons, search results and deep links all respect the s
   benchmark_editor  the Benchmark Editor tab inside Benchmark (Library · Transfer Viewer · Boards stay)
   board_sharing  Boards' file sharing: Save board / Import board, a board's Share sheet, "Shared with me"
                  and the download-file reminder; Boards are labelled as private to this browser
-  ask_echo       Ask Echo; while false, the Ask page shows CX Martin, the Copilot Studio agent
+  ask_echo       Ask Echo; while false, the Ask page shows Echo, the Copilot Studio agent
                  (cx_martin_chat_url, the agent's web-chat link from Copilot Studio > Channels > App)
   project_plus   Project Plus as a business line: menu, line page, catalogue chips, hero, Portfolio
                  Discovery counts, Activity feed and search; also /mcp and Submit & review
@@ -24,7 +24,7 @@ section are swapped for neutral wording while it is hidden, and swapped back whe
 Always on (not switches), installed by the same pass:
   - Portfolio Discovery: "Theme of the week" from discovery-themes.json, and the defining moment of the
     week (the showreel opens on it and the Defining moments rail leads with it); both change every Monday
-  - the compare view's AI read comes from /api/compare-read (one read per set, shared with CX Martin)
+  - the compare view's AI read comes from /api/compare-read (one read per set, shared with Echo)
   - the embedded export state carries no one's saved audits or links (userData is emptied)
 
 Usage: python3 tools/apply_features.py    (also run by the Netlify build)
@@ -122,7 +122,7 @@ GUARDS += [
      "      const dwel = this._dShuffle(_thPick.items, this.state.dSeed + 17);", 1),
     ("welcome: { title: 'Arrival & welcome', accent: '#3D5958', items: dwel }", "welcome: { title: dwelTheme.title, accent: dwelTheme.accent, items: dwel }", 1),
     (RAIL_OLD, "{ key: 'welcome', idx: '03', kicker: 'Theme of the week', accent: dwelTheme.accent, band: 'linear-gradient(118deg,' + dwelTheme.accent + ' 0%,' + dwelTheme.deep + ' 100%)', title: dwelTheme.title, blurb: dwelTheme.blurb, ", 1),
-    # compare view: the AI read comes from the site (shared with CX Martin); the in-page reader is the fallback
+    # compare view: the AI read comes from the site (shared with Echo); the in-page reader is the fallback
     ("Promise.resolve(cc({ system: sys, messages: [{ role: 'user', content: JSON.stringify(recs, null, 1) }], max_tokens: 700 })).then(txt => {",
      "Promise.resolve((/^https?:$/.test(location.protocol) ? fetch('/api/compare-read', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ids: ids, refresh: !!force }) }).then(r => r.ok ? r.text() : Promise.reject(new Error('remote'))) : Promise.reject(new Error('local'))).catch(() => cc({ system: sys, messages: [{ role: 'user', content: JSON.stringify(recs, null, 1) }], max_tokens: 700 }))).then(txt => {", 1),
 ]
@@ -149,23 +149,23 @@ GUARDS += [
 ]
 
 GUARDS += [
-    # Ask: CX Martin (Copilot Studio) in place of Echo while ask_echo is false
-    ("  <!-- ===================== ASSISTANT ===================== -->\n", '  <!-- ============ ASK CX MARTIN (Copilot Studio web chat, features.json) ============ -->\n  <sc-if value="{{ vMartin }}" hint-placeholder-val="{{ false }}">\n  <section style="max-width:none;padding:26px 28px 40px;width:100%">\n    <div style="position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(232,185,106,.26);background:radial-gradient(120% 140% at 50% 0%,#16232B 0%,#0A1014 70%);padding:30px 34px 28px">\n      <div style="font-size:9.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#E8B96A">Aldar &middot; Ask CX Martin</div>\n      <div style="font-family:\'Poppins\',sans-serif;color:#F6F3EC;font-size:clamp(26px,2.8vw,36px);font-weight:300;line-height:1.15;margin-top:12px;letter-spacing:-.015em">Ask CX Martin, Aldar&rsquo;s CX agent</div>\n      <div style="font-size:14px;font-weight:300;color:rgba(246,243,236,.72);line-height:1.6;margin-top:8px;max-width:70ch">The same agent as in Microsoft Copilot and Teams, answering live from the hub: signature experiences across every line, deployment, benchmarks, Aldar CX Times and side-by-side comparisons.</div>\n    </div>\n    <div style="margin-top:18px;border-radius:16px;overflow:hidden;border:1px solid rgba(232,185,106,.26);background:#0A1014;box-shadow:0 18px 44px -18px rgba(11,17,22,.45)">\n      <iframe src="{{ martinUrl }}" title="Ask CX Martin" allow="clipboard-write" style="display:block;width:100%;height:max(560px, calc(100vh - 300px));border:0;background:#0A1014"></iframe>\n    </div>\n  </section>\n  </sc-if>\n\n' + "  <!-- ===================== ASSISTANT ===================== -->\n", 1, "ASK CX MARTIN (Copilot Studio web chat"),
+    # Ask: Echo (Copilot Studio) in place of Echo while ask_echo is false
+    ("  <!-- ===================== ASSISTANT ===================== -->\n", '  <!-- ============ ASK CX MARTIN (Copilot Studio web chat, features.json) ============ -->\n  <sc-if value="{{ vMartin }}" hint-placeholder-val="{{ false }}">\n  <section style="max-width:none;padding:26px 28px 40px;width:100%">\n    <div style="position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(232,185,106,.26);background:radial-gradient(120% 140% at 50% 0%,#16232B 0%,#0A1014 70%);padding:30px 34px 28px">\n      <div style="font-size:9.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#E8B96A">Aldar &middot; Ask Echo</div>\n      <div style="font-family:\'Poppins\',sans-serif;color:#F6F3EC;font-size:clamp(26px,2.8vw,36px);font-weight:300;line-height:1.15;margin-top:12px;letter-spacing:-.015em">Ask Echo, Aldar&rsquo;s CX agent</div>\n      <div style="font-size:14px;font-weight:300;color:rgba(246,243,236,.72);line-height:1.6;margin-top:8px;max-width:70ch">The same agent as in Microsoft Copilot and Teams, answering live from the hub: signature experiences across every line, deployment, benchmarks, Aldar CX Times and side-by-side comparisons.</div>\n    </div>\n    <div style="margin-top:18px;border-radius:16px;overflow:hidden;border:1px solid rgba(232,185,106,.26);background:#0A1014;box-shadow:0 18px 44px -18px rgba(11,17,22,.45)">\n      <iframe src="{{ martinUrl }}" title="Ask Echo" allow="clipboard-write" style="display:block;width:100%;height:max(560px, calc(100vh - 300px));border:0;background:#0A1014"></iframe>\n    </div>\n  </section>\n  </sc-if>\n\n' + "  <!-- ===================== ASSISTANT ===================== -->\n", 1, "ASK CX MARTIN (Copilot Studio web chat"),
     ("vAssistant: V === 'assistant',", "vAssistant: V === 'assistant' && !" + O + ".askEcho, vMartin: V === 'assistant' && !!" + O + ".askEcho, martinUrl: window.__SIG_MARTIN_URL || '',", 1),
-    ("iconItem('\u2726', 'Ask Echo', 'assistant')", "iconItem('\u2726', " + O + ".askEcho ? 'Ask CX Martin' : 'Ask Echo', 'assistant')", 1),
-    ("['assistant', 'Ask Echo', 'The CX assistant'],", "['assistant', " + O + ".askEcho ? 'Ask CX Martin' : 'Ask Echo', " + O + ".askEcho ? 'Aldar\u2019s Copilot CX agent' : 'The CX assistant'],", 1),
-    ("assistant: ['Overview', 'Ask Echo', ''],", "assistant: ['Overview', " + O + ".askEcho ? 'Ask CX Martin' : 'Ask Echo', ''],", 1),
+    ("iconItem('\u2726', 'Ask Echo', 'assistant')", "iconItem('\u2726', " + O + ".askEcho ? 'Ask Echo' : 'Ask Echo', 'assistant')", 1),
+    ("['assistant', 'Ask Echo', 'The CX assistant'],", "['assistant', " + O + ".askEcho ? 'Ask Echo' : 'Ask Echo', " + O + ".askEcho ? 'Aldar\u2019s Copilot CX agent' : 'The CX assistant'],", 1),
+    ("assistant: ['Overview', 'Ask Echo', ''],", "assistant: ['Overview', " + O + ".askEcho ? 'Ask Echo' : 'Ask Echo', ''],", 1),
 ]
 
 GUARDS += [
-    # CX Martin: the branded chat (app/martin.html) opens an experience it names in the hub's detail view
+    # Echo: the branded chat (app/martin.html) opens an experience it names in the hub's detail view
     ("    window.addEventListener('hashchange', this._onHash);\n",
      "    window.addEventListener('hashchange', this._onHash);\n    window.addEventListener('message', (ev) => { try { if (ev.origin !== location.origin) return; const m = ev.data || {}; if (m.type === 'sig:open-exp' && m.id) this.openExp(String(m.id)); } catch (e) {} });\n", 1),
-    # CX Martin page: slimmer intro, and the chat fills the rest of the screen
+    # Echo page: slimmer intro, and the chat fills the rest of the screen
     ("padding:30px 34px 28px\">", "padding:18px 26px 16px\">", 1),
     ("font-size:clamp(26px,2.8vw,36px)", "font-size:clamp(22px,2.2vw,28px)", 1),
     ("height:max(560px, calc(100vh - 300px))", "height:max(480px, calc(100vh - 262px))", 1),
-    ("line-height:1.15;margin-top:12px;letter-spacing:-.015em\">Ask CX Martin, Aldar", "line-height:1.15;margin-top:8px;letter-spacing:-.015em\">Ask CX Martin, Aldar", 1),
+    ("line-height:1.15;margin-top:12px;letter-spacing:-.015em\">Ask Echo, Aldar", "line-height:1.15;margin-top:8px;letter-spacing:-.015em\">Ask Echo, Aldar", 1),
     ("font-size:14px;font-weight:300;color:rgba(246,243,236,.72);line-height:1.6;margin-top:8px;max-width:70ch\">The same agent as in Microsoft Copilot", "font-size:13px;font-weight:300;color:rgba(246,243,236,.72);line-height:1.55;margin-top:5px;max-width:none\">The same agent as in Microsoft Copilot", 1),
     ("<div style=\"margin-top:18px;border-radius:16px;overflow:hidden;border:1px solid rgba(232,185,106,.26);background:#0A1014;box-shadow:0 18px 44px -18px rgba(11,17,22,.45)\">\n      <iframe src=\"{{ martinUrl }}\"", "<div style=\"margin-top:12px;border-radius:16px;overflow:hidden;border:1px solid rgba(232,185,106,.26);background:#0A1014;box-shadow:0 18px 44px -18px rgba(11,17,22,.45)\">\n      <iframe src=\"{{ martinUrl }}\"", 1),
 ]

@@ -6,7 +6,7 @@
  *
  * One copy, used in three places:
  *   - the hub page (index.html loads /sx/sx-apply.js and applies records as each data set loads)
- *   - /mcp and /api/sx (Netlify functions import it), so CX Martin sees exactly what the hub shows
+ *   - /mcp and /api/sx (Netlify functions import it), so Echo sees exactly what the hub shows
  *   - the build (tools/build_mcp_data.mjs) for the submission form's choices
  * Plain script (no exports): it defines globalThis.SX_APPLY.
  */

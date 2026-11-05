@@ -151,7 +151,7 @@ export const TOOLS = [
       notes: [
         "Stages follow the hub: In Review → In Implementation → Deployed & Live → Audited; Backlog (2027) and Discontinued sit outside the flow.",
         "Target go-live is month/quarter granularity; live items read 'Already live'.",
-        "Saved boards, audits recorded in a browser and Ask Echo chats are browser-local and are not in this dataset.",
+        "Saved boards and audits recorded in a browser are browser-local and are not in this dataset.",
       ],
     }),
   },

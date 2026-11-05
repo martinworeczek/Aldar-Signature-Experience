@@ -1,5 +1,5 @@
 // POST /api/compare-read  {ids:[2-4 experience ids]}  ->  the AI read as JSON
-// {verdict, shared[], differs[], takeaway}, the same object CX Martin's compare_experiences returns.
+// {verdict, shared[], differs[], takeaway}, the same object Echo's compare_experiences returns.
 import { liveDataset } from "./_lib/live-data.mjs";
 import { compareRead, CompareError } from "./_lib/compare-read.mjs";
 

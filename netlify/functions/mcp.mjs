@@ -5,7 +5,7 @@
 // Read-only, rate limited per client. Protected by a key: MCP_API_KEY (Netlify env), sent as the
 // x-api-key header (Copilot Studio: API key, header), or as Authorization: Bearer <key>.
 // While MCP_KEY_REQUIRED is not "true", calls without the key are still answered and logged,
-// so CX Martin keeps working while its connection is being switched over.
+// so Echo keeps working while its connection is being switched over.
 import { liveDataset } from "./_lib/live-data.mjs";
 import { callTool, toolList, ToolError, SERVER_INFO, INSTRUCTIONS } from "./_lib/mcp-core.mjs";
 

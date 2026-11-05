@@ -1,6 +1,6 @@
 // The hub's data as visitors see it: the data sets built from index.html, plus every
 // submission the Group CX reviewer has approved (Netlify Blobs). Shared by /mcp and /api/sx,
-// so CX Martin answers from exactly what the hub shows.
+// so Echo answers from exactly what the hub shows.
 import { getStore } from "@netlify/blobs";
 import native from "../_data/hub-native.json" with { type: "json" };
 import base from "../_data/mcp-dataset.json" with { type: "json" };

@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ask CX Martin</title>
+<title>Ask Echo</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Branded chat for CX Martin (Copilot Studio over Direct Line). Embedded by the hub's Ask page. */
+/* Branded chat for Echo (Copilot Studio over Direct Line). Embedded by the hub's Ask page. */
 :root{--bg:#0A1014;--panel:#111B22;--panel2:#16232B;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);--ink:#F2EFE8;--ink2:#B9C2C9;--ink3:#7E8A93;--gold:#C9A24A;--gold2:#E8C97E;--goldbg:rgba(201,162,74,.12)}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.6 Poppins,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -61,7 +61,7 @@ textarea::placeholder{color:var(--ink3)}
 .err{max-width:1240px;margin:0 auto 14px;background:rgba(201,138,110,.12);border:1px solid rgba(201,138,110,.35);color:#F0C4B2;border-radius:12px;padding:12px 14px;font-size:13px}
 .err a{color:#F6D9CC}
 /* visual cards: experiences and customer stories named in an answer */
-/* pictures CX Martin puts in an answer: a sized photo in text, a thumbnail in a table */
+/* pictures Echo puts in an answer: a sized photo in text, a thumbnail in a table */
 .msg img{display:block;width:100%;max-width:460px;max-height:280px;object-fit:cover;border-radius:10px;margin:8px 0;background:#16232B}
 .msg td img,.msg th img{width:132px;max-width:132px;height:88px;max-height:none;margin:0;border-radius:8px}
 .msg img.xo{cursor:pointer;transition:opacity .15s}.msg img.xo:hover{opacity:.85}
@@ -104,7 +104,7 @@ textarea::placeholder{color:var(--ink3)}
 <div class="app">
   <div class="bar">
     <div class="av" aria-hidden="true"></div>
-    <div><b>CX Martin</b><span>Aldar&rsquo;s CX agent &middot; answers live from the hub</span></div>
+    <div><b>Echo</b><span>Aldar&rsquo;s CX agent &middot; answers live from the hub</span></div>
     <div class="sp"></div>
     <span class="st" id="st"><i></i><em style="font-style:normal" id="stt">Connecting…</em></span>
     <button class="btn" id="new" type="button" title="Start a new conversation">New chat</button>
@@ -112,10 +112,10 @@ textarea::placeholder{color:var(--ink3)}
   <div class="log" id="log" aria-live="polite"></div>
   <div class="foot">
     <form class="box" id="f">
-      <textarea id="q" rows="1" placeholder="Ask CX Martin about any signature experience, line, property or benchmark…" aria-label="Your question"></textarea>
+      <textarea id="q" rows="1" placeholder="Ask Echo about any signature experience, line, property or benchmark…" aria-label="Your question"></textarea>
       <button class="send" id="go" type="submit" aria-label="Send" disabled>&#10148;</button>
     </form>
-    <div class="note">CX Martin runs on Microsoft Copilot Studio and reads the hub&rsquo;s live data. Check important figures in the hub.</div>
+    <div class="note">Echo runs on Microsoft Copilot Studio and reads the hub&rsquo;s live data. Check important figures in the hub.</div>
   </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
@@ -197,7 +197,7 @@ textarea::placeholder{color:var(--ink3)}
     var d = document.createElement("div"); d.innerHTML = html; var text = nrm(d.textContent);
     return IX.stories.filter(function (s) { var n = nrm(s.title); return n.length >= 10 && text.indexOf(n) >= 0; }).map(function (s) { return s.id; });
   }
-  // the experience behind a picture CX Martin embedded (matched on the image file)
+  // the experience behind a picture Echo embedded (matched on the image file)
   function expForImg(src) {
     if (!IX || !src) return null; var f = String(src).split("?")[0].replace(/^https?:\/\/[^/]+/, "");
     return IX.experiences.find(function (x) { return x.image && x.image === f; }) || null;
@@ -235,7 +235,7 @@ textarea::placeholder{color:var(--ink3)}
   function fail(msg) {
     status(false, "Offline"); typing(false);
     var e = document.createElement("div"); e.className = "err";
-    e.innerHTML = msg + (window.parent && window.parent.__SIG_MARTIN_MS_URL ? ' You can also <a href="' + window.parent.__SIG_MARTIN_MS_URL + '" target="_blank" rel="noopener">open CX Martin in Microsoft’s chat</a>.' : "");
+    e.innerHTML = msg + (window.parent && window.parent.__SIG_MARTIN_MS_URL ? ' You can also <a href="' + window.parent.__SIG_MARTIN_MS_URL + '" target="_blank" rel="noopener">open Echo in Microsoft’s chat</a>.' : "");
     log.appendChild(e); scroll();
   }
   function api(method, path, body) {
@@ -289,7 +289,7 @@ textarea::placeholder{color:var(--ink3)}
         return api("POST", "/conversations/" + S.conv + "/activities", { type: "event", name: "startConversation", from: { id: S.user }, locale: "en-GB" });
       })
       .then(function () { setTimeout(function () { if (!S.greeted && !document.getElementById("chips")) { S.greeted = true; typing(false); chips(STARTERS); } }, 9000); })
-      .catch(function () { fail("CX Martin couldn’t be reached just now. Try again in a moment."); });
+      .catch(function () { fail("Echo couldn’t be reached just now. Try again in a moment."); });
   }
   function send(text) {
     text = String(text || "").trim(); if (!text || !S.conv) return;

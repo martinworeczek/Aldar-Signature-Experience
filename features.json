@@ -1,5 +1,5 @@
 {
-  "_about": "Which hub sections are visible. true = shown, false = hidden (the code and data stay in place). Change a value and redeploy; the build applies it to the hub (tools/apply_features.py), Ask Echo and the MCP / CX Martin.",
+  "_about": "Which hub sections are visible. true = shown, false = hidden (the code and data stay in place). Change a value and redeploy; the build applies it to the hub (tools/apply_features.py), and the MCP that Echo (the Copilot Studio agent) reads.",
   "report_studio": false,
   "rag_status": false,
   "idea_exchange": false,

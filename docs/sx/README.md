@@ -2,7 +2,7 @@
 
 Business-line leads submit new signature experiences, and updates to their existing ones, at
 **https://aldar-signature-experience.netlify.app/sx/**. They can also reach it from the hub's sidebar.
-Group CX reviews each submission. Approved submissions appear on the hub and in the MCP / CX Martin
+Group CX reviews each submission. Approved submissions appear on the hub and in the MCP / Echo
 straight away, with no redeploy.
 
 ## Who can do what

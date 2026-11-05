@@ -1,7 +1,7 @@
 // Hub sign-in gate: runs before every request to the site.
 // Without a valid hub_session cookie, pages get the sign-in page and APIs get 401.
 // Left open: /mcp (it has its own key, MCP_API_KEY), the sign-in endpoint, the photos in /img/
-// (content-hash names; Teams loads them when CX Martin answers with pictures) and the icons and
+// (content-hash names; Teams loads them when Echo answers with pictures) and the icons and
 // link-preview image that the sign-in page and WhatsApp/Teams previews need.
 import { COOKIE, readCookie, verify, loginPage, safeNext } from "../shared/hub-session.mjs";
 
@@ -16,6 +16,9 @@ export default async (req, context) => {
   if (OPEN.some((r) => r.test(url.pathname))) return context.next();
 
   const secret = Netlify.env.get("HUB_SESSION_SECRET"), code = Netlify.env.get("HUB_ACCESS_CODE");
+  // not set up yet (neither setting exists): the gate stays off so the hub isn't locked before the
+  // Netlify settings are created. If only one of the two exists, the gate stays closed.
+  if (!secret && !code) { console.log(JSON.stringify({ hub: "gate-off", reason: "HUB_ACCESS_CODE and HUB_SESSION_SECRET not set" })); return context.next(); }
   if (await verify(readCookie(req.headers.get("cookie"), COOKIE), secret, code)) return context.next();
 
   const isPage = req.method === "GET" && !url.pathname.startsWith("/api/") && /text\/html|\*\/\*/.test(req.headers.get("accept") || "*/*");

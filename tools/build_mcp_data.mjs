@@ -65,7 +65,7 @@ fs.mkdirSync(path.dirname(OUT), { recursive: true });
 fs.writeFileSync(OUT, JSON.stringify(dataset));
 fs.writeFileSync(NATIVE_OUT, JSON.stringify(native));
 fs.writeFileSync(OPTIONS_OUT, JSON.stringify(formOptions(W)));
-// ---- the branded CX Martin chat's visual index (app/martin.html shows image cards for experiences it names) ----
+// ---- the branded Echo chat's visual index (app/martin.html shows image cards for experiences it names) ----
 {
   const ppOff = JSON.parse(fs.readFileSync("features.json", "utf8")).project_plus === false;
   const rel = (u) => (u && u.startsWith(SITE) ? u.slice(SITE.length) : u || null);

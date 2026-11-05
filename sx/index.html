@@ -256,7 +256,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
       ? [["queue", "Review queue", pending], ["all", "All submissions"], ["leads", "Leads & access codes"], ["notify", "Notifications"]]
       : [["mine", "My submissions"], ["new", "New experience"], ["update", "Update an experience"]];
     var title = rev ? "Review submissions" : lineLabel(S.me.line);
-    var lede = rev ? "Everything business-line leads submit waits here for your decision. Approved experiences and updates appear on the hub, and in CX Martin, straight away."
+    var lede = rev ? "Everything business-line leads submit waits here for your decision. Approved experiences and updates appear on the hub, and in Echo, straight away."
       : "Submit a new signature experience, or an update to one of yours. Group CX reviews each submission before it is published to the hub.";
     app.innerHTML = "<h1>" + esc(title) + '</h1><p class="lede">' + lede + '</p><div class="tabs">' +
       tabs.map(function (t) { return '<button class="tab' + (S.tab === t[0] ? " on" : "") + '" data-t="' + t[0] + '">' + t[1] + (t[2] ? '<span class="n">' + t[2] + "</span>" : "") + "</button>"; }).join("") +
@@ -344,7 +344,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
       acts = '<div class="sep"></div><label class="f"><span>Comment <i>(required to send back; shared with the lead)</i></span><textarea id="cm" placeholder="What should change, or a note on your decision"></textarea></label>' +
         '<div class="actions"><button class="btn ok" id="ap">Approve and publish</button><button class="btn" id="ed">Edit, then approve</button><button class="btn" id="rt">Send back for changes</button><button class="btn bad" id="rj">Reject</button></div>';
     } else if (rev && s.status === "approved") {
-      acts = '<div class="sep"></div><div class="actions"><button class="btn bad" id="up">Unpublish</button></div><p class="hint">Unpublishing removes it from the hub and CX Martin. The submission stays here.</p>';
+      acts = '<div class="sep"></div><div class="actions"><button class="btn bad" id="up">Unpublish</button></div><p class="hint">Unpublishing removes it from the hub and Echo. The submission stays here.</p>';
     } else if (!rev && (s.status === "pending" || s.status === "returned")) {
       acts = '<div class="sep"></div><div class="actions"><button class="btn gold" id="me">' + (s.status === "returned" ? "Make changes and resubmit" : "Edit submission") + '</button><button class="btn bad" id="wd">Withdraw</button></div>';
     }
@@ -357,7 +357,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
       var comment = ($("#cm") || {}).value || "";
       if (action === "return" && !comment.trim()) { toast("Add a comment so the lead knows what to change."); $("#cm").focus(); return; }
       if (action === "reject" && !confirm("Reject this submission? The lead will see your comment.")) return;
-      if (action === "unpublish" && !confirm("Unpublish? It will disappear from the hub and CX Martin.")) return;
+      if (action === "unpublish" && !confirm("Unpublish? It will disappear from the hub and Echo.")) return;
       app.querySelectorAll(".actions .btn").forEach(function (b) { b.disabled = true; });
       api("review/" + s.id, { body: { action: action, comment: comment, fields: fields } }).then(function (j) {
         toast({ approve: "Approved: it's live on the hub", return: "Sent back to the lead", reject: "Rejected", unpublish: "Unpublished" }[action] + (j.notified === false && action !== "unpublish" ? " (no notification sent: set up Notifications)" : ""));

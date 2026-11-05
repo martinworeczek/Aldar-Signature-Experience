@@ -20,7 +20,7 @@ A read-only [Model Context Protocol](https://modelcontextprotocol.io) server ove
 | 6 | **Idea Exchange** | *Hidden while `idea_exchange` is false in `features.json`.* Transferable experience moves, what each becomes in every line, and the experiences that embody it | 26 moves |
 | 7 | **Asset library** | SharePoint folder per experience (folder, link, photo / film / document counts, file names) | 22 folders, attached to experiences |
 
-Not included, because they live only in each visitor's browser: saved boards, audits recorded in the browser, and Ask Echo chats.
+Not included, because they live only in each visitor's browser: saved boards and audits recorded in the browser.
 
 ## Tools
 

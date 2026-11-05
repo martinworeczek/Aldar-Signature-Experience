@@ -2,7 +2,7 @@
 //
 // One implementation, used by both surfaces so they always agree:
 //   - the hub's compare view (POST /api/compare-read, netlify/functions/compare.mjs)
-//   - CX Martin / any MCP client (the compare_experiences tool in mcp-core.mjs)
+//   - Echo / any MCP client (the compare_experiences tool in mcp-core.mjs)
 // The prompt is the hub's own (moved here from the page). Reads are cached in Netlify Blobs per
 // set of experiences AND the facts the read was based on, so the same set gives the same read
 // until one of those experiences changes.
