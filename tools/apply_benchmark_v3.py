@@ -43,11 +43,13 @@ sub("hasInf: (x.informed || []).length > 0 };", "hasInf: (x.informed || []).leng
 FOLLOWUPS = [
     # the gallery's section links name the new chapter
     ("label: 'Explore the library'", "label: 'The library'"),
-    # the showreel is capped (1280 x 560) so 1536-2400px photos stay sharp on high-density screens
-    ('<div id="bm-newly" data-bm-reel="1" style="padding:40px 28px 0"><div style="max-width:1860px;margin:0 auto">',
-     '<div id="bm-newly" data-bm-reel="1" style="padding:40px 28px 0"><div style="max-width:1280px;margin:0 auto">'),
-    ('<div style="position:relative;height:640px;border-radius:20px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.25);container-type:inline-size">',
-     '<div style="position:relative;height:560px;border-radius:20px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.25);container-type:inline-size">'),
+    # the showreel keeps its full size (1860 x 640); it shows only photos that can fill it
+    ('<div id="bm-newly" data-bm-reel="1" style="padding:40px 28px 0"><div style="max-width:1280px;margin:0 auto">',
+     '<div id="bm-newly" data-bm-reel="1" style="padding:40px 28px 0"><div style="max-width:1860px;margin:0 auto">'),
+    ('<div style="position:relative;height:560px;border-radius:20px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.25);container-type:inline-size">',
+     '<div style="position:relative;height:640px;border-radius:20px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.25);container-type:inline-size">'),
+    ("const reelSet = R.filter(b => b.added).sort((x, y) => String(y.added).localeCompare(String(x.added))).concat(R.filter(b => !b.added && b.feat)).slice(0, 8);",
+     "const OKR = window.__BM_REEL_OK, okImg = b => !OKR || OKR.indexOf(b.id) >= 0; // data/benchmark-showreel.json\n    const reelSet = R.filter(b => b.added && okImg(b)).sort((x, y) => String(y.added).localeCompare(String(x.added))).concat(R.filter(b => !b.added && b.feat && okImg(b))).slice(0, 8);"),
     # Browse by: the three cards share the full width of the panel
     ('<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px">\n            <sc-for list="{{ u3.ix.p3 }}"',
      '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">\n            <sc-for list="{{ u3.ix.p3 }}"'),

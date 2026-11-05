@@ -30,6 +30,7 @@ Always on (not switches), installed by the same pass:
 Usage: python3 tools/apply_features.py    (also run by the Netlify build)
 """
 import base64, gzip, json, re
+import benchmark_showreel  # tools/benchmark_showreel.py: which photos may lead the Benchmark showreel
 import customer_stories  # tools/customer_stories.py: the Customer Stories tab, chapter and card marker
 
 PATH = "index.html"
@@ -207,7 +208,7 @@ html = open(PATH, encoding="utf-8").read()
 html = re.sub(r'<script id="__sig_features">.*?</script>\n', "", html)
 tag = ('<script id="__sig_features">window.__SIG_OFF=' + json.dumps(OFF, separators=(",", ":")) + ';window.__SIG_THEMES='
        + json.dumps([{k: t.get(k) for k in ("title", "blurb", "match", "accent", "deep") if t.get(k)} for t in THEMES], separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/")
-       + ';window.__SIG_MARTIN_URL=' + json.dumps(MARTIN_URL) + ';window.__SIG_MARTIN_MS_URL=' + json.dumps(MARTIN_MS_URL) + ';window.__SIG_IMPL=' + json.dumps(IMPL, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/") + ';' + customer_stories.data_js() + '</script>\n')
+       + ';window.__SIG_MARTIN_URL=' + json.dumps(MARTIN_URL) + ';window.__SIG_MARTIN_MS_URL=' + json.dumps(MARTIN_MS_URL) + ';window.__SIG_IMPL=' + json.dumps(IMPL, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/") + ';' + customer_stories.data_js() + benchmark_showreel.reel_ok_js(html) + '</script>\n')
 i = html.find('<script id="__sig_edition">')
 assert i > 0, "edition hook not found"
 html = html[:i] + tag + html[i:]

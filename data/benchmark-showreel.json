@@ -1,0 +1,5 @@
+{
+  "_about": "Which benchmark photos may lead the Benchmark showreel (01 · Newly added). A photo needs to be at least min_width pixels wide, and not listed under exclude. Edit and redeploy; the showreel then takes the eight newest benchmarks that pass. Excluded benchmarks still appear everywhere else in the library.",
+  "min_width": 1400,
+  "exclude": ["raffles-butler", "atl-upgrade-bidding", "fs-child-tour"]
+}
