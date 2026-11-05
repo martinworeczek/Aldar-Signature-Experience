@@ -4,11 +4,11 @@
 <!-- __sig_app:start -->
 <meta charset="utf-8">
 <title>Submit &amp; review · Aldar Signature Experience Hub</title>
-<meta name="description" content="Business-line leads submit new signature experiences and updates. Group CX reviews each one before it goes live on the hub.">
+<meta name="description" content="Colleagues across Aldar's business lines submit new signature experiences and updates. Group CX reviews each one before it goes live on the hub.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Aldar Signature Experience Hub">
 <meta property="og:title" content="Submit &amp; review · Aldar Signature Experience Hub">
-<meta property="og:description" content="Business-line leads submit new signature experiences and updates. Group CX reviews each one before it goes live on the hub.">
+<meta property="og:description" content="Colleagues across Aldar's business lines submit new signature experiences and updates. Group CX reviews each one before it goes live on the hub.">
 <meta property="og:url" content="https://aldar-signature-experience.netlify.app/sx/">
 <meta property="og:image" content="https://aldar-signature-experience.netlify.app/app/og-submit.jpg">
 <meta property="og:image:secure_url" content="https://aldar-signature-experience.netlify.app/app/og-submit.jpg">
@@ -19,7 +19,7 @@
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Submit &amp; review · Aldar Signature Experience Hub">
-<meta name="twitter:description" content="Business-line leads submit new signature experiences and updates. Group CX reviews each one before it goes live on the hub.">
+<meta name="twitter:description" content="Colleagues across Aldar's business lines submit new signature experiences and updates. Group CX reviews each one before it goes live on the hub.">
 <meta name="twitter:image" content="https://aldar-signature-experience.netlify.app/app/og-submit.jpg">
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#070c10">
@@ -142,6 +142,7 @@ table.t th{text-align:left;font-size:11px;color:var(--ink3);text-transform:upper
 table.t td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
 table.t input{padding:7px 9px}
 .scroll{overflow-x:auto}
+[hidden]{display:none!important}
 .login{max-width:420px;margin:12vh auto 0}
 .muted{color:var(--ink3)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1b2730;border:1px solid var(--line2);padding:10px 16px;border-radius:10px;font-size:13px;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.4)}
@@ -168,7 +169,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
   "use strict";
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var app = $("#app");
-  var S = { code: "", me: null, subs: [], tab: "", editing: null };
+  var S = { code: "", who: null, me: null, subs: [], tab: "", editing: null, lines: [] };
   var STATUS = { pending: "Waiting for review", returned: "Changes requested", approved: "Published", rejected: "Not approved", withdrawn: "Withdrawn", unpublished: "Unpublished" };
   var STAGE = { rev: "In Review", impl: "In Implementation", live: "Deployed & Live", dep: "Backlog (2027)", disc: "Discontinued" };
 
@@ -181,7 +182,9 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
 
   function api(path, opt) {
     opt = opt || {};
-    var h = { "x-sx-code": S.code };
+    var h = {};
+    if (S.code) h["x-sx-code"] = S.code;
+    else if (S.who) { h["x-sx-name"] = encodeURIComponent(S.who.name); h["x-sx-email"] = encodeURIComponent(S.who.email); h["x-sx-line"] = encodeURIComponent(S.who.line); }
     if (opt.body && !(opt.body instanceof Blob)) { h["content-type"] = "application/json"; opt.body = JSON.stringify(opt.body); }
     if (opt.type) h["content-type"] = opt.type;
     return fetch("/api/sx/" + path, { method: opt.method || (opt.body ? "POST" : "GET"), headers: h, body: opt.body }).then(function (r) {
@@ -190,29 +193,47 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
   }
 
   // ---------- sign in ----------
-  function loginView(err) {
+  // Anyone signed in to the hub can submit: they give their name, email and business line.
+  // Group CX signs in to the review side with the reviewer code.
+  function roleLabel(me) { return me.role === "reviewer" ? "Reviewer · Group CX" : esc(lineLabel(me.line)); }
+  function loginView(err, asReviewer) {
     $("#who").innerHTML = ""; $("#signout").hidden = true; menu([]);
+    var last = {}; try { last = JSON.parse(store("sx_who") || "{}") || {}; } catch (e) {}
+    var opts = '<option value="">Choose your business line</option>' + S.lines.map(function (l) { return '<option value="' + esc(l.key) + '"' + (last.line === l.key ? " selected" : "") + ">" + esc(l.label) + "</option>"; }).join("");
     app.innerHTML = '<div class="login card"><h2 style="font-size:20px;font-weight:500">Submit &amp; review</h2>' +
-      '<p class="muted" style="margin-top:0">Business-line leads submit new signature experiences and updates here. Group CX reviews every one before it appears on the hub.</p>' +
-      (err ? '<div class="errbox">' + esc(err) + '</div>' : '') +
-      '<form id="lf"><label class="f"><span>Access code</span><input type="password" id="code" autocomplete="current-password" placeholder="e.g. HP-XXXX-XXXX-XXXX" required></label>' +
-      '<label class="check"><input type="checkbox" id="rem" checked> Remember me on this device</label>' +
-      '<button class="btn gold" style="width:100%;justify-content:center">Sign in</button></form>' +
-      '<p class="hint">No code? Ask Group CX for your business line\'s access code.</p></div>';
-    $("#lf").onsubmit = function (e) { e.preventDefault(); signIn($("#code").value.trim(), $("#rem").checked); };
-    $("#code").focus();
+      (asReviewer
+        ? '<p class="muted" style="margin-top:0">Group CX: sign in with the reviewer code to review submissions.</p>' + (err ? '<div class="errbox">' + esc(err) + '</div>' : '') +
+          '<form id="lf"><label class="f"><span>Reviewer code</span><input type="password" id="code" autocomplete="current-password" required></label>' +
+          '<label class="check"><input type="checkbox" id="rem" checked> Remember me on this device</label>' +
+          '<button class="btn gold" style="width:100%;justify-content:center">Sign in</button></form>' +
+          '<p class="hint"><a href="#" id="sw">← Back to submitting an experience</a></p>'
+        : '<p class="muted" style="margin-top:0">Share a new signature experience, or an update to one, from your business line. Group CX reviews every submission before it appears on the hub.</p>' + (err ? '<div class="errbox">' + esc(err) + '</div>' : '') +
+          '<form id="lf"><label class="f"><span>Your name</span><input type="text" id="nm" autocomplete="name" value="' + esc(last.name || "") + '" required maxlength="80"></label>' +
+          '<label class="f"><span>Your email <i>· Group CX replies here</i></span><input type="email" id="em" autocomplete="email" value="' + esc(last.email || "") + '" placeholder="name@aldar.com" required maxlength="120"></label>' +
+          '<label class="f"><span>Business line</span><select id="ln" required>' + opts + '</select></label>' +
+          '<label class="check"><input type="checkbox" id="rem" checked> Remember me on this device</label>' +
+          '<button class="btn gold" style="width:100%;justify-content:center">Continue</button></form>' +
+          '<p class="hint">Group CX reviewer? <a href="#" id="sw">Sign in with the reviewer code</a></p>') + "</div>";
+    $("#sw").onclick = function (e) { e.preventDefault(); loginView("", !asReviewer); };
+    $("#lf").onsubmit = function (e) {
+      e.preventDefault();
+      if (asReviewer) signIn({ code: $("#code").value.trim() }, $("#rem").checked);
+      else signIn({ who: { name: $("#nm").value.trim(), email: $("#em").value.trim().toLowerCase(), line: $("#ln").value } }, $("#rem").checked);
+    };
+    (asReviewer ? $("#code") : ($("#nm").value ? $("#em").value ? $("#ln") : $("#em") : $("#nm"))).focus();
   }
-  function signIn(code, remember) {
-    S.code = code;
+  function signIn(cred, remember) {
+    S.code = cred.code || ""; S.who = cred.who || null;
     app.innerHTML = '<div class="login"><span class="spin"></span></div>';
     api("session", { method: "POST" }).then(function (me) {
-      S.me = me; if (remember) store("sx_code", code);
-      $("#who").innerHTML = "<b>" + esc(me.name) + "</b>" + (me.role === "reviewer" ? "Reviewer · Group CX" : esc(lineLabel(me.line)) + " lead");
+      S.me = me;
+      if (remember) { if (S.code) store("sx_code", S.code); else store("sx_who", JSON.stringify(S.who)); }
+      $("#who").innerHTML = "<b>" + esc(me.name) + "</b>" + roleLabel(me);
       $("#signout").hidden = false;
       return loadSubs().then(route);
-    }).catch(function (e) { store("sx_code", null); S.code = ""; loginView(e.message); });
+    }).catch(function (e) { if (cred.code) store("sx_code", null); S.code = ""; S.who = null; loginView(e.message, !!cred.code); });
   }
-  $("#signout").onclick = function () { store("sx_code", null); S.code = ""; S.me = null; location.hash = ""; loginView(); };
+  $("#signout").onclick = function () { store("sx_code", null); store("sx_who", null); S.code = ""; S.who = null; S.me = null; location.hash = ""; loginView(); };
   function loadSubs() { return api("submissions").then(function (j) { S.subs = j.submissions || []; }); }
   function refreshSession() { return api("session", { method: "POST" }).then(function (me) { S.me = me; }); }
 
@@ -237,7 +258,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
   // phone menu: the tabs, back to the hub and sign out
   function menu(tabs) {
     var h = "";
-    if (S.me) h += '<div class="me"><b>' + esc(S.me.name) + "</b>" + (S.me.role === "reviewer" ? "Reviewer · Group CX" : esc(lineLabel(S.me.line)) + " lead") + "</div>";
+    if (S.me) h += '<div class="me"><b>' + esc(S.me.name) + "</b>" + roleLabel(S.me) + "</div>";
     (tabs || []).forEach(function (t) { h += '<button class="it' + (S.tab === t[0] ? " on" : "") + '" data-t="' + t[0] + '"><span>' + t[1] + "</span>" + (t[2] ? '<span class="n">' + t[2] + "</span>" : "") + "</button>"; });
     if (tabs && tabs.length) h += "<hr>";
     h += '<a class="it" href="/"><span>Back to the hub</span><span>→</span></a>';
@@ -253,10 +274,10 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
     var rev = S.me.role === "reviewer";
     var pending = S.subs.filter(function (s) { return s.status === "pending"; }).length;
     var tabs = rev
-      ? [["queue", "Review queue", pending], ["all", "All submissions"], ["leads", "Leads & access codes"], ["notify", "Notifications"]]
+      ? [["queue", "Review queue", pending], ["all", "All submissions"], ["notify", "Notifications"]]
       : [["mine", "My submissions"], ["new", "New experience"], ["update", "Update an experience"]];
     var title = rev ? "Review submissions" : lineLabel(S.me.line);
-    var lede = rev ? "Everything business-line leads submit waits here for your decision. Approved experiences and updates appear on the hub, and in Echo, straight away."
+    var lede = rev ? "Everything colleagues submit waits here for your decision. Approved experiences and updates appear on the hub, and in Echo, straight away."
       : "Submit a new signature experience, or an update to one of yours. Group CX reviews each submission before it is published to the hub.";
     app.innerHTML = "<h1>" + esc(title) + '</h1><p class="lede">' + lede + '</p><div class="tabs">' +
       tabs.map(function (t) { return '<button class="tab' + (S.tab === t[0] ? " on" : "") + '" data-t="' + t[0] + '">' + t[1] + (t[2] ? '<span class="n">' + t[2] + "</span>" : "") + "</button>"; }).join("") +
@@ -275,7 +296,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
     var name = s.kind === "new" ? f.name : (s.exp_name || exp.name || s.exp_id);
     return '<a class="row" href="#s/' + esc(s.id) + '">' + (img ? '<img class="thumb" src="' + esc(img) + '" alt="" loading="lazy">' : '<div class="thumb"></div>') +
       '<div class="t"><div class="kind">' + (s.kind === "new" ? "New experience" : "Update") + (S.me.role === "reviewer" ? " · " + esc(lineLabel(s.line)) : "") + '</div><b>' + esc(name) + '</b><span>' +
-      (S.me.role === "reviewer" ? esc(s.lead) + " · " : "") + "Updated " + esc(fmtDate(s.updated_at)) + "</span></div>" +
+      (S.me.role === "reviewer" ? esc(s.lead) + (s.email ? " (" + esc(s.email) + ")" : "") + " · " : "") + "Updated " + esc(fmtDate(s.updated_at)) + "</span></div>" +
       '<span class="chip c-' + s.status + '">' + STATUS[s.status] + "</span></a>";
   }
   function mineView() {
@@ -292,7 +313,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
     setTimeout(function () {
       var run = function () {
         var l = $("#fl").value, st = $("#fs").value, q = $("#fq").value.toLowerCase();
-        var list = S.subs.filter(function (s) { var f = s.fields || {}; return (!l || s.line === l) && (!st || s.status === st) && (!q || JSON.stringify([f.name, s.exp_name, s.lead, f.note]).toLowerCase().indexOf(q) >= 0); });
+        var list = S.subs.filter(function (s) { var f = s.fields || {}; return (!l || s.line === l) && (!st || s.status === st) && (!q || JSON.stringify([f.name, s.exp_name, s.lead, s.email, f.note]).toLowerCase().indexOf(q) >= 0); });
         $("#fr").innerHTML = list.length ? list.map(subRow).join("") : '<div class="empty">No submissions match.</div>';
       };
       ["#fl", "#fs", "#fq"].forEach(function (id) { $(id).oninput = run; }); run();
@@ -341,7 +362,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
     }).join("") + "</div>";
     var acts = "";
     if (rev && s.status === "pending") {
-      acts = '<div class="sep"></div><label class="f"><span>Comment <i>(required to send back; shared with the lead)</i></span><textarea id="cm" placeholder="What should change, or a note on your decision"></textarea></label>' +
+      acts = '<div class="sep"></div><label class="f"><span>Comment <i>(required to send back; shared with the submitter)</i></span><textarea id="cm" placeholder="What should change, or a note on your decision"></textarea></label>' +
         '<div class="actions"><button class="btn ok" id="ap">Approve and publish</button><button class="btn" id="ed">Edit, then approve</button><button class="btn" id="rt">Send back for changes</button><button class="btn bad" id="rj">Reject</button></div>';
     } else if (rev && s.status === "approved") {
       acts = '<div class="sep"></div><div class="actions"><button class="btn bad" id="up">Unpublish</button></div><p class="hint">Unpublishing removes it from the hub and Echo. The submission stays here.</p>';
@@ -349,18 +370,18 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
       acts = '<div class="sep"></div><div class="actions"><button class="btn gold" id="me">' + (s.status === "returned" ? "Make changes and resubmit" : "Edit submission") + '</button><button class="btn bad" id="wd">Withdraw</button></div>';
     }
     app.innerHTML = '<p style="margin:26px 0 0"><a href="#' + (rev ? "queue" : "mine") + '">← Back</a></p><div style="display:flex;align-items:center;gap:12px;margin:14px 0 18px;flex-wrap:wrap"><span class="kind">' +
-      (s.kind === "new" ? "New experience" : "Update") + " · " + esc(lineLabel(s.line)) + " · from " + esc(s.lead) + '</span><span class="chip c-' + s.status + '">' + STATUS[s.status] + "</span></div>" +
+      (s.kind === "new" ? "New experience" : "Update") + " · " + esc(lineLabel(s.line)) +  " · from " + esc(s.lead) + (s.email ? ' · <a href="mailto:' + esc(s.email) + '">' + esc(s.email) + "</a>" : "") + '</span><span class="chip c-' + s.status + '">' + STATUS[s.status] + "</span></div>" +
       (s.status === "returned" && s.reviewer_comment ? '<div class="warnbox" style="margin:0 0 16px"><b>Group CX:</b> ' + esc(s.reviewer_comment) + "</div>" : "") +
       '<div class="card">' + body + hist + acts + "</div>";
     window.scrollTo(0, 0);
     var act = function (action, fields) {
       var comment = ($("#cm") || {}).value || "";
-      if (action === "return" && !comment.trim()) { toast("Add a comment so the lead knows what to change."); $("#cm").focus(); return; }
-      if (action === "reject" && !confirm("Reject this submission? The lead will see your comment.")) return;
+      if (action === "return" && !comment.trim()) { toast("Add a comment so the submitter knows what to change."); $("#cm").focus(); return; }
+      if (action === "reject" && !confirm("Reject this submission? The submitter will see your comment.")) return;
       if (action === "unpublish" && !confirm("Unpublish? It will disappear from the hub and Echo.")) return;
       app.querySelectorAll(".actions .btn").forEach(function (b) { b.disabled = true; });
       api("review/" + s.id, { body: { action: action, comment: comment, fields: fields } }).then(function (j) {
-        toast({ approve: "Approved: it's live on the hub", return: "Sent back to the lead", reject: "Rejected", unpublish: "Unpublished" }[action] + (j.notified === false && action !== "unpublish" ? " (no notification sent: set up Notifications)" : ""));
+        toast({ approve: "Approved: it's live on the hub", return: "Sent back to the submitter", reject: "Rejected", unpublish: "Unpublished" }[action] + (j.notified === false && action !== "unpublish" ? " (no notification sent: set up Notifications)" : ""));
         return Promise.all([loadSubs(), refreshSession()]).then(function () { location.hash = "queue"; route(); });
       }).catch(function (e) { toast(e.message); app.querySelectorAll(".actions .btn").forEach(function (b) { b.disabled = false; }); });
     };
@@ -597,7 +618,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
   // ---------- reviewer: notifications ----------
   function notifyView() {
     var s = S.me.settings || {};
-    return '<div class="card"><label class="f"><span>Your name <i>· shown to leads on decisions</i></span><input type="text" id="rn" value="' + esc(s.reviewer_name || "Group CX") + '"></label>' +
+    return '<div class="card"><label class="f"><span>Your name <i>· shown to submitters on decisions</i></span><input type="text" id="rn" value="' + esc(s.reviewer_name || "Group CX") + '"></label>' +
       '<label class="f"><span>Your email <i>· new submissions are emailed here</i></span><input type="email" id="re" value="' + esc(s.reviewer_email) + '" placeholder="name@aldar.com"></label>' +
       '<label class="f"><span>Teams workflow webhook URL</span><input type="url" id="tw" value="' + esc(s.teams_webhook) + '" placeholder="https://…logic.azure.com/… or https://…powerplatform.com/…"></label>' +
       '<div class="actions"><button class="btn gold" id="ns">Save</button><button class="btn" id="nt">Save and send a test</button></div>' +
@@ -605,7 +626,7 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
       "<li>In Teams, open the channel or chat where you want alerts, choose <b>…</b> → <b>Workflows</b>, and pick the template <b>“Send webhook alerts to a channel”</b> (or <b>“…to a chat”</b>).</li>" +
       "<li>Name it “Signature Experience Hub”, choose where it posts, and create it. Copy the <b>webhook URL</b> it shows, paste it above and click <b>Save and send a test</b>. The card should appear in Teams.</li>" +
       "<li>For email too: open the workflow in Power Automate (Teams → Workflows → Edit), add a step after the trigger: <b>Office 365 Outlook → Send an email (V2)</b>. Set <b>To</b> = <code class=\"code\">triggerBody()?['email_to']</code>, <b>Subject</b> = <code class=\"code\">triggerBody()?['subject']</code>, <b>Body</b> = <code class=\"code\">triggerBody()?['html']</code>. Save.</li>" +
-      "<li>New submissions are emailed to you. Decisions (approved, sent back, rejected) are emailed to that line's lead, using the email on the <a href=\"#leads\">Leads</a> tab.</li></ol></div>";
+      "<li>New submissions are emailed to you. Decisions (approved, sent back, rejected) are emailed to the person who submitted, at the email they gave.</li></ol></div>";
   }
   function bindNotify() {
     var go = function (test) {
@@ -618,8 +639,12 @@ ol.steps{padding-left:18px;color:var(--ink2);font-size:13px}ol.steps li{margin-b
   }
 
   // ---------- start ----------
-  var saved = store("sx_code");
-  if (saved) signIn(saved, true); else loginView();
+  fetch("/api/sx/lines").then(function (r) { return r.json(); }).then(function (j) { S.lines = j.lines || []; }).catch(function () {}).then(function () {
+    var code = store("sx_code"), who = null; try { who = JSON.parse(store("sx_who") || "null"); } catch (e) {}
+    if (code) signIn({ code: code }, true);
+    else if (who && who.name && who.email && who.line) signIn({ who: who }, true);
+    else loginView();
+  });
 })();
 </script>
 </body>

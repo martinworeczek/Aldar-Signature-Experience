@@ -1,8 +1,11 @@
 // Signature experience submissions: business-line leads submit, Group CX reviews, approved
 // records publish to the hub (index.html applies them as it loads) and to /mcp.
 //
-// Access: one code per business-line lead (kept in Blobs, managed from the review page) and
-// a reviewer code (SX_REVIEWER_CODE env var). Codes are sent as the x-sx-code header.
+// Access: the whole site is behind the hub sign-in (netlify/edge-functions/hub-gate.js), so anyone
+// signed in to the hub can submit: they give their name, email and business line (x-sx-name,
+// x-sx-email, x-sx-line headers, URI-encoded). Every submission waits for the reviewer, who signs
+// in with the reviewer code (SX_REVIEWER_CODE env var, sent as x-sx-code). Older per-line lead
+// codes (kept in Blobs) are still accepted.
 // Storage: Netlify Blobs store "sx-submissions" (sub/<id>, published, leads, settings) and
 // "sx-photos" (uploaded photos). Notifications: a Microsoft Teams Workflows webhook set on
 // the review page; the same payload carries the email fields for the workflow's email step.
@@ -40,13 +43,22 @@ const getSettings = async () => (await store().get("settings", { type: "json" })
 
 async function who(req) {
   const code = str(req.headers.get("x-sx-code"), 100);
-  if (!code) throw new HttpError(401, "Enter your access code.");
+  if (!code) {
+    const dec = (h) => { try { return decodeURIComponent(str(req.headers.get(h), 400)); } catch { return ""; } };
+    const name = str(dec("x-sx-name"), 80), email = str(dec("x-sx-email"), 120).toLowerCase(), line = str(dec("x-sx-line"), 10);
+    if (!name || !email) throw new HttpError(401, "Enter your name, email and business line.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpError(401, "That email address doesn't look right.");
+    if (!LINES.includes(line)) throw new HttpError(401, "Choose your business line.");
+    return { role: "contributor", line, name, email };
+  }
   const rev = process.env.SX_REVIEWER_CODE;
   if (rev && same(code, rev)) return { role: "reviewer", name: (await getSettings()).reviewer_name || "Group CX" };
   const leads = await getLeads();
-  for (const [line, l] of Object.entries(leads)) if (l.code && LINES.includes(line) && same(code, l.code)) return { role: "lead", line, name: l.name || SX.LINES[line].short + " lead" };
-  throw new HttpError(401, "That access code isn't recognised.");
+  for (const [line, l] of Object.entries(leads)) if (l.code && LINES.includes(line) && same(code, l.code)) return { role: "lead", line, name: l.name || SX.LINES[line].short + " lead", email: (l.email || "").toLowerCase() };
+  throw new HttpError(401, "That reviewer code isn't recognised.");
 }
+// a submitter can see and change their own submissions: by email for contributors, by line for code-holding leads
+const mine = (u, s) => u.role === "reviewer" || (u.role === "lead" ? s.line === u.line : !!u.email && String(s.email || "").toLowerCase() === u.email);
 const needReviewer = (u) => { if (u.role !== "reviewer") throw new HttpError(403, "Only the Group CX reviewer can do that."); };
 
 // ---------- submissions ----------
@@ -147,7 +159,7 @@ async function notify(event, sub, extra = {}) {
     const facts = [
       { title: "Business line", value: lineLabel },
       { title: "Type", value: sub.kind === "new" ? "New experience" : "Update to an existing experience" },
-      { title: "From", value: sub.lead || lead.name || "Line lead" },
+      { title: "From", value: (sub.lead || lead.name || "Contributor") + (sub.email ? " (" + sub.email + ")" : "") },
       ...(f.stage ? [{ title: "Stage", value: SX.STAGE_LABEL[f.stage] || f.stage }] : []),
       ...(f.target ? [{ title: "Target go-live", value: f.target }] : []),
     ];
@@ -170,7 +182,7 @@ async function notify(event, sub, extra = {}) {
       }],
       // for the workflow's "Send an email" step
       event, subject: title, html, text, link,
-      email_to: toReviewer ? (settings.reviewer_email || "") : (lead.email || settings.reviewer_email || ""),
+      email_to: toReviewer ? (settings.reviewer_email || "") : (sub.email || lead.email || settings.reviewer_email || ""),
       line: lineLabel,
     };
     const r = await fetch(settings.teams_webhook, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
@@ -212,6 +224,9 @@ export default async (req, context) => {
       return new Response(r.data, { headers: { "content-type": r.metadata?.type || "image/jpeg", "cache-control": "public, max-age=31536000, immutable" } });
     }
 
+    // the business lines the sign-in form offers
+    if (req.method === "GET" && a === "lines") return json({ lines: LINES.map((l) => ({ key: l, label: SX.LINES[l].label })) });
+
     const u = await who(req);
 
     if (req.method === "POST" && a === "session") {
@@ -221,7 +236,7 @@ export default async (req, context) => {
         id: e.id, line: e.line, name: e.name, stage: e.stage, stage_key: e.stage_key, target: e.target_go_live, target_sort: e.target_sort, essence: e.essence, image_url: e.image_url,
         assets: (e.deployment?.assets || []).map((x) => ({ name: x.name, live: !!x.live })),
       }));
-      const out = { role: u.role, line: u.line || null, name: u.name, options: Object.fromEntries(lines.map((l) => [l, options[l]])), experiences };
+      const out = { role: u.role, line: u.line || null, name: u.name, email: u.email || null, options: Object.fromEntries(lines.map((l) => [l, options[l]])), experiences };
       if (u.role === "reviewer") { out.settings = await getSettings(); const L = await getLeads(); out.leads = Object.fromEntries(Object.entries(L).filter(([l]) => LINES.includes(l))); }
       return json(out);
     }
@@ -232,19 +247,19 @@ export default async (req, context) => {
       const buf = await req.arrayBuffer();
       if (buf.byteLength > 4 * 1024 * 1024) throw new HttpError(413, "That photo is over 4 MB.");
       const key = randomUUID().replace(/-/g, "");
-      await photos().set(key, buf, { metadata: { type, by: u.role === "lead" ? u.line : "reviewer", at: now() } });
+      await photos().set(key, buf, { metadata: { type, by: u.role === "reviewer" ? "reviewer" : (u.email || u.line), at: now() } });
       return json({ url: "/api/sx/photo/" + key });
     }
 
     if (a === "submissions" && !b && req.method === "GET") {
       let subs = await allSubs();
-      if (u.role === "lead") subs = subs.filter((s) => s.line === u.line);
+      if (u.role !== "reviewer") subs = subs.filter((s) => mine(u, s));
       return json({ submissions: subs });
     }
 
     if (a === "submissions" && !b && req.method === "POST") {
       const body = await req.json();
-      const line = u.role === "lead" ? u.line : str(body.line, 10);
+      const line = u.role === "reviewer" ? str(body.line, 10) : u.line;
       if (!LINES.includes(line)) throw new HttpError(400, "Unknown business line.");
       const kind = body.kind === "update" ? "update" : "new";
       const fields = await cleanFields(kind, line, str(body.exp_id, 120), body.fields);
@@ -255,7 +270,7 @@ export default async (req, context) => {
         exp_id = "sx-" + slug + "-" + randomBytes(2).toString("hex");
       } else { exp_id = str(body.exp_id, 120); exp_name = D.experiences.find((e) => e.id === exp_id)?.name; }
       const sub = {
-        id: randomUUID(), kind, line, exp_id, exp_name, status: "pending", fields, lead: u.name, by_role: u.role,
+        id: randomUUID(), kind, line, exp_id, exp_name, status: "pending", fields, lead: u.name, email: u.email || "", by_role: u.role,
         created_at: now(), updated_at: now(), history: [{ at: now(), by: u.name, action: "submitted" }],
       };
       await putSub(sub);
@@ -265,7 +280,7 @@ export default async (req, context) => {
 
     if (a === "submissions" && b && req.method === "POST") {
       const sub = await getSub(b);
-      if (u.role === "lead" && sub.line !== u.line) throw new HttpError(403, "That submission belongs to another line.");
+      if (!mine(u, sub)) throw new HttpError(403, "That submission isn't one of yours.");
       const body = await req.json().catch(() => ({}));
       if (c === "withdraw") {
         if (!["pending", "returned"].includes(sub.status)) throw new HttpError(409, "Only pending or returned submissions can be withdrawn.");
@@ -300,7 +315,7 @@ export default async (req, context) => {
         await publishList((list) => list.filter((r) => r.id !== sub.id).concat([rec]));
         sub.status = "approved"; sub.approved_at = rec.approved_at;
       } else if (action === "return") {
-        if (!comment) throw new HttpError(422, "Add a comment so the lead knows what to change.");
+        if (!comment) throw new HttpError(422, "Add a comment so the submitter knows what to change.");
         sub.status = "returned";
       } else if (action === "reject") {
         sub.status = "rejected";

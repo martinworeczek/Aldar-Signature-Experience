@@ -1,6 +1,6 @@
 # Submit & review: business-line submissions
 
-Business-line leads submit new signature experiences, and updates to their existing ones, at
+Colleagues across the business lines submit new signature experiences, and updates to their existing ones, at
 **https://aldar-signature-experience.netlify.app/sx/**. They can also reach it from the hub's sidebar.
 Group CX reviews each submission. Approved submissions appear on the hub and in the MCP / Echo
 straight away, with no redeploy.
@@ -9,12 +9,14 @@ straight away, with no redeploy.
 
 | Role | Signs in with | Can |
 |---|---|---|
-| Line lead (one per line) | That line's access code | Submit new experiences and updates for their own line only. See their submissions and status. Edit or withdraw while pending. Resubmit when sent back. |
-| Reviewer (Group CX) | The reviewer code (`SX_REVIEWER_CODE`, a Netlify secret) | See everything. Approve, edit then approve, send back with a comment, reject, unpublish. Manage lead names, emails and codes. Set up notifications. |
+| Contributor (anyone signed in to the hub) | Their name, email and business line, typed on the Submit page | Submit new experiences and updates for the line they chose. See the submissions made with their email, and their status. Edit or withdraw while pending. Resubmit when sent back. |
+| Reviewer (Group CX) | The reviewer code (`SX_REVIEWER_CODE`, a Netlify secret) | See everything. Approve, edit then approve, send back with a comment, reject, unpublish. Set up notifications. |
 
-Codes are sent as the `x-sx-code` header. The lead codes live in Netlify Blobs and are managed on the
-**Leads & access codes** tab. "New code" revokes the old one immediately. To change the reviewer code,
+The Submit page is behind the hub sign-in, so only people with the hub access code can reach it. Name,
+email and line are self-declared: check them when you review. They travel as the `x-sx-name`,
+`x-sx-email` and `x-sx-line` headers; the reviewer code as `x-sx-code`. To change the reviewer code,
 edit `SX_REVIEWER_CODE` under Netlify → Project configuration → Environment variables, then redeploy.
+Older per-line lead codes (in Netlify Blobs) are still accepted, but the page no longer offers them.
 
 ## Lifecycle
 
@@ -56,7 +58,7 @@ alerts to a channel" or "…to a chat"). The hub posts an Adaptive Card. The sam
 - Subject: `triggerBody()?['subject']`
 - Body: `triggerBody()?['html']`
 
-New submissions are emailed to the reviewer. Decisions are emailed to that line's lead.
+New submissions are emailed to the reviewer. Decisions are emailed to the person who submitted, at the email they gave.
 
 ## Local test
 
