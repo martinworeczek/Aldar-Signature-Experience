@@ -2,7 +2,7 @@
 
 Usage: python3 tools/set_benchmark_image.py <benchmark-id>=<image file> [...]
 
-Each image is converted to WebP (max 1800px wide), saved in img/ under a content-hash name (img/ is
+A WebP up to 2400px wide is kept byte for byte; other images are converted to WebP (quality 92, max 2400px wide), saved in img/ under a content-hash name (img/ is
 served as immutable, so a new photo always gets a new name), and the benchmark's entry is pointed at it.
 The old file is deleted when nothing else in index.html uses it. Then redeploy (Netlify rebuilds /mcp).
 """
@@ -10,6 +10,7 @@ import base64, gzip, hashlib, io, json, os, re, sys
 from PIL import Image
 
 PATH = "index.html"
+MAX_W = 2400  # wide enough for the 640px showreel on high-density screens
 pairs = [a.split("=", 1) for a in sys.argv[1:]]
 assert pairs and all(len(p) == 2 for p in pairs), __doc__
 
@@ -32,9 +33,15 @@ def everything():
 
 retired = []
 for bid, src in pairs:
-    im = Image.open(src).convert("RGB")
-    if im.width > 1800: im = im.resize((1800, round(im.height * 1800 / im.width)), Image.LANCZOS)
-    o = io.BytesIO(); im.save(o, "WEBP", quality=86, method=6); o = o.getvalue()
+    # keep the photographer's file whenever it can be served as is (no second compression):
+    # a WebP up to MAX_W wide is copied byte for byte; anything else is converted at high quality
+    im = Image.open(src)
+    if im.format == "WEBP" and im.width <= MAX_W:
+        o = open(src, "rb").read()
+    else:
+        im = im.convert("RGB")
+        if im.width > MAX_W: im = im.resize((MAX_W, round(im.height * MAX_W / im.width)), Image.LANCZOS)
+        b = io.BytesIO(); im.save(b, "WEBP", quality=92, method=6); o = b.getvalue()
     name = "/img/" + hashlib.sha256(o).hexdigest()[:16] + ".webp"
     open(name[1:], "wb").write(o)
     pat = re.compile(r'("' + re.escape(bid) + r'"\s*:\s*")([^"]+)(")')

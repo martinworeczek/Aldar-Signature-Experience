@@ -43,6 +43,11 @@ sub("hasInf: (x.informed || []).length > 0 };", "hasInf: (x.informed || []).leng
 FOLLOWUPS = [
     # the gallery's section links name the new chapter
     ("label: 'Explore the library'", "label: 'The library'"),
+    # the showreel is capped (1280 x 560) so 1536-2400px photos stay sharp on high-density screens
+    ('<div id="bm-newly" data-bm-reel="1" style="padding:40px 28px 0"><div style="max-width:1860px;margin:0 auto">',
+     '<div id="bm-newly" data-bm-reel="1" style="padding:40px 28px 0"><div style="max-width:1280px;margin:0 auto">'),
+    ('<div style="position:relative;height:640px;border-radius:20px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.25);container-type:inline-size">',
+     '<div style="position:relative;height:560px;border-radius:20px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.25);container-type:inline-size">'),
     # the quick detail clears the hub's sticky top bar
     ("backdrop-filter:blur(5px);display:flex;justify-content:center;overflow-y:auto;padding:40px 20px\"",
      "backdrop-filter:blur(5px);display:flex;justify-content:center;overflow-y:auto;padding:84px 20px 40px\""),

@@ -39,7 +39,7 @@
 /* Benchmark v3 (showreel, library, quick detail) on phones */
 @media (max-width:700px){
   html [data-bm-reel]{padding:24px 12px 0!important}
-  html [data-bm-reel] [style*="height: 640px"]{height:600px!important}
+  html [data-bm-reel] [style*="height: 560px"]{height:600px!important}
   html [data-bm-reel] [style*="top: 32px"][style*="left: 40px"]{top:18px!important;left:18px!important;right:18px!important}
   html [data-bm-reel] [style*="left: 40px"][style*="bottom: 40px"]{left:18px!important;right:18px!important;bottom:22px!important;width:auto!important;min-width:0!important}
   html [data-bm-reel] [style*="font-size: 48px"]{font-size:30px!important;line-height:34px!important}
