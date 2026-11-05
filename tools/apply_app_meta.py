@@ -93,5 +93,5 @@ apply("index.html",
       restore=True, drop_title="  <title>Bundled Page</title>\n")
 apply("sx/index.html",
       tags("Submit & review · Aldar Signature Experience Hub",
-           "Business-line leads submit new signature experiences and updates. Group CX reviews each one before it goes live on the hub.",
+           "Colleagues across Aldar's business lines submit new signature experiences and updates. Group CX reviews each one before it goes live on the hub.",
            SITE + "/sx/", "/app/og-submit.jpg", "Submit and review signature experiences"))
