@@ -75,9 +75,6 @@
   html #sec-stories [data-d2-acts]{display:none!important}
   html #sec-stories [data-d2-row]{grid-template-columns:56px minmax(0,1fr)!important;gap:12px!important}
   html #sec-stories [data-d2-filter]>div:first-child{flex-wrap:nowrap!important;overflow-x:auto;width:100%;padding-bottom:4px}
-  /* the five tabs: one scrolling row, not a tall wrapped pill */
-  html #sec-stories>div:first-child>div:last-child{flex-wrap:nowrap!important;overflow-x:auto;max-width:100%;scrollbar-width:none}
-  html #sec-stories>div:first-child>div:last-child>button{flex:0 0 auto;white-space:nowrap}
 }
 /* the filter row already draws the line above the first list row */
 html #sec-stories [data-d2-row]:first-of-type{border-top:0!important}
@@ -109,21 +106,26 @@ html #sec-stories [data-d2-row]:first-of-type{border-top:0!important}
   html [data-d2-at-body]>div:nth-child(2){font-size:27px!important}
 }
 
-/* Large desktop screens: the detail panels (experience 3a, customer story, benchmark, CX Times,
-   and the Benchmark library's quick detail) scale with the screen instead of staying 860-940px.
-   zoom scales type, spacing and images together; 1440px laptops stay at 1. */
-@media (min-width:1600px){
-  html .d3-modal,html [data-d2-story-panel],html [data-d2-bench-panel],html [data-d2-at-panel],html [data-bm-quick]>div{zoom:1.12}
+/* Large desktop screens: the whole hub scales with the screen (type, spacing, sidebar, navigation,
+   cards and the detail panels together), so a 2560px monitor lays out like a ~1700px desktop.
+   1440px laptops stay at 1. */
+@media (min-width:1600px){ html{zoom:1.1}
   /* the story reader fits the window at 1x; scaled, it scrolls like the other panels */
   html [data-d2-story]{align-items:flex-start!important;overflow-y:auto}
   html [data-d2-story-panel]{max-height:none!important;overflow:visible!important;height:max-content}
 }
-@media (min-width:1800px){
-  html .d3-modal,html [data-d2-story-panel],html [data-d2-bench-panel],html [data-d2-at-panel],html [data-bm-quick]>div{zoom:1.22}
-}
-@media (min-width:2100px){
-  html .d3-modal,html [data-d2-story-panel],html [data-d2-bench-panel],html [data-d2-at-panel],html [data-bm-quick]>div{zoom:1.36}
-}
-@media (min-width:2400px){
-  html .d3-modal,html [data-d2-story-panel],html [data-d2-bench-panel],html [data-d2-at-panel],html [data-bm-quick]>div{zoom:1.5}
+@media (min-width:1800px){ html{zoom:1.2} }
+@media (min-width:2100px){ html{zoom:1.35} }
+@media (min-width:2400px){ html{zoom:1.5} }
+
+/* Curated stories tabs, every screen size: always one row (never a tall wrapped pill); on narrow
+   desktop windows (high display scaling or browser zoom) the tabs tighten, and scroll if still short */
+html #sec-stories>div:first-child>div:last-child{flex-wrap:nowrap!important;overflow-x:auto;max-width:100%;scrollbar-width:none}
+html #sec-stories>div:first-child>div:last-child::-webkit-scrollbar{display:none}
+html #sec-stories>div:first-child>div:last-child>button{flex:0 0 auto;white-space:nowrap}
+/* tabs tighten on narrow windows (11px type) and are 12px from 1440 up, as designed; on large
+   monitors the page-wide zoom above scales them with everything else */
+@media (min-width:701px){
+  html #sec-stories>div:first-child>div:last-child>button{font-size:clamp(11px,.84vw,12px)!important;padding:clamp(6px,.56vw,8px) clamp(10px,1.12vw,16px)!important}
+  html #sec-stories>div:first-child>div:last-child>button>span{font-size:.92em!important}
 }
