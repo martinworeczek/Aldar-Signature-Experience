@@ -1,5 +1,7 @@
 // Customer stories — expressions of Signature Experiences in the field.
 // Source: uploads "Signature Experience Customer Stories.xlsx" (All stories sheet, 4 Nov 2026).
+// `added`: the day the story joined the hub (YYYY-MM-DD). Curated stories' "Recent customer stories" shows
+// those added in the last 90 days, newest first. Give every new story the day it is added.
 // `photo` (optional): a site path or URL for the card's 16:7 band; `photo_position` sets the crop (CSS background-position).
 // `experience` links are PROPOSED from the story text (sure:true = unambiguous); the workbook has no link column.
 window.CS_DATA = {
@@ -15,6 +17,7 @@ window.CS_DATA = {
   {
    "id": "cs-01",
    "n": 1,
+   "added": "2026-11-04",
    "category": "Property Sales",
    "line": "Development",
    "title": "Bringing Behind the Build Home",
@@ -34,6 +37,7 @@ window.CS_DATA = {
   {
    "id": "cs-02",
    "n": 2,
+   "added": "2026-11-04",
    "category": "Property Sales",
    "line": "Development",
    "title": "Supporting a Parent in a Difficult Moment",
@@ -49,6 +53,7 @@ window.CS_DATA = {
   {
    "id": "cs-03",
    "n": 3,
+   "added": "2026-11-04",
    "category": "Property Sales",
    "line": "Development",
    "title": "Taxi on Us",
@@ -64,6 +69,7 @@ window.CS_DATA = {
   {
    "id": "cs-04",
    "n": 4,
+   "added": "2026-11-04",
    "category": "Property Sales",
    "line": "Development",
    "title": "Property Viewing, Perfected",
@@ -79,6 +85,7 @@ window.CS_DATA = {
   {
    "id": "cs-05",
    "n": 5,
+   "added": "2026-11-04",
    "category": "Property Sales",
    "line": "Development",
    "title": "Turning a Difficult Day into Laughter",
@@ -92,6 +99,7 @@ window.CS_DATA = {
   {
    "id": "cs-06",
    "n": 6,
+   "added": "2026-11-04",
    "category": "Property Sales",
    "line": "Development",
    "title": "Turning Patience into a Celebration",
@@ -105,6 +113,7 @@ window.CS_DATA = {
   {
    "id": "cs-07",
    "n": 7,
+   "added": "2026-11-04",
    "category": "Property Sales",
    "line": "Development",
    "title": "Creating Unexpected Moments",
@@ -122,6 +131,7 @@ window.CS_DATA = {
   {
    "id": "cs-08",
    "n": 8,
+   "added": "2026-11-04",
    "category": "Property Sales",
    "line": "Development",
    "title": "Saadiyat Grove Residences handover experience",
@@ -140,6 +150,7 @@ window.CS_DATA = {
   {
    "id": "cs-09",
    "n": 9,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Cared For, All the Way Home",
@@ -153,6 +164,7 @@ window.CS_DATA = {
   {
    "id": "cs-10",
    "n": 10,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Anniversary Flowers for Mr. Jonas",
@@ -168,6 +180,7 @@ window.CS_DATA = {
   {
    "id": "cs-11",
    "n": 11,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Back to School, at the Front Door",
@@ -183,6 +196,7 @@ window.CS_DATA = {
   {
    "id": "cs-12",
    "n": 12,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Honouring Paris, a Much-Loved Member of the Family",
@@ -198,6 +212,7 @@ window.CS_DATA = {
   {
    "id": "cs-13",
    "n": 13,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Turning Wedding Memories into a Lasting Keepsake",
@@ -211,6 +226,7 @@ window.CS_DATA = {
   {
    "id": "cs-14",
    "n": 14,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "An Anniversary Evening, Planned by Their Community",
@@ -224,6 +240,7 @@ window.CS_DATA = {
   {
    "id": "cs-15",
    "n": 15,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Celebrating What Matters to Residents",
@@ -237,6 +254,7 @@ window.CS_DATA = {
   {
    "id": "cs-16",
    "n": 16,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Feeling at Home Before the Furniture Arrived",
@@ -250,6 +268,7 @@ window.CS_DATA = {
   {
    "id": "cs-17",
    "n": 17,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "The Ice Cream Truck That Brought Neighbours Together",
@@ -263,6 +282,7 @@ window.CS_DATA = {
   {
    "id": "cs-18",
    "n": 18,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "A Visit After Heart Surgery",
@@ -276,6 +296,7 @@ window.CS_DATA = {
   {
    "id": "cs-19",
    "n": 19,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "A Handmade Welcome for a Little One",
@@ -289,6 +310,7 @@ window.CS_DATA = {
   {
    "id": "cs-20",
    "n": 20,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Turning a Difficult Day into a Sweet Memory",
@@ -302,6 +324,7 @@ window.CS_DATA = {
   {
    "id": "cs-21",
    "n": 21,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Bringing Comfort Away from Home",
@@ -315,6 +338,7 @@ window.CS_DATA = {
   {
    "id": "cs-22",
    "n": 22,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "A Thoughtful Welcome Home",
@@ -330,6 +354,7 @@ window.CS_DATA = {
   {
    "id": "cs-23",
    "n": 23,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "A Gesture of Care When It Mattered",
@@ -343,6 +368,7 @@ window.CS_DATA = {
   {
    "id": "cs-24",
    "n": 24,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Care Beyond the Everyday",
@@ -356,6 +382,7 @@ window.CS_DATA = {
   {
    "id": "cs-25",
    "n": 25,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "An Anniversary Memory Made to Last",
@@ -369,6 +396,7 @@ window.CS_DATA = {
   {
    "id": "cs-26",
    "n": 26,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "An Anniversary Designed Around Them",
@@ -382,6 +410,7 @@ window.CS_DATA = {
   {
    "id": "cs-27",
    "n": 27,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "From Al Bandar to the World Stage",
@@ -395,6 +424,7 @@ window.CS_DATA = {
   {
    "id": "cs-28",
    "n": 28,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Dario Turns Five",
@@ -408,6 +438,7 @@ window.CS_DATA = {
   {
    "id": "cs-29",
    "n": 29,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Recovery, Arranged Around a Passion",
@@ -421,6 +452,7 @@ window.CS_DATA = {
   {
    "id": "cs-30",
    "n": 30,
+   "added": "2026-11-04",
    "category": "Community Living",
    "line": "Estates",
    "title": "Making Up for a Missed Anniversary",
@@ -434,6 +466,7 @@ window.CS_DATA = {
   {
    "id": "cs-31",
    "n": 31,
+   "added": "2026-11-04",
    "category": "Hotels & Leisure",
    "line": "Hospitality",
    "title": "The Jersey That Made Her Day",
@@ -453,6 +486,7 @@ window.CS_DATA = {
   {
    "id": "cs-32",
    "n": 32,
+   "added": "2026-11-04",
    "category": "Hotels & Leisure",
    "line": "Hospitality",
    "title": "A Blazer for the Big Meeting",
@@ -472,6 +506,7 @@ window.CS_DATA = {
   {
    "id": "cs-33",
    "n": 33,
+   "added": "2026-11-04",
    "category": "Hotels & Leisure",
    "line": "Hospitality",
    "title": "A Keepsake Made from Mamsha Beach",
@@ -491,6 +526,7 @@ window.CS_DATA = {
   {
    "id": "cs-34",
    "n": 34,
+   "added": "2026-11-04",
    "category": "Hotels & Leisure",
    "line": "Hospitality",
    "title": "Personalized Cooking Experience",
@@ -508,6 +544,7 @@ window.CS_DATA = {
   {
    "id": "cs-35",
    "n": 35,
+   "added": "2026-11-04",
    "category": "Hotels & Leisure",
    "line": "Hospitality",
    "title": "A Visit to Remember",
@@ -525,6 +562,7 @@ window.CS_DATA = {
   {
    "id": "cs-36",
    "n": 36,
+   "added": "2026-11-04",
    "category": "Hotels & Leisure",
    "line": "Hospitality",
    "title": "Nature’s Art, Shared with Love",
@@ -542,6 +580,7 @@ window.CS_DATA = {
   {
    "id": "cs-37",
    "n": 37,
+   "added": "2026-11-04",
    "category": "Malls",
    "line": "Retail",
    "title": "Invited into Hag Al Leila",
@@ -557,6 +596,7 @@ window.CS_DATA = {
   {
    "id": "cs-38",
    "n": 38,
+   "added": "2026-11-04",
    "category": "Malls",
    "line": "Retail",
    "title": "A Surprise at the Entrance",
@@ -572,6 +612,7 @@ window.CS_DATA = {
   {
    "id": "cs-39",
    "n": 39,
+   "added": "2026-11-04",
    "category": "Malls",
    "line": "Retail",
    "title": "Hand in Hand, All the Way to His Car",
@@ -585,6 +626,7 @@ window.CS_DATA = {
   {
    "id": "cs-40",
    "n": 40,
+   "added": "2026-11-04",
    "category": "Schools",
    "line": "Education",
    "title": "Known by name before day one",
@@ -604,6 +646,7 @@ window.CS_DATA = {
   {
    "id": "cs-41",
    "n": 41,
+   "added": "2026-11-04",
    "category": "Schools",
    "line": "Education",
    "title": "The call before they called",
@@ -617,6 +660,7 @@ window.CS_DATA = {
   {
    "id": "cs-42",
    "n": 42,
+   "added": "2026-11-04",
    "category": "Schools",
    "line": "Education",
    "title": "From reassurance to advocacy",
@@ -630,6 +674,7 @@ window.CS_DATA = {
   {
    "id": "cs-43",
    "n": 43,
+   "added": "2026-11-04",
    "category": "Schools",
    "line": "Education",
    "title": "From fear to confidence",
@@ -643,6 +688,7 @@ window.CS_DATA = {
   {
    "id": "cs-44",
    "n": 44,
+   "added": "2026-11-04",
    "category": "Schools",
    "line": "Education",
    "title": "Protecting an IGCSE year",
@@ -656,6 +702,7 @@ window.CS_DATA = {
   {
    "id": "cs-45",
    "n": 45,
+   "added": "2026-11-04",
    "category": "Schools",
    "line": "Education",
    "title": "From First-Day Tears to Happy Smiles – Almahara's Welcome Week Journey",
