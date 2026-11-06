@@ -196,6 +196,9 @@ STORIES = [
     (OLD_LIST_ACTS, OLD_LIST_ACTS.replace('<button sc-camel-on-click="{{ r.onCmp }}"', '<sc-if value="{{ r.isExp }}" hint-placeholder-val="{{ true }}"><button sc-camel-on-click="{{ r.onCmp }}"').replace('{{ r.saveLabel }}</button>', '{{ r.saveLabel }}</button></sc-if>')),
     ("{{ disc.d2.moreLabel }}</button></div></sc-if>\n    </section>", "{{ disc.d2.moreLabel }}</button></div></sc-if>" + READER + "\n    </section>"),
     ("if (this.state.intro) { this._endIntro(); return; }", "if (this.state.intro) { this._endIntro(); return; }\n        if (this.state.dStory) { this.setState({ dStory: null }); return; }"),
+    # benchmark cards open the Benchmark library's quick detail (the new design), not the full story
+    ("const openBench = (id) => { if (id) { try { window.__BM_OPEN = id; } catch (e) {} } this.go('benchmark-hub'); };",
+     "const openBench = (id) => { if (id) { try { window.__BM_OPEN = id; window.__BM_QUICK = true; } catch (e) {} } this.go('benchmark-hub'); };"),
 ]
 
 # 01 Showreel: the defining moments only, eight of them (one tick each), opening on the week's

@@ -61,6 +61,12 @@ FOLLOWUPS = [
     # the quick detail clears the hub's sticky top bar
     ("backdrop-filter:blur(5px);display:flex;justify-content:center;overflow-y:auto;padding:40px 20px\"",
      "backdrop-filter:blur(5px);display:flex;justify-content:center;overflow-y:auto;padding:84px 20px 40px\""),
+    # Portfolio Discovery's benchmark cards set window.__BM_QUICK: open the quick detail over the
+    # library (the new design), not the full feature story. Other links still open the full story.
+    ("if (DATA.some(d => d.id === want)) { this._open(want); opened = true;",
+     "if (DATA.some(d => d.id === want)) { if (window.__BM_QUICK) { window.__BM_QUICK = null; this.setState({ view: 'gallery', sel: null, u3Open: want }); } else this._open(want); opened = true;"),
+    ("if (DATA.some(d => d.id === want0)) { this._open(want0);",
+     "if (DATA.some(d => d.id === want0)) { if (window.__BM_QUICK) { window.__BM_QUICK = null; this._pubView('gallery'); this.setState({ view: 'gallery', sel: null, from: null, infOpen: null, u3Open: want0 }); return; } this._open(want0);"),
 ]
 
 OLD_START = "  <!-- CHAPTER 01 · NEWLY ADDED · procession -->"
