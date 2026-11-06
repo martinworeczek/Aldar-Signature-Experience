@@ -86,6 +86,10 @@ TABS2 = [
     ("d2.tabSeeAllLabel = 'See all ' + DCOLL[tk].items.length + ' \\u2192';", "d2.tabSeeAllLabel = 'See all ' + (isSt ? CSA.length : DCOLL[tk].items.length) + ' \\u2192';"),
     ("d2.tabSeeAll = dOpenColl(tk);", "d2.tabSeeAll = isSt ? goStories : dOpenColl(tk);"),
     ("d2.tabCards = DCOLL[tk].items.slice(0, 5).map(card);", "d2.tabCards = isSt ? storyCards : DCOLL[tk].items.slice(0, 5).map(e => Object.assign(card(e), { isExp: true }));"),
+    # cards open the experience's full detail view (the dark 3a design) directly; the old light
+    # preview popup (it still mentioned RAG status) is no longer used
+    ("  _dOpen(id) { return (ev) => { if (ev && ev.stopPropagation) ev.stopPropagation(); this.setState({ dPeekId: id }); }; }",
+     "  _dOpen(id) { return (ev) => { if (ev && ev.stopPropagation) ev.stopPropagation(); this.setState({ dPeekId: null, dColKey: null }); this.openExp(id); }; }"),
     # story cards carry no Compare / Save
     ('<div style="display:flex;gap:6px"><button sc-camel-on-click="{{ c.onCmp }}" style="{{ c.cmpCss }}">{{ c.cmpLabel }}</button><button sc-camel-on-click="{{ c.onSave }}" style="{{ c.saveCss }}">{{ c.saveLabel }}</button></div><span style="font-size:11px;font-weight:500;color:#E8B96A;white-space:nowrap">Open &#8594;</span>',
      '<sc-if value="{{ c.isExp }}" hint-placeholder-val="{{ true }}"><div style="display:flex;gap:6px"><button sc-camel-on-click="{{ c.onCmp }}" style="{{ c.cmpCss }}">{{ c.cmpLabel }}</button><button sc-camel-on-click="{{ c.onSave }}" style="{{ c.saveCss }}">{{ c.saveLabel }}</button></div></sc-if><span style="font-size:11px;font-weight:500;color:#E8B96A;white-space:nowrap;margin-left:auto">Open &#8594;</span>'),
