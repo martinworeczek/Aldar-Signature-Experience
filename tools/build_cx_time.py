@@ -39,7 +39,7 @@ body{margin:0;background:#F3EFE7;font-family:'Poppins',sans-serif;-webkit-font-s
 .cxt-brand i{font-style:normal;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#E8B96A;margin-top:3px;white-space:nowrap}
 .cxt-hub{font-size:11px;font-weight:500;color:#F6F3EC;text-decoration:none;border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:8px 14px;white-space:nowrap}
 .cxt-hub:hover{border-color:#E8B96A;color:#E8B96A}
-.cxt-page{max-width:1440px;margin:0 auto;overflow-x:clip}
+.cxt-page{max-width:none;margin:0;overflow-x:clip}
 html,body{overflow-x:clip}
 @media (max-width:640px){.cxt-bar{padding:10px 16px}.cxt-brand i{display:none}.cxt-hub{padding:7px 11px}}
 @media (max-width:400px){.cxt-long{display:none}.cxt-brand img{width:34px;height:34px}}
@@ -80,7 +80,7 @@ MOBILE_HOOKS = [
     ('<div style="background:radial-gradient(1100px 480px', "shelf", 1),
     ('<div style="position:absolute;top:18px;left:18px;display:flex;gap:8px;flex-wrap:nowrap', "leadchips", 1),
     ('<div style="position:absolute;left:28px;right:28px;bottom:26px', "leadtx", 1),
-    ('<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px', "grid", 1),
+    ('<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(max(250px,calc((100% - 64px) / 5)),1fr));gap:16px', "grid", 1),
 ]
 
 
