@@ -92,8 +92,8 @@ function findExperience(D, id) {
 // ---------------- other categories ----------------
 const bmText = (b) => [b.title, b.brand, b.industry, b.summary, b.lead, (b.themes || []).join(" "), (b.why || []).map((w) => (w.head || "") + " " + (w.body || "")).join(" "), (b.transfer_to_lines || []).map((t) => t.how).join(" ")].join(" ");
 const bmRow = (b) => ({ id: b.id, title: b.title, brand: b.brand, industry: b.industry, line: b.line_label, pillar: b.pillar, themes: b.themes, summary: b.summary, informs_experiences: b.informs_experiences });
-const storyText = (s) => [s.title, s.dek, (s.summary || []).join(" "), s.why_it_matters, s.tag, s.source, (s.relevant_lines || []).join(" "), (s.signature_experience_idea || []).map((o) => o.title + " " + o.text).join(" ")].join(" ");
-const storyRow = (s) => ({ id: s.id, edition: s.edition, format: s.format, signal_of_the_week: s.signal_of_the_week, tag: s.tag, source: s.source, published: s.published, duration: s.duration, title: s.title, dek: s.dek, why_it_matters: s.why_it_matters, relevant_lines: s.relevant_lines, source_url: s.source_url });
+const storyText = (s) => [s.title, s.dek, (s.summary || []).join(" "), s.why_it_matters, s.tag, s.source, (s.relevant_lines || []).join(" "), s.the_experience, s.signature_experience_opportunity, (s.further_ideas_by_line || []).map((o) => o.title + " " + o.text).join(" ")].join(" ");
+const storyRow = (s) => ({ id: s.id, edition: s.edition, format: s.format, signal_of_the_week: s.signal_of_the_week, tag: s.tag, source: s.source, published: s.published, duration: s.duration, title: s.title, the_experience: s.the_experience, signature_experience_opportunity: s.signature_experience_opportunity, business_lines: s.business_lines, source_url: s.source_url });
 const allStories = (D) => D.cx_time.flatMap((e) => e.stories);
 
 // ---------------- customer stories ----------------
@@ -288,7 +288,7 @@ export const TOOLS = [
   {
     name: "get_cx_time_story",
     title: "Get one CX Times story",
-    description: "A full CX Times story: AI summary, key insights, why it matters to Aldar, relevant lines, the suggested signature experience(s), speakers, source and transcript links, image URL.",
+    description: "A full CX Times story. the_experience and signature_experience_opportunity are exactly what the story's article page shows under 'The experience' and 'Signature Experience Opportunity' (with business_lines as its line pills): present those, word for word. Also: the full AI summary, key insights, further ideas by line (only if asked), speakers, source and transcript links, image URL.",
     inputSchema: { type: "object", required: ["id"], properties: { id: { type: "string", description: "Story id (e.g. e2-s1) or title." } } },
     run: (D, a) => {
       const n = norm(a.id), all = allStories(D);

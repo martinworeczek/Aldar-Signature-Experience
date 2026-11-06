@@ -140,9 +140,13 @@ export function buildDataset(W, full = [], SITE = "https://aldar-signature-exper
   const cx_time = W.AT_DATA.editions.map((ed) => ({
     edition: ed.n, date: ed.date,
     stories: ed.items.map((s) => ({
+      // what the CX Times article page shows, in its own words and order (the 6a reader)
+      the_experience: ((s.summary || []).filter(Boolean)[0]) || s.dek || "",
+      signature_experience_opportunity: s.why || "",
+      business_lines: [...new Set((s.lines || []).map((l) => (/PM|Community|Estates/i.test(l) ? "Estates" : l)))],
       id: s.id, edition: ed.n, format: s.format, signal_of_the_week: !!s.lead, tag: s.tag, source: s.source, source_url: s.sourceUrl, published: s.published, duration: s.meta || null,
       title: s.title, dek: s.dek, summary: s.summary || [], key_insights: s.insights || s.keyInsights || [], why_it_matters: s.why, quote: s.excerpt || null,
-      relevant_lines: s.lines || [], signature_experience_idea: s.opps || (s.oppTitle ? [{ lines: s.lines || [], title: s.oppTitle, text: s.oppText }] : []),
+      relevant_lines: s.lines || [], further_ideas_by_line: s.opps || (s.oppTitle ? [{ lines: s.lines || [], title: s.oppTitle, text: s.oppText }] : []),
       speakers: s.speakers || [], transcript_url: s.transcriptUrl || null, insight_type: s.insight || s.insightType || null, related: s.related || [],
       image_url: abs((W.AT_IMG || {})[s.id]),
     })),
