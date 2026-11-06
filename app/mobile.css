@@ -85,9 +85,19 @@ html #sec-stories [data-d2-row]:first-of-type{border-top:0!important}
 /* Curated stories: the in-place story reader on phones */
 @media (max-width:700px){
   html [data-d2-story]{padding:10px!important;align-items:flex-start!important}
-  html body:has([data-d2-story]) #sx-burger{display:none!important}
+  html body:has([data-d2-story]) #sx-burger,html body:has([data-d2-bench]) #sx-burger{display:none!important}
   html [data-d2-story-panel]{max-height:calc(100vh - 20px)!important;border-radius:16px!important}
   html [data-d2-story-body]{padding:2px 20px 24px!important;gap:14px!important}
   html [data-d2-story-body]>div:nth-child(2){font-size:27px!important}
   html [data-d2-story-body]>div:nth-child(3){font-size:15px!important;line-height:1.65!important}
+}
+
+/* Portfolio Discovery: the benchmark quick detail on phones */
+@media (max-width:700px){
+  html [data-d2-bench]{padding:10px!important}
+  html [data-d2-bench-hero]{min-height:420px!important}
+  html [data-d2-bench-head]{padding:0 20px 22px!important}
+  html [data-d2-bench-body]{padding:6px 12px 20px!important}
+  html [data-d2-bench-body]>div{padding:20px 18px!important}
+  html [data-d2-bench-ln]{display:none}
 }

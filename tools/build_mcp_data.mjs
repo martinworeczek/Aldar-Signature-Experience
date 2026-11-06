@@ -78,4 +78,14 @@ fs.writeFileSync(OPTIONS_OUT, JSON.stringify(formOptions(W)));
   };
   fs.writeFileSync("app/martin-index.json", JSON.stringify(index));
 }
+// ---- Portfolio Discovery's benchmark quick detail (loaded on the first click; the gallery's records
+// otherwise live only inside the Benchmark module). The moment label follows the gallery's bmStage().
+{
+  const lit = (name, close) => { const i = benchmarkModule.indexOf("const " + name + " = "); if (i < 0) return null; const a = benchmarkModule.indexOf("=", i) + 1, b = benchmarkModule.indexOf(close, a) + close.length - 1; try { return vm.runInNewContext("(" + benchmarkModule.slice(a, b) + ")", {}, { timeout: 2000 }); } catch { return null; } };
+  const MOMENTS = lit("MOMENTS", "\n];") || [], LJ = lit("LINE_JOURNEY", "\n};") || {};
+  const stage = (b) => { const j = LJ[b.line]; const st = j && (j.stages || []).find((s) => (s.m || []).includes(b.moment)); return st ? st.label : ((MOMENTS.find((m) => m.key === b.moment) || {}).label || ""); };
+  const rel = (u) => (u && u.startsWith(SITE) ? u.slice(SITE.length) : u || null);
+  const items = (dataset.benchmarks || []).map((b) => ({ id: b.id, t: b.title, b: b.brand, i: b.industry, m: stage(b), s: b.summary, l: b.lead, w: b.why || [], x: b.transfer_to_lines || [], f: b.informs_experiences || [], src: b.source, img: rel(b.image_url) }));
+  fs.writeFileSync("app/bm-quick.json", JSON.stringify({ generated_at: dataset.generated_at, items }));
+}
 console.log("mcp dataset:", JSON.stringify(dataset.counts), (fs.statSync(OUT).size / 1e6).toFixed(2) + " MB; native", (fs.statSync(NATIVE_OUT).size / 1e6).toFixed(2) + " MB");
