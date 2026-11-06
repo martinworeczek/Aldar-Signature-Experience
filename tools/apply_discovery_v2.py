@@ -134,6 +134,8 @@ EXPAND = [
     ("d2.tabSeeAllLabel = 'See all ' + (isSt ? CSA.length : DCOLL[tk].items.length) + ' \\u2192';\n    d2.tabSeeAll = isSt ? goStories : dOpenColl(tk);\n    d2.tabCards = isSt ? storyCards : DCOLL[tk].items.slice(0, 5).map(e => Object.assign(card(e), { isExp: true }));", LOGIC),
     (GRID_OLD, GRID_NEW),
     (END_OLD, END_NEW),
+    # tab renamed (Group CX, 6 Nov 2026)
+    ("'Customer stories' : DCOLL[k].title", "'Recent customer stories' : DCOLL[k].title"),
 ]
 
 # 01 Showreel: the defining moments only, eight of them (one tick each), opening on the week's
