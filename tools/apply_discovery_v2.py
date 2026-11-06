@@ -244,6 +244,57 @@ STORIES += [
     (ESC_OLD, ESC_OLD + "\n        if (this.state.dBench) { this.setState({ dBench: null }); return; }"),
 ]
 
+# 04 Aldar CX Times (Group CX, 6 Nov 2026): the lead and the three stories open in place, in a dark
+# reader worded as on the article page (The experience = summary[0], else the dek; Signature
+# Experience Opportunity = why), with the ideas by business line, the source link and ‹ › through
+# the edition. "Open in CX Times" opens that article in the reader (window.__AT_OPEN_ID).
+AT_FN_OLD = "    d2.atTitle = ED.n ?"
+AT_FN_NEW = "    const atOpen = it => (ev) => { if (ev && ev.stopPropagation) ev.stopPropagation(); this.setState({ dAt: it.id }); };\n    d2.atTitle = ED.n ?"
+AT_VM = ("    { const ai = S.dAt ? items.findIndex(i => i.id === S.dAt) : -1; d2.hasAt = ai >= 0; d2.at = null;\n"
+"      if (ai >= 0) { const x = items[ai], n = items.length, keep = (ev) => { if (ev && ev.stopPropagation) ev.stopPropagation(); };\n"
+"        const LCa = { Retail: '#D9786A', Hospitality: '#D08A4C', Development: '#C9A24A', Estates: '#A5443A', Community: '#A5443A', Education: '#5A82B5', Corporate: '#4FB58C' };\n"
+"        const go = j => (ev) => { keep(ev); this.setState({ dAt: items[(j + n) % n].id }); };\n"
+"        d2.at = { keep, close: () => this.setState({ dAt: null }), title: x.title || '', dek: x.dek || '', tag: x.tag || 'CX', lead: !!x.lead,\n"
+"          kicker: 'Aldar CX Times' + (ED.n ? ' \\u00b7 Edition ' + ED.n : ''), meta: [KIND[x.format] || 'Article', x.source, x.published, x.meta].filter(Boolean).join(' \\u00b7 '),\n"
+"          bandCss: Object.assign(aimg(x), { position: 'relative', inset: 'auto', aspectRatio: '16 / 7' }),\n"
+"          exp: ((x.summary || []).filter(Boolean)[0]) || x.dek || '', opp: x.why || '',\n"
+"          ideas: (x.opps || (x.oppTitle ? [{ line: (x.lines || [])[0] || '', title: x.oppTitle, text: x.oppText }] : [])).map(o => ({ line: o.line || (o.lines || []).join(' \\u00b7 '), title: o.title, text: o.text, dot: dot(LCa[o.line] || '#E8B96A') })),\n"
+"          url: x.sourceUrl || '', hasUrl: !!x.sourceUrl, urlLabel: ({ read: 'Read', watch: 'Watch', listen: 'Listen' }[x.format] || 'Read') + ' at ' + (x.sourceShort || x.source || 'the source') + ' \\u2197',\n"
+"          inTimes: (ev) => { keep(ev); this.setState({ dAt: null }); try { window.__AT_OPEN_ID = x.id; } catch (e) {} this.go('aldar-times'); },\n"
+"          prev: go(ai - 1), next: go(ai + 1), pos: (ai + 1) + ' of ' + n + ' in this edition' };\n"
+"        d2.at.hasIdeas = d2.at.ideas.length > 0; } }\n")
+NAVA = "font-family:inherit;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.22);background:transparent;color:#F6F3EC;font-size:18px;cursor:pointer"
+LBL = "font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#E8B96A;margin-bottom:8px"
+AT_HTML = ('\n      <sc-if value="{{ disc.d2.hasAt }}" hint-placeholder-val="{{ false }}"><div data-d2-at="1" sc-camel-on-click="{{ disc.d2.at.close }}" style="position:fixed;inset:0;z-index:9000;background:rgba(4,7,9,.8);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;justify-content:center;overflow-y:auto;padding:36px 16px">'
+  '<div data-d2-at-panel="1" role="dialog" aria-label="CX Times story" sc-camel-on-click="{{ disc.d2.at.keep }}" style="position:relative;width:min(900px,100%);height:max-content;background:#15120F;border:1px solid rgba(232,185,106,.28);border-radius:20px;overflow:hidden;box-shadow:0 40px 90px -30px rgba(0,0,0,.9);color:#F6F3EC">'
+  '<div style="{{ disc.d2.at.bandCss }}"><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,0) 35%,rgba(21,18,15,0) 60%,#15120F 100%)"></div>'
+  '<div style="position:absolute;top:16px;left:18px;right:16px;display:flex;gap:8px;align-items:center"><span style="font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#0A1014;background:#E8B96A;border-radius:999px;padding:5px 11px;white-space:nowrap">{{ disc.d2.at.kicker }}</span><span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px;color:#fff;white-space:nowrap">{{ disc.d2.at.tag }}</span>'
+  '<button sc-camel-on-click="{{ disc.d2.at.close }}" aria-label="Close" style="font-family:inherit;margin-left:auto;flex-shrink:0;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.5);color:#fff;font-size:16px;cursor:pointer">&#10005;</button></div></div>'
+  '<div data-d2-at-body="1" style="padding:6px 40px 34px;display:flex;flex-direction:column;gap:20px">'
+  '<div style="font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55)">{{ disc.d2.at.meta }}</div>'
+  '<div style="font-family:\'Fraunces\',serif;font-size:34px;line-height:1.12;letter-spacing:-.01em;margin-top:-10px;text-wrap:balance">{{ disc.d2.at.title }}</div>'
+  '<div style="font-size:15.5px;line-height:1.65;font-weight:300;color:rgba(246,243,236,.82);text-wrap:pretty">{{ disc.d2.at.dek }}</div>'
+  '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:14px">'
+  '<div style="padding:20px 22px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)"><div style="' + LBL + '">The experience</div><div style="font-size:14.5px;line-height:1.7;color:rgba(246,243,236,.9);text-wrap:pretty">{{ disc.d2.at.exp }}</div></div>'
+  '<div style="padding:20px 22px;border-radius:14px;background:rgba(232,185,106,.07);border:1px solid rgba(232,185,106,.3)"><div style="' + LBL + '">Signature Experience Opportunity</div><div style="font-size:14.5px;line-height:1.7;color:#F6F3EC;text-wrap:pretty">{{ disc.d2.at.opp }}</div></div></div>'
+  '<sc-if value="{{ disc.d2.at.hasIdeas }}" hint-placeholder-val="{{ true }}"><div><div style="' + LBL + '">Ideas by business line</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px"><sc-for list="{{ disc.d2.at.ideas }}" as="o" hint-placeholder-count="3"><div style="padding:16px 18px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)"><div style="display:inline-flex;align-items:center;gap:7px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);font-weight:600"><span style="{{ o.dot }}"></span>{{ o.line }}</div><div style="font-size:15px;font-weight:500;margin-top:8px">{{ o.title }}</div><div style="font-size:13px;line-height:1.55;color:rgba(255,255,255,.72);margin-top:6px">{{ o.text }}</div></div></sc-for></div></div></sc-if>'
+  '<div style="display:flex;gap:10px;flex-wrap:wrap"><sc-if value="{{ disc.d2.at.hasUrl }}" hint-placeholder-val="{{ true }}"><a href="{{ disc.d2.at.url }}" target="_blank" rel="noopener" style="font-size:12px;font-weight:600;color:#0A1014;background:#E8B96A;border-radius:999px;padding:10px 18px;text-decoration:none">{{ disc.d2.at.urlLabel }}</a></sc-if>'
+  '<button sc-camel-on-click="{{ disc.d2.at.inTimes }}" style="font-family:inherit;font-size:12px;font-weight:500;color:#E8B96A;background:transparent;border:1px solid rgba(232,185,106,.5);border-radius:999px;padding:10px 18px;cursor:pointer" style-hover="background:rgba(232,185,106,.14)">Open in CX Times &#8594;</button></div>'
+  '<div style="display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.1);padding-top:18px"><button sc-camel-on-click="{{ disc.d2.at.prev }}" aria-label="Previous story" style="' + NAVA + '">&#8249;</button><button sc-camel-on-click="{{ disc.d2.at.next }}" aria-label="Next story" style="' + NAVA + '">&#8250;</button><span style="font-size:12px;color:rgba(255,255,255,.55)">{{ disc.d2.at.pos }}</span></div>'
+  '</div></div></div></sc-if>')
+SECT = 'id="sec-times" style="background:#1C1814;border-radius:20px;padding:40px;margin-bottom:30px;display:flex;flex-direction:column;gap:28px;color:#fff">'
+ESC2 = "if (this.state.dBench) { this.setState({ dBench: null }); return; }"
+STORIES += [
+    (AT_FN_OLD, AT_FN_NEW),
+    ("d2.atLead = { title: lead.title || '',", "d2.atLead = { open: atOpen(lead), title: lead.title || '',"),
+    ("d2.atRows = items.filter(i => i !== lead).slice(0, 3).map(i => ({ title: i.title,", "d2.atRows = items.filter(i => i !== lead).slice(0, 3).map(i => ({ open: atOpen(i), title: i.title,"),
+    ("    // 05 journey \u2014 same data", AT_VM + "    // 05 journey \u2014 same data"),
+    ('<div sc-camel-on-click="{{ disc.openTimes }}" style="position:relative;min-height:380px', '<div sc-camel-on-click="{{ disc.d2.atLead.open }}" style="position:relative;min-height:380px'),
+    ('<div sc-camel-on-click="{{ disc.openTimes }}" style="flex:1;display:flex;gap:14px', '<div sc-camel-on-click="{{ r.open }}" style="flex:1;display:flex;gap:14px'),
+    (SECT, SECT + AT_HTML),
+    (ESC2, ESC2 + "\n        if (this.state.dAt) { this.setState({ dAt: null }); return; }"),
+]
+
 # 01 Showreel: the defining moments only, eight of them (one tick each), opening on the week's
 REEL_OLD = "const rest = this._dShuffle(withImg.filter(e => !e.defining), this.state.dSeed + 7); return def.concat(rest); }"
 REEL_NEW = "return def.slice(0, 8); } /* v2: eight defining moments; was def + every other experience */"
