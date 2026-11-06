@@ -295,6 +295,24 @@ STORIES += [
     (ESC2, ESC2 + "\n        if (this.state.dAt) { this.setState({ dAt: null }); return; }"),
 ]
 
+# 02 Curated stories cards adapt to their own width (Group CX, 6 Nov 2026): the card is a CSS
+# container; app/mobile.css tightens it below 240px (narrow desktop windows, high display scaling),
+# so the line pill ends in "…" instead of being cut and "Open →" never falls off the card.
+CARD_OLD = '<div sc-camel-on-click="{{ c.open }}" style="position:relative;aspect-ratio:3/4;border-radius:10px;'
+TOP_OLD = '<div style="position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;gap:8px">\n                  <sc-if value="{{ c.defining }}" hint-placeholder-val="{{ false }}"><span style="font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#0A1014;background:#E8B96A;border-radius:999px;padding:4px 9px;white-space:nowrap">&#10022; Defining</span></sc-if>'
+LINE_OLD = '<span style="display:inline-flex;align-items:center;gap:6px;font-size:9.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:4px 9px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis"><span style="{{ c.dot }}"></span>{{ c.line }}</span>'
+BOT_OLD = '<div style="position:absolute;left:0;right:0;bottom:0;padding:0 16px 16px;display:flex;flex-direction:column;gap:8px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)">\n                  <div style="font-family:\'Fraunces\',serif;font-size:21px;line-height:25px;height:50px;'
+FOOT_OLD = '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid rgba(255,255,255,.16);padding-top:9px;text-shadow:none"><sc-if value="{{ c.isExp }}" hint-placeholder-val="{{ true }}"><div style="display:flex;gap:6px"><button sc-camel-on-click="{{ c.onCmp }}"'
+OPEN_OLD = '<span style="font-size:11px;font-weight:500;color:#E8B96A;white-space:nowrap;margin-left:auto">Open &#8594;</span></div>\n                </div>\n              </div>\n        </sc-for>'
+STORIES += [
+    (CARD_OLD, '<div data-d2-card="1" sc-camel-on-click="{{ c.open }}" style="position:relative;aspect-ratio:3/4;container-type:inline-size;border-radius:10px;'),
+    (TOP_OLD, TOP_OLD.replace('<div style="position:absolute;top:12px', '<div data-d2-top="1" style="position:absolute;top:12px').replace('<span style="font-size:9.5px;font-weight:600', '<span data-d2-def="1" style="flex-shrink:0;font-size:9.5px;font-weight:600').replace('&#10022; Defining</span>', '&#10022;<span data-d2-deftxt="1"> Defining</span></span>')),
+    (LINE_OLD, LINE_OLD.replace('<span style="display:inline-flex', '<span data-d2-line="1" style="display:inline-flex').replace('{{ c.line }}</span>', '<span style="min-width:0;overflow:hidden;text-overflow:ellipsis">{{ c.line }}</span></span>')),
+    (BOT_OLD, BOT_OLD.replace('<div style="position:absolute;left:0;right:0;bottom:0', '<div data-d2-bot="1" style="position:absolute;left:0;right:0;bottom:0').replace("<div style=\"font-family:'Fraunces'", "<div data-d2-title=\"1\" style=\"font-family:'Fraunces'")),
+    (FOOT_OLD, FOOT_OLD.replace('<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;border-top', '<div data-d2-foot="1" style="display:flex;align-items:center;justify-content:space-between;gap:8px;border-top')),
+    (OPEN_OLD, OPEN_OLD.replace('margin-left:auto">Open &#8594;', 'margin-left:auto"><span data-d2-otxt="1">Open </span>&#8594;')),
+]
+
 # 01 Showreel: the defining moments only, eight of them (one tick each), opening on the week's
 REEL_OLD = "const rest = this._dShuffle(withImg.filter(e => !e.defining), this.state.dSeed + 7); return def.concat(rest); }"
 REEL_NEW = "return def.slice(0, 8); } /* v2: eight defining moments; was def + every other experience */"
