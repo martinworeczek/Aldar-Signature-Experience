@@ -1,6 +1,10 @@
 """Replace benchmark photographs in the hub (index.html's BM_IMAGES_A..D modules).
 
-Usage: python3 tools/set_benchmark_image.py <benchmark-id>=<image file> [...]
+Usage: python3 tools/set_benchmark_image.py [--generated] <benchmark-id>=<image file> [...]
+
+A benchmark with no image yet gets a new entry (in the smallest image module). --generated marks the
+images as AI-generated illustrations in data/generated-images.json (the hub labels them "Illustrative
+image"); a later run without it, e.g. a real photograph, takes the benchmark off that list.
 
 A WebP up to 2400px wide is kept byte for byte; other images are converted to WebP (quality 92, max 2400px wide), saved in img/ under a content-hash name (img/ is
 served as immutable, so a new photo always gets a new name), and the benchmark's entry is pointed at it.
@@ -11,7 +15,9 @@ from PIL import Image
 
 PATH = "index.html"
 MAX_W = 2400  # wide enough for the 640px showreel on high-density screens
-pairs = [a.split("=", 1) for a in sys.argv[1:]]
+GEN = "--generated" in sys.argv
+GEN_PATH = "data/generated-images.json"
+pairs = [a.split("=", 1) for a in sys.argv[1:] if a != "--generated"]
 assert pairs and all(len(p) == 2 for p in pairs), __doc__
 
 html = open(PATH, encoding="utf-8").read()
@@ -46,9 +52,17 @@ for bid, src in pairs:
     open(name[1:], "wb").write(o)
     pat = re.compile(r'("' + re.escape(bid) + r'"\s*:\s*")([^"]+)(")')
     hit = [k for k, s in mods.items() if pat.search(s)]
-    assert len(hit) == 1, f"{bid}: found in {len(hit)} image modules"
-    k = hit[0]; old = pat.search(mods[k]).group(2)
-    mods[k] = pat.sub(lambda m: m.group(1) + name + m.group(3), mods[k], count=1)
+    assert len(hit) <= 1, f"{bid}: found in {len(hit)} image modules"
+    if hit:
+        k = hit[0]; old = pat.search(mods[k]).group(2)
+        mods[k] = pat.sub(lambda m: m.group(1) + name + m.group(3), mods[k], count=1)
+    else:  # no image yet: add the entry to the smallest module
+        k = min(mods, key=lambda x: len(mods[x])); old = name
+        mods[k] = re.sub(r"\{", "{" + json.dumps(bid) + ":" + json.dumps(name) + ",", mods[k], count=1)
+    gen = json.load(open(GEN_PATH)) if os.path.exists(GEN_PATH) else {"benchmarks": {}}
+    if GEN: gen.setdefault("benchmarks", {})[bid] = name
+    else: gen.setdefault("benchmarks", {}).pop(bid, None)
+    json.dump(gen, open(GEN_PATH, "w"), indent=1, sort_keys=True)
     if old != name: retired.append(old)
     print(f"{bid}: {old} -> {name} ({im.width}x{im.height}, {len(o) // 1024} KB)")
 
