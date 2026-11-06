@@ -442,7 +442,11 @@ window.CS_DATA = {
    "memorable": "A simple, highly personal gesture created a strong emotional connection. Tala immediately wore the jersey, the family captured the moment, and she later changed her Instagram profile picture to herself wearing it.",
    "colleagues": "Aldar colleague: Ahmed Saber – Duty Manager, Crowne Plaza Yas Island",
    "source": "Signature Journey Board",
-   "experience": null,
+   "experience": {
+    "id": "staff-free-to-act-be-generous",
+    "name": "Staff free to act (Be Generous)",
+    "sure": true
+   },
    "photo": "/img/stories/cs-31-9c0ef990db.webp",
    "photo_position": "center 40%"
   },
@@ -457,7 +461,11 @@ window.CS_DATA = {
    "memorable": "The team identified an immediate personal need and resolved it proactively, turning a stressful situation into a highly personalized hospitality moment. The guest later provided written recognition of the exceptional service.",
    "colleagues": "Aldar colleague: Surendra Rajah, Stills Bar & Restaurant Supervisor",
    "source": "Signature Journey Board",
-   "experience": null,
+   "experience": {
+    "id": "staff-free-to-act-be-generous",
+    "name": "Staff free to act (Be Generous)",
+    "sure": true
+   },
    "photo": "/img/stories/cs-32-6dba282c76.webp",
    "photo_position": "center 8%"
   },
@@ -472,7 +480,11 @@ window.CS_DATA = {
    "memorable": "The handmade artwork captured the character of Mamsha Beach and turned a first visit into a lasting personal memory. The guest specifically recognized the team for going “above and beyond” and creating an unforgettable souvenir.",
    "colleagues": "Sujan · Mamsha Beach team",
    "source": "Signature Journey Board",
-   "experience": null,
+   "experience": {
+    "id": "staff-free-to-act-be-generous",
+    "name": "Staff free to act (Be Generous)",
+    "sure": true
+   },
    "photo": "/img/stories/cs-33-9aa485bcb7.webp",
    "photo_position": "center 20%"
   },
@@ -487,7 +499,11 @@ window.CS_DATA = {
    "memorable": "The team transformed a simple recipe request into a personalized experience that brought the guest back specifically for the occasion and strengthened her emotional connection with the restaurant.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": {
+    "id": "staff-free-to-act-be-generous",
+    "name": "Staff free to act (Be Generous)",
+    "sure": true
+   }
   },
   {
    "id": "cs-35",
@@ -500,7 +516,11 @@ window.CS_DATA = {
    "memorable": "A routine dinner was transformed into an emotional birthday celebration through thoughtful observation, speed and personalization. The family later shared a 5-star TripAdvisor review, describing the evening as an extraordinary and unforgettable memory.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": {
+    "id": "staff-free-to-act-be-generous",
+    "name": "Staff free to act (Be Generous)",
+    "sure": true
+   }
   },
   {
    "id": "cs-36",
@@ -513,7 +533,11 @@ window.CS_DATA = {
    "memorable": "A simple, locally inspired gesture created an immediate emotional connection before guests even reached the beach. The handmade souvenirs were repeatedly mentioned in guest feedback as a memorable part of their experience.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": {
+    "id": "staff-free-to-act-be-generous",
+    "name": "Staff free to act (Be Generous)",
+    "sure": true
+   }
   },
   {
    "id": "cs-37",
