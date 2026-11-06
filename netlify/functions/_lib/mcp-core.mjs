@@ -288,13 +288,18 @@ export const TOOLS = [
   {
     name: "get_cx_time_story",
     title: "Get one CX Times story",
-    description: "A full CX Times story. the_experience and signature_experience_opportunity are exactly what the story's article page shows under 'The experience' and 'Signature Experience Opportunity' (with business_lines as its line pills): present those, word for word. Also: the full AI summary, key insights, further ideas by line (only if asked), speakers, source and transcript links, image URL.",
+    description: "A full CX Times story. the_experience and signature_experience_opportunity are exactly what the story's article page shows under 'The experience' and 'Signature Experience Opportunity' (with business_lines as its line pills): present those, word for word. Then offer source_link (the original article, video or podcast) and, as follow-ups, more_stories (related CX Times stories). Also: the full AI summary, key insights, further ideas by line (only if asked), speakers, transcript link, image URL.",
     inputSchema: { type: "object", required: ["id"], properties: { id: { type: "string", description: "Story id (e.g. e2-s1) or title." } } },
     run: (D, a) => {
       const n = norm(a.id), all = allStories(D);
       const s = all.find((x) => norm(x.id) === n) || all.find((x) => norm(x.title).includes(n));
       if (!s) throw new ToolError(`No CX Times story matches "${a.id}".`);
-      return s;
+      // the article's own link (as the reader's CTA) and the stories the reader offers next
+      const VERB = { read: "Read the article", watch: "Watch the video", listen: "Listen to the episode" };
+      const rel = (s.related || []).map((id) => all.find((x) => x.id === id)).filter(Boolean)
+        .concat(all.filter((x) => x.edition === s.edition && x.id !== s.id && !(s.related || []).includes(x.id)))
+        .slice(0, 3).map((x) => ({ id: x.id, title: x.title, format: x.format, source: x.source, tag: x.tag, business_lines: x.business_lines }));
+      return { ...s, source_link: s.source_url ? { label: (VERB[s.format] || "Read the article") + " \u2197", url: s.source_url, source: s.source } : null, more_stories: rel };
     },
   },
   {
