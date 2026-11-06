@@ -69,3 +69,15 @@
   html [data-bm-quick] [style*="padding: 28px 32px"]{padding:20px 18px!important}
   html [data-bm-quick] [style*="min-height: 520px"]{min-height:440px!important}
 }
+
+/* Portfolio Discovery: the in-place collection on phones */
+@media (max-width:700px){
+  html #sec-stories [data-d2-acts]{display:none!important}
+  html #sec-stories [data-d2-row]{grid-template-columns:56px minmax(0,1fr)!important;gap:12px!important}
+  html #sec-stories [data-d2-filter]>div:first-child{flex-wrap:nowrap!important;overflow-x:auto;width:100%;padding-bottom:4px}
+  /* the five tabs: one scrolling row, not a tall wrapped pill */
+  html #sec-stories>div:first-child>div:last-child{flex-wrap:nowrap!important;overflow-x:auto;max-width:100%;scrollbar-width:none}
+  html #sec-stories>div:first-child>div:last-child>button{flex:0 0 auto;white-space:nowrap}
+}
+/* the filter row already draws the line above the first list row */
+html #sec-stories [data-d2-row]:first-of-type{border-top:0!important}

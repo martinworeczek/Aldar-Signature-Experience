@@ -95,6 +95,47 @@ TABS2 = [
      '<sc-if value="{{ c.isExp }}" hint-placeholder-val="{{ true }}"><div style="display:flex;gap:6px"><button sc-camel-on-click="{{ c.onCmp }}" style="{{ c.cmpCss }}">{{ c.cmpLabel }}</button><button sc-camel-on-click="{{ c.onSave }}" style="{{ c.saveCss }}">{{ c.saveLabel }}</button></div></sc-if><span style="font-size:11px;font-weight:500;color:#E8B96A;white-space:nowrap;margin-left:auto">Open &#8594;</span>'),
 ]
 
+# 02 Curated stories, See all (Group CX chose option A, 6 Nov 2026): the full collection opens in place,
+# inside the panel, with line chips, a count, Cards / List and Show 15 more. It replaces the old light
+# collection overlay, which nothing opens any more. Customer stories' See all still opens its tab.
+CHIPCSS = "{ display: 'inline-flex', alignItems: 'center', gap: '7px', fontFamily: 'inherit', fontSize: '11.5px', fontWeight: 500, padding: '6px 12px', borderRadius: '999px', cursor: 'pointer', whiteSpace: 'nowrap', border: '1px solid ' + (on ? '#E8B96A' : 'rgba(255,255,255,.14)'), background: on ? 'rgba(232,185,106,.15)' : 'transparent', color: on ? '#F6F3EC' : 'rgba(255,255,255,.7)' }"
+VIEWCSS = "{ fontFamily: 'inherit', fontSize: '11px', fontWeight: 600, cursor: 'pointer', padding: '5px 12px', borderRadius: '7px', border: 0, background: on ? '#E8B96A' : 'transparent', color: on ? '#0A1014' : 'rgba(255,255,255,.7)' }"
+LOGIC = ("const exp = !isSt && !!S.dExp, lmapE = this._dLineMap(), allIt = isSt ? [] : DCOLL[tk].items, eLine = S.dExpLine || null;\n"
+"    const fl = eLine ? allIt.filter(e => e.line === eLine) : allIt, eN = S.dExpN || 15, eView = S.dExpView || 'cards';\n"
+"    d2.exp = exp; d2.showCards = !exp || eView === 'cards'; d2.showList = exp && eView === 'list';\n"
+"    d2.tabSeeAllLabel = exp ? 'Show fewer \\u2191' : 'See all ' + (isSt ? CSA.length : allIt.length) + ' \\u2192';\n"
+"    d2.tabSeeAll = isSt ? goStories : () => this.setState({ dExp: !exp, dExpLine: null, dExpN: 15 });\n"
+"    const shown = exp ? fl.slice(0, eN) : allIt.slice(0, 5);\n"
+"    d2.tabCards = isSt ? storyCards : (d2.showCards ? shown.map(e => Object.assign(card(e), { isExp: true })) : []);\n"
+"    d2.expRows = d2.showList ? shown.map(card) : [];\n"
+"    d2.gridCss = { display: 'grid', gridTemplateColumns: exp ? 'repeat(auto-fill,minmax(min(100%,190px),1fr))' : 'repeat(auto-fit,minmax(min(100%,150px),1fr))', gap: '14px' };\n"
+"    const lnames = []; allIt.forEach(e => { if (lnames.indexOf(e.line) < 0) lnames.push(e.line); }); lnames.sort();\n"
+"    const echip = (label, val, color) => { const on = eLine === val; return { label, dot: dot(color), onClick: () => this.setState({ dExpLine: val, dExpN: 15 }), css: " + CHIPCSS + " }; };\n"
+"    d2.expChips = [echip('All lines', null, '#E8B96A')].concat(lnames.map(n => echip(n, n, lmapE[n] || '#C9A15A')));\n"
+"    d2.expCount = fl.length + (fl.length === 1 ? ' experience' : ' experiences');\n"
+"    d2.expViews = [['cards', 'Cards'], ['list', 'List']].map(([v, l]) => { const on = eView === v; return { label: l, onClick: () => this.setState({ dExpView: v }), css: " + VIEWCSS + " }; });\n"
+"    d2.hasMore = exp && fl.length > eN; d2.moreLabel = 'Show ' + Math.min(15, fl.length - eN) + ' more \\u00b7 ' + (fl.length - eN) + ' left'; d2.more = () => this.setState({ dExpN: eN + 15 });")
+FILTER = ('<sc-if value="{{ disc.d2.exp }}" hint-placeholder-val="{{ false }}"><div data-d2-filter="1" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)">'
+  '<div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ disc.d2.expChips }}" as="ch" hint-placeholder-count="7"><button sc-camel-on-click="{{ ch.onClick }}" style="{{ ch.css }}"><span style="{{ ch.dot }}"></span>{{ ch.label }}</button></sc-for></div>'
+  '<div style="display:flex;align-items:center;gap:14px"><span style="font-size:12px;color:rgba(255,255,255,.55);white-space:nowrap">{{ disc.d2.expCount }}</span><div style="display:flex;gap:3px;background:rgba(255,255,255,.08);border-radius:9px;padding:3px"><sc-for list="{{ disc.d2.expViews }}" as="v" hint-placeholder-count="2"><button sc-camel-on-click="{{ v.onClick }}" style="{{ v.css }}">{{ v.label }}</button></sc-for></div></div></div></sc-if>\n      ')
+LIST = ('\n      <sc-if value="{{ disc.d2.showList }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column"><sc-for list="{{ disc.d2.expRows }}" as="r" hint-placeholder-count="8">'
+  '<div data-d2-row="1" sc-camel-on-click="{{ r.open }}" style="display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:16px;align-items:center;padding:12px 8px;border-top:1px solid rgba(255,255,255,.08);cursor:pointer" style-hover="background:rgba(255,255,255,.04)">'
+  '<div style="position:relative;width:64px;height:64px;border-radius:8px;overflow:hidden;background:#111"><div style="{{ r.img }}"></div></div>'
+  '<div style="min-width:0"><div style="display:flex;gap:12px;align-items:center"><span style="display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6)"><span style="{{ r.dot }}"></span>{{ r.line }}</span><sc-if value="{{ r.defining }}" hint-placeholder-val="{{ false }}"><span style="font-size:9.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#E8B96A">&#10022; Defining</span></sc-if></div>'
+  '<div style="font-size:17px;font-weight:300;margin-top:4px;color:#F6F3EC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</div><div style="font-size:12px;color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.essence }}</div></div>'
+  '<div data-d2-acts="1" style="display:flex;gap:6px;align-items:center"><button sc-camel-on-click="{{ r.onCmp }}" style="{{ r.cmpCss }}">{{ r.cmpLabel }}</button><button sc-camel-on-click="{{ r.onSave }}" style="{{ r.saveCss }}">{{ r.saveLabel }}</button><span style="color:#E8B96A;margin-left:6px">&#8594;</span></div></div></sc-for></div></sc-if>'
+  '\n      <sc-if value="{{ disc.d2.hasMore }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:center"><button sc-camel-on-click="{{ disc.d2.more }}" style="font-family:inherit;font-size:12px;border:1px solid rgba(232,185,106,.5);background:transparent;color:#E8B96A;border-radius:999px;padding:10px 22px;cursor:pointer" style-hover="background:rgba(232,185,106,.15)">{{ disc.d2.moreLabel }}</button></div></sc-if>')
+GRID_OLD = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:14px">\n        <sc-for list="{{ disc.d2.tabCards }}"'
+GRID_NEW = FILTER + '<sc-if value="{{ disc.d2.showCards }}" hint-placeholder-val="{{ true }}"><div style="{{ disc.d2.gridCss }}">\n        <sc-for list="{{ disc.d2.tabCards }}"'
+END_OLD = '        </sc-for>\n      </div>\n    </section>\n\n    <sc-if value="{{ disc.showModules }}"'
+END_NEW = '        </sc-for>\n      </div></sc-if>' + LIST + '\n    </section>\n\n    <sc-if value="{{ disc.showModules }}"'
+EXPAND = [
+    ("go: () => this.setState({ dTab: k }),", "go: () => this.setState({ dTab: k, dExpLine: null, dExpN: 15 }),"),
+    ("d2.tabSeeAllLabel = 'See all ' + (isSt ? CSA.length : DCOLL[tk].items.length) + ' \\u2192';\n    d2.tabSeeAll = isSt ? goStories : dOpenColl(tk);\n    d2.tabCards = isSt ? storyCards : DCOLL[tk].items.slice(0, 5).map(e => Object.assign(card(e), { isExp: true }));", LOGIC),
+    (GRID_OLD, GRID_NEW),
+    (END_OLD, END_NEW),
+]
+
 # 01 Showreel: the defining moments only, eight of them (one tick each), opening on the week's
 REEL_OLD = "const rest = this._dShuffle(withImg.filter(e => !e.defining), this.state.dSeed + 7); return def.concat(rest); }"
 REEL_NEW = "return def.slice(0, 8); } /* v2: eight defining moments; was def + every other experience */"
@@ -104,8 +145,8 @@ m = re.search(r'(<script type="__bundler/template">\s*)(".*?")(\s*</script>)', h
 t = json.loads(m.group(2))
 if 'id="sec-reel"' in t:
     n0 = t
-    for old, new in TABS2:
-        if new not in t:
+    for old, new in TABS2 + EXPAND:
+        if new not in t and old in t:  # absent both ways: a later step rewrote that text
             assert t.count(old) == 1, old[:70]
             t = t.replace(old, new, 1)
     if t != n0:
@@ -135,7 +176,7 @@ else:
     t = t.replace(ANCH_OLD, ANCH_NEW, 1)
     assert t.count(REEL_OLD) == 1
     t = t.replace(REEL_OLD, REEL_NEW, 1)
-    for old, new in TABS2:
+    for old, new in TABS2 + EXPAND:
         assert t.count(old) == 1, old[:70]
         t = t.replace(old, new, 1)
     html = html[:m.start(2)] + json.dumps(t).replace("</", "<\\u002F") + html[m.end(2):]
