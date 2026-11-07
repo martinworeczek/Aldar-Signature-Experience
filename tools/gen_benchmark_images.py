@@ -48,8 +48,12 @@ MOMENT = {"pre": "before joining (discovery, visits, applying)", "onb": "the fir
 
 
 def records():
+    """Benchmarks with no image, plus those whose image was generated (so they can be redone).
+    A real photograph is never replaced from here."""
     d = json.load(open(DATASET, encoding="utf-8"))
-    return [b for b in d["benchmarks"] if not b.get("image_url")]
+    try: gen = json.load(open("data/generated-images.json", encoding="utf-8")).get("benchmarks", {})
+    except FileNotFoundError: gen = {}
+    return [b for b in d["benchmarks"] if not b.get("image_url") or b["id"] in gen]
 
 
 # benchmarks that happen away from campus get their own setting
@@ -133,10 +137,10 @@ def main(argv):
     recs = records()
     if "--list" in flags:
         for b in recs: print(b["id"], "|", b["brand"], "|", b["title"])
-        print(len(recs), "benchmarks without an image"); return
+        print(len(recs), "benchmarks without an image or with a generated one"); return
     pick = recs if "--all" in flags else [b for b in recs if b["id"] in ids]
     missing = set(ids) - {b["id"] for b in pick}
-    assert not missing, f"not a benchmark without an image: {sorted(missing)}"
+    assert not missing, f"not a benchmark without an image (or with a generated one): {sorted(missing)}"
     assert opt["--out"], "--out DIR is required"
     os.makedirs(opt["--out"], exist_ok=True)
     pj = os.path.join(opt["--out"], "prompts.json")

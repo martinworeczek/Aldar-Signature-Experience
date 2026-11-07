@@ -161,7 +161,7 @@ GUARDS = [
     ("  <!-- ===================== PAGE HEADER (non-dashboard views) ===================== -->", WALL, 1, "<!-- ===================== CUSTOMER STORIES ===================== -->"),
     ("Submit &amp; review</b>.</div></sc-if>\n        </div>\n      </div>\n", CHAPTER, 1),
     (OPEN_SPAN, MARKER, 3),
-    ("  // ===== Portfolio Discovery helpers =====\n", METHODS, 1),
+    ("  // ===== Portfolio Discovery helpers =====\n", METHODS, 1, "// ===== Customer stories (data/customer-stories.js"),
     (CH_OLD, CH_NEW, 1),
     ("      modal.ch = {};\n", "      if (modal.hasStories) _ch.push(['stories', true]);\n      modal.ch = {};\n", 1),
     ("['scope', 'deploy', 'progress', 'benefits', 'tp', 'audit', 'assets', 'photos'].forEach", "['scope', 'deploy', 'progress', 'benefits', 'tp', 'audit', 'assets', 'photos', 'stories'].forEach", 1),
@@ -172,4 +172,14 @@ GUARDS = [
     ("iconItem('⌕', 'Signature Experiences', 'catalogue'), ", "iconItem('⌕', 'Signature Experiences', 'catalogue'), newItem(iconItem('❝', 'Customer Stories', 'stories')), ", 1),
     ("assistant: ['Overview', (window.__SIG_OFF", "stories: ['Overview', 'Customer Stories', ''], assistant: ['Overview', (window.__SIG_OFF", 1),
     ("['catalogue', 'All Signature Experiences', 'Every experience, filterable'],\n", "['catalogue', 'All Signature Experiences', 'Every experience, filterable'],\n      ['stories', 'Customer Stories', 'Moments told by the colleagues who made them'],\n", 1),
+]
+
+# Images generated as illustrations (window.SIG_GEN.stories, from data/generated-images.json) carry a
+# label on the story card. Added as refinements (the METHODS and WALL guards carry markers, so editing
+# the text they inserted doesn't re-insert them).
+GUARDS += [
+    ("    return Object.assign({}, s, { place: s.place || s.category || '', who: who,",
+     "    return Object.assign({}, s, { isGen: !!(((window.SIG_GEN || {}).stories || {})[s.id]), place: s.place || s.category || '', who: who,", 1),
+    ('          <div style="{{ s.bandCss }}">\n            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,0) 40%)"></div>',
+     '          <div style="{{ s.bandCss }}">\n            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,0) 40%)"></div>\n            <sc-if value="{{ s.isGen }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;right:12px;bottom:12px"><span title="Generated with AI to illustrate the story; not a photograph of the moment" style="font-size:10px;font-weight:500;letter-spacing:.06em;color:rgba(255,255,255,.88);background:rgba(0,0,0,.55);border:1px dashed rgba(255,255,255,.35);border-radius:999px;padding:4px 9px;white-space:nowrap">Illustrative image &middot; AI</span></span></sc-if>', 1),
 ]

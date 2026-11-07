@@ -321,6 +321,12 @@ STORIES += [
     (GEN_HTML_OLD, '{{ disc.d2.bench.industry }}</span><sc-if value="{{ disc.d2.bench.isGen }}" hint-placeholder-val="{{ false }}"><span title="Generated with AI to illustrate the idea; not a photograph of the organisation" style="font-size:10px;font-weight:500;letter-spacing:.06em;color:rgba(255,255,255,.85);background:rgba(0,0,0,.55);border:1px dashed rgba(255,255,255,.35);border-radius:999px;padding:5px 10px;white-space:nowrap">Illustrative image &middot; AI</span></sc-if><button sc-camel-on-click="{{ disc.d2.bench.close }}"'),
 ]
 
+# Customer stories whose picture was generated as an illustration (window.SIG_GEN.stories) say so.
+STORIES += [
+    ("d2.story = { title: x.title,", "d2.story = { isGen: !!(((window.SIG_GEN || {}).stories || {})[x.id]), title: x.title,"),
+    ('>&#10077; Customer story</span>', '>&#10077; Customer story</span><sc-if value="{{ disc.d2.story.isGen }}" hint-placeholder-val="{{ false }}"><span title="Generated with AI to illustrate the story; not a photograph of the moment" style="font-size:10px;font-weight:500;letter-spacing:.06em;color:rgba(255,255,255,.88);background:rgba(0,0,0,.55);border:1px dashed rgba(255,255,255,.35);border-radius:999px;padding:4px 9px;white-space:nowrap">Illustrative image &middot; AI</span></sc-if>'),
+]
+
 # 01 Showreel: the defining moments only, eight of them (one tick each), opening on the week's
 REEL_OLD = "const rest = this._dShuffle(withImg.filter(e => !e.defining), this.state.dSeed + 7); return def.concat(rest); }"
 REEL_NEW = "return def.slice(0, 8); } /* v2: eight defining moments; was def + every other experience */"
@@ -332,7 +338,7 @@ if 'id="sec-reel"' in t:
     n0 = t
     # MARKS: text a step leaves behind even after a later step rewrites its output, so a rerun
     # doesn't apply it a second time
-    MARKS = {"const TABS = [['defining',": "const CSA = ((window.CS_DATA", "['welcome', 'This week: '": "['added', 'The newest experiences", READER_VM: "d2.hasBench = !!bid"}
+    MARKS = {"const TABS = [['defining',": "const CSA = ((window.CS_DATA", "['welcome', 'This week: '": "['added', 'The newest experiences", READER_VM: "d2.hasBench = !!bid", "d2.more = () => this.setState({ dExpN: eN + 15 });": "d2.hasStory = si >= 0"}
     for old, new in TABS2 + EXPAND + STORIES:
         if old in MARKS and MARKS[old] in t: continue
         if new not in t and old in t:  # absent both ways: a later step rewrote that text

@@ -94,7 +94,9 @@ window.CS_DATA = {
    "memorable": "The team noticed the customer's emotional state without being asked and responded with a thoughtful gesture at a particularly difficult time.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/87603b716b18366d.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-06",
@@ -108,7 +110,9 @@ window.CS_DATA = {
    "memorable": "Rather than treating the delays as simply an operational issue, the team recognised the customer's patience and turned the final interaction into an experience his family could enjoy together.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/95e38fe72fc3bae4.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-07",
@@ -126,7 +130,9 @@ window.CS_DATA = {
     "id": "dev-birthday-recognition",
     "name": "Birthday Recognition",
     "sure": false
-   }
+   },
+   "photo": "/img/ef94e6c7b91a218d.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-08",
@@ -159,7 +165,9 @@ window.CS_DATA = {
    "memorable": "The team looked after the person, not only the property. At a vulnerable moment, a resident felt her community was there for her, and said so in her own words.",
    "colleagues": "Ansam community management team",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/cac0a1185d8bd3b4.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-10",
@@ -221,7 +229,9 @@ window.CS_DATA = {
    "memorable": "The team turned the couple’s personal photographs into a lasting reminder of their special day, combining creativity, personalisation and genuine care to make the celebration even more meaningful.",
    "colleagues": "Kristal and Harold",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/75f4df469de299a2.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-14",
@@ -235,7 +245,9 @@ window.CS_DATA = {
    "memorable": "A missed milestone became a memorable evening, planned entirely by their community.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/3668c3a3552606f6.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-15",
@@ -249,7 +261,9 @@ window.CS_DATA = {
    "memorable": "Rather than simply noticing the gathering, Alex took the initiative to understand its significance and turn that insight into a personal gesture, making the family’s cultural celebration feel recognised and valued by the community.",
    "colleagues": "Alex",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/2117b42da1c6d788.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-16",
@@ -263,7 +277,9 @@ window.CS_DATA = {
    "memorable": "The team noticed the gap between getting the keys and feeling at home, and filled it before the family had to ask.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/b8b882c006159c66.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-17",
@@ -277,7 +293,9 @@ window.CS_DATA = {
    "memorable": "A simple treat at the right moment brought neighbours together, and residents asked for more.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/482938a525db91f8.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-18",
@@ -291,7 +309,9 @@ window.CS_DATA = {
    "memorable": "Showing up in person told him his community noticed, and cared, at a difficult time.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/e8e4666cb22e88d6.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-19",
@@ -305,7 +325,9 @@ window.CS_DATA = {
    "memorable": "Rather than simply acknowledging the birthday, Miguel invested personal time and creativity into making something by hand, turning a small act of kindness into a meaningful and memorable experience for the family.",
    "colleagues": "Miguel Naseem-B",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/c435cb51998036a1.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-20",
@@ -319,7 +341,9 @@ window.CS_DATA = {
    "memorable": "Rather than treating the situation as an everyday inconvenience, the team recognised its impact on the young resident and responded with a thoughtful, age-appropriate gesture that brought comfort and kindness when it mattered.",
    "colleagues": "Henry",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/c8b7718956d2e4b5.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-21",
@@ -333,7 +357,9 @@ window.CS_DATA = {
    "memorable": "Rather than limiting the interaction to a routine welfare check, Fazirah recognised the resident’s need for human connection and responded with genuine care, helping the resident feel supported and less alone.",
    "colleagues": "Fazirah",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/09c0d7ac42043f76.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-22",
@@ -363,7 +389,9 @@ window.CS_DATA = {
    "memorable": "Agnes recognised an unspoken need and responded without being asked. The personal gesture went beyond everyday service, creating a meaningful moment of care and reminding the resident that the community was there to support them.",
    "colleagues": "Agnes",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/36034a5a306db140.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-24",
@@ -377,7 +405,9 @@ window.CS_DATA = {
    "memorable": "Rather than treating the loss as a private matter outside the scope of community service, the team responded with genuine empathy and care, reminding the resident that the community was there for them beyond everyday interactions.",
    "colleagues": "The Al Bandar team",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/1a8500e6ac389b43.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-25",
@@ -391,7 +421,9 @@ window.CS_DATA = {
    "memorable": "The team involved the family’s children to create something deeply personal and lasting. The thoughtful keepsake captured a meaningful memory and showed that the moments important to residents are also valued by their community.",
    "colleagues": "Hassan and Abigel",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/45e30a7ee38e13a6.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-26",
@@ -405,7 +437,9 @@ window.CS_DATA = {
    "memorable": "Roshan went beyond everyday service by turning his knowledge of the couple’s preferences into a fully personalised anniversary experience, thoughtfully creating a moment designed especially for them.",
    "colleagues": "Roshan",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/15355d3041785c73.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-27",
@@ -419,7 +453,9 @@ window.CS_DATA = {
    "memorable": "A resident credited his community for part of his success: a real sign of belonging.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/66af89c7625a7417.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-28",
@@ -433,7 +469,9 @@ window.CS_DATA = {
    "memorable": "A small, unexpected gift made the community part of a child’s big day.",
    "colleagues": "",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/b7ed332fda181792.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-29",
@@ -447,7 +485,9 @@ window.CS_DATA = {
    "memorable": "Gerald took the time to understand what would be personally meaningful to the resident and turned that insight into a thoughtful experience. By connecting the gesture to a much-loved hobby, the team brought creativity, enjoyment and a personal sense of care into the resident’s recovery.",
    "colleagues": "Gerald",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/043209af5632b4ab.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-30",
@@ -461,7 +501,9 @@ window.CS_DATA = {
    "memorable": "A casual conversation became an opportunity to create something meaningful. The team listened, remembered and acted, turning a missed milestone into a personalised moment designed around the resident and their family.",
    "colleagues": "",
    "source": "Signature Experiences – Community Management (PDF)",
-   "experience": null
+   "experience": null,
+   "photo": "/img/3918da044d7bfaba.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-31",
@@ -539,7 +581,9 @@ window.CS_DATA = {
     "id": "staff-free-to-act-be-generous",
     "name": "Staff free to act (Be Generous)",
     "sure": true
-   }
+   },
+   "photo": "/img/6d3241136f04da08.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-35",
@@ -557,7 +601,9 @@ window.CS_DATA = {
     "id": "staff-free-to-act-be-generous",
     "name": "Staff free to act (Be Generous)",
     "sure": true
-   }
+   },
+   "photo": "/img/ad4d522bbde327b6.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-36",
@@ -575,7 +621,9 @@ window.CS_DATA = {
     "id": "staff-free-to-act-be-generous",
     "name": "Staff free to act (Be Generous)",
     "sure": true
-   }
+   },
+   "photo": "/img/8d1823ebb3007be4.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-37",
@@ -621,7 +669,9 @@ window.CS_DATA = {
    "memorable": "Christian saw what the guest needed and acted without being asked, so he left the mall feeling looked after rather than helped.",
    "colleagues": "Christian · Hostess, Beverly",
    "source": "Signature Journey Board",
-   "experience": null
+   "experience": null,
+   "photo": "/img/b3d5f935ec865283.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-40",
@@ -655,7 +705,9 @@ window.CS_DATA = {
    "memorable": "Simple, personal, proactive. No complaint prompted it. One small, thoughtful call lifted the whole parent experience.",
    "colleagues": "The teacher has asked not to be named. When the CX team learned of the parent’s message, we sent her flowers and a personalised thank-you card. It recognised the impact she had made for the family and reinforced this kind of proactive CX behaviour. · The teacher created the moment, the parent recognised her, and the CX team recognised her in return.",
    "source": "Signature Moments – AE for Group v2 (Word + PowerPoint)",
-   "experience": null
+   "experience": null,
+   "photo": "/img/93ea89ecd35d6c6a.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-42",
@@ -669,7 +721,9 @@ window.CS_DATA = {
    "memorable": "Care for the parent, too. The team saw the mother’s emotional experience, not just a child’s adjustment issue.",
    "colleagues": "Noor Abdalla · Parent Relations Executive · Kept communication open, following up after each visit with reassurance and updates. · Andrew Lett · Went in person to check on her daughter, reassuring the mother directly. · Sudichhya Limbu · Director of FS · Spent time with and comforted her daughter, helping her feel comfortable in the school environment. · Saoirse Hall · Reassured the mother that settling in takes time and that the transition was normal and temporary. · Support and security team · Everyday acts of kindness and reassurance, showing that CX is everyone’s responsibility. · How they",
    "source": "Signature Moments – AE for Group v2 (Word + PowerPoint)",
-   "experience": null
+   "experience": null,
+   "photo": "/img/922b0a0a3e7beb8d.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-43",
@@ -683,7 +737,9 @@ window.CS_DATA = {
    "memorable": "The swim was the fix. What came next made it a signature moment. Her parents had spent a day worrying about one lesson. Rather than leave them to imagine it, the team arranged for photos and videos of the lesson to go straight to the family, so they could see their daughter’s confidence for themselves, that same day. The question every worried parent asks after a hard day was answered before they had to ask it. Speed, with care. A personal plan within 45 minutes, the swimming team aligned within the hour, and a confident swim at the very next lesson. A third way. The curriculum held, and the child’s pace was honoured: step by step, with permission to stop. Emotional safety, not logistics. The team heard what the mother actually said, that this was about comfort and not ability, and designed everything around it. The moment, delivered home. Photos and videos turned a private victory into one her parents could share. Peace of mind, restored. From a request for an exemption to a heartfelt thank-you in little more than a day.",
    "colleagues": "Shirin Elmughrabi · Parent Relations Executive · Met the family, worked closely with the teacher throughout, and arranged for photos and videos to reach the parents. · Julie Ann Liebenberg · EYFS Teacher · Built a personal, step-by-step plan within 45 minutes, offered to walk her to the changing area herself, and sent the family an unprompted update after the lesson. · Mary Grace Alvarez · Swimming Instructor · Confirmed changing-room supervision within the hour and briefed the swimming team to give extra support. · Trusted to adapt. Ms Liebenberg used her own judgement to change how a mandato",
    "source": "Signature Moments – Yasmina British Academy (Word)",
-   "experience": null
+   "experience": null,
+   "photo": "/img/3a5ebb1e73c02cd7.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-44",
@@ -697,7 +753,9 @@ window.CS_DATA = {
    "memorable": "The class change was the fix. Ownership was the signature. A mother who wrote at 10:43pm had her answer at 6:30 the next morning, and from then on she had one person personally advocating for her son and following the matter through. In her words, the school was “taking this seriously”. A repeat problem, broken. The family had lived this once already. This year, it was resolved. Speed that signals respect. A 10:43pm email answered at 6:30 the next morning. One owner. One person took the concern personally and followed it through with the academic team. Results the family could see. A happier student and positive feedback within a short time of the change.",
    "colleagues": "Shirin Elmughrabi · Parent Relations Executive · Replied at 6:30am, took personal ownership and followed the request through with the academic team. · Head of Sport · Reviewed class arrangements and availability to make the change possible. · Trusted to own it. Shirin was free to take the concern personally and follow it through with academic leaders, rather than pass it on and step away. · Recognised by name. The mother thanked Shirin personally for how quickly she looked into the concern and arranged the change. · “What made this memorable was not simply the resolution, but the reassurance t",
    "source": "Signature Moments – Yasmina British Academy (Word)",
-   "experience": null
+   "experience": null,
+   "photo": "/img/50339f8262250f30.webp",
+   "photo_position": "center 40%"
   },
   {
    "id": "cs-45",
@@ -711,7 +769,9 @@ window.CS_DATA = {
    "memorable": "This wasn't simply about welcoming a new student. It was about turning a child's first experience of school from one of fear and uncertainty into happiness, confidence and a genuine sense of belonging. The most rewarding part was seeing the transformation in Almahara herself: from a little girl who didn't want to enter her classroom to one who now looks forward to spending time with her favourite teacher. It is these small, personal moments that build lasting trust with families and make the Yasmina experience so special.",
    "colleagues": "Ms Sophie Grandy and the EYFS team, supported by the Parent Relations team.",
    "source": "Shared in chat",
-   "experience": null
+   "experience": null,
+   "photo": "/img/18b5af259fe6acb2.webp",
+   "photo_position": "center 40%"
   }
  ]
 };
