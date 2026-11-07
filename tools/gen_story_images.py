@@ -67,7 +67,7 @@ SCENES = {
     "cs-41": "a teacher in a bright school office smiling as she talks on the phone, sharing good news, a sunny classroom visible through the glass",
     "cs-42": "a school reception: a parent relations colleague sitting with an anxious mother on a sofa, reassuring her warmly over a cup of tea",
     "cs-43": "a bright indoor school pool: a smiling swimming teacher kneeling at the poolside giving a high-five to a young girl in a modest long-sleeved swimsuit and swim cap",
-    "cs-44": "early morning at home: a mother reading a reassuring reply on her phone at the kitchen table, relief on her face, her teenage son packing his school bag",
+    "cs-44": "early morning in a warm family kitchen: a mother at the table reading a reassuring reply on her phone, relief and a smile on her face; beside her, her 15-year-old son in a casual school polo shirt zipping up his backpack, glancing at her. Only these two people in the scene, no other adults, nobody in a suit or tie",
     "cs-45": "a nursery classroom doorway: a kind teacher kneeling to welcome a shy little girl holding her mother's hand, the girl starting to smile",
 }
 

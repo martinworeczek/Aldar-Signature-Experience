@@ -754,7 +754,7 @@ window.CS_DATA = {
    "colleagues": "Shirin Elmughrabi · Parent Relations Executive · Replied at 6:30am, took personal ownership and followed the request through with the academic team. · Head of Sport · Reviewed class arrangements and availability to make the change possible. · Trusted to own it. Shirin was free to take the concern personally and follow it through with academic leaders, rather than pass it on and step away. · Recognised by name. The mother thanked Shirin personally for how quickly she looked into the concern and arranged the change. · “What made this memorable was not simply the resolution, but the reassurance t",
    "source": "Signature Moments – Yasmina British Academy (Word)",
    "experience": null,
-   "photo": "/img/50339f8262250f30.webp",
+   "photo": "/img/35616659bb658c3b.webp",
    "photo_position": "center 40%"
   },
   {
