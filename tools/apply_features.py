@@ -202,13 +202,21 @@ ASSET_TEXTS += [  # inside bundled modules
     ("Ask Echo, the comparison reads and Idea Exchange generation call a language model", "Ask Echo and the comparison reads call a language model", "ideaExchange"),
 ]
 
+def gen_js():
+    """window.SIG_GEN: images generated as illustrations (data/generated-images.json), so the hub can
+    label them "Illustrative image"; tools/set_benchmark_image.py --generated keeps the list."""
+    try: g = json.load(open("data/generated-images.json", encoding="utf-8"))
+    except FileNotFoundError: g = {}
+    return "window.SIG_GEN=" + json.dumps(g, separators=(",", ":")) + ";"
+
+
 html = open(PATH, encoding="utf-8").read()
 
 # 1. runtime switches in <head>
 html = re.sub(r'<script id="__sig_features">.*?</script>\n', "", html)
 tag = ('<script id="__sig_features">window.__SIG_OFF=' + json.dumps(OFF, separators=(",", ":")) + ';window.__SIG_THEMES='
        + json.dumps([{k: t.get(k) for k in ("title", "blurb", "match", "accent", "deep") if t.get(k)} for t in THEMES], separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/")
-       + ';window.__SIG_MARTIN_URL=' + json.dumps(MARTIN_URL) + ';window.__SIG_MARTIN_MS_URL=' + json.dumps(MARTIN_MS_URL) + ';window.__SIG_IMPL=' + json.dumps(IMPL, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/") + ';' + customer_stories.data_js() + benchmark_showreel.reel_ok_js(html) + '</script>\n')
+       + ';window.__SIG_MARTIN_URL=' + json.dumps(MARTIN_URL) + ';window.__SIG_MARTIN_MS_URL=' + json.dumps(MARTIN_MS_URL) + ';window.__SIG_IMPL=' + json.dumps(IMPL, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/") + ';' + customer_stories.data_js() + benchmark_showreel.reel_ok_js(html) + gen_js() + '</script>\n')
 i = html.find('<script id="__sig_edition">')
 assert i > 0, "edition hook not found"
 html = html[:i] + tag + html[i:]

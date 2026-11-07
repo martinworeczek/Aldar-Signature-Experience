@@ -131,7 +131,9 @@ export function buildDataset(W, full = [], SITE = "https://aldar-signature-exper
   const bmImg = Object.assign({}, W.BM_IMAGES_A, W.BM_IMAGES_B, W.BM_IMAGES_C, W.BM_IMAGES_D);
   const benchmarks = W.BM_LINKS.map((b) => {
     const f = fullById[b.id] || {};
-    const r = { id: b.id, title: b.t, brand: b.br, industry: b.ind, line: b.ln, line_label: LN[b.ln] || b.ln, pillar: b.pil, themes: b.th || [], summary: b.s, informs_experiences: b.inf || [], image_url: abs(bmImg[b.id]) };
+    const r = { id: b.id, title: b.t, brand: b.br, industry: b.ind, line: b.ln, line_label: LN[b.ln] || b.ln, pillar: b.pil, themes: b.th || [], summary: b.s, informs_experiences: b.inf || [], image_url: abs(bmImg[b.id]),
+      // generated to illustrate the idea (data/generated-images.json), not a photograph of the organisation
+      image_is_illustrative: !!(((W.SIG_GEN || {}).benchmarks || {})[b.id]) };
     for (const k of ["lead", "why", "transfer", "moment", "source", "added"]) if (f[k] != null && f[k] !== "") r[k === "transfer" ? "transfer_to_lines" : k] = f[k];
     return r;
   });

@@ -27,7 +27,9 @@ STYLE = ("Editorial documentary photograph, shot on a full-frame camera with a 3
          "backgrounds, including Gulf Arab and expatriate families where it fits, dressed in contemporary modest "
          "clothing. Strictly no text, letters, words, numbers, logos, brand marks, signage, crests or watermarks "
          "anywhere in the image; any screens, papers or signs are blurred or turned away. Do not depict any specific "
-         "real school, company, building or real person.")
+         "real school, company, building or real person, and no recognisable landmarks, skylines or famous "
+         "buildings (for example no Burj Khalifa). Show the moment itself happening, never photographs, posters, "
+         "screens or framed pictures of it.")
 
 SETTING = {
     "Education": "inside a modern international school campus",
@@ -50,12 +52,21 @@ def records():
     return [b for b in d["benchmarks"] if not b.get("image_url")]
 
 
+# benchmarks that happen away from campus get their own setting
+SETTING_BY_ID = {
+    "bisad-expeditions": "outdoors on a school expedition: teenage students with backpacks and a teacher on a high mountain trail in the Alps, snow-capped peaks behind them",
+    "dais-exchange": "abroad on a school exchange: a small group of teenage students and their teacher exploring a historic European city street with luggage",
+    "aisr-week-without-walls": "outdoors, off timetable: students working together on a hands-on service project",
+}
+
+
 def prompt_for(b):
-    setting = SETTING.get(b.get("industry"), "a contemporary, premium setting")
+    setting = SETTING_BY_ID.get(b["id"]) or SETTING.get(b.get("industry"), "a contemporary, premium setting")
     return (f"{STYLE}\n\nScene: {setting}, during {MOMENT.get(b.get('moment'), 'everyday life')}. "
             f"It illustrates this idea: \"{b['title']}\" - {b.get('summary') or ''} "
             f"{(b.get('lead') or '')[:400]}\n"
-            "Show the human moment of this idea, not a diagram. Leave calm space at the bottom of the frame for a caption.")
+            "Show the human moment of this idea, not a diagram. The photograph fills the whole frame edge to edge: "
+            "no white or blank areas, fades, vignettes to white, borders or empty bands.")
 
 
 def _call(url, body=None):

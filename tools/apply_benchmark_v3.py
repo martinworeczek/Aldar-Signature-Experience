@@ -67,6 +67,11 @@ FOLLOWUPS = [
      "if (DATA.some(d => d.id === want)) { if (window.__BM_QUICK) { window.__BM_QUICK = null; this.setState({ view: 'gallery', sel: null, u3Open: want }); } else this._open(want); opened = true;"),
     ("if (DATA.some(d => d.id === want0)) { this._open(want0);",
      "if (DATA.some(d => d.id === want0)) { if (window.__BM_QUICK) { window.__BM_QUICK = null; this._pubView('gallery'); this.setState({ view: 'gallery', sel: null, from: null, infOpen: null, u3Open: want0 }); return; } this._open(want0);"),
+    # images generated as illustrations (window.SIG_GEN, from data/generated-images.json) carry a label
+    ("backgroundPosition: 'center' } }; }),\n        hasInf: (x.informed || []).length > 0, showAdapt",
+     "backgroundPosition: 'center' } }; }),\n        isGen: !!(((window.SIG_GEN || {}).benchmarks || {})[x.id]), hasInf: (x.informed || []).length > 0, showAdapt"),
+    ('{{ u3.d.industry }}</span><button onClick="{{ u3.close }}"',
+     '{{ u3.d.industry }}</span><sc-if value="{{ u3.d.isGen }}" hint-placeholder-val="{{ false }}"><span title="Generated with AI to illustrate the idea; not a photograph of the organisation" style="font-size:10px;font-weight:500;letter-spacing:.06em;color:rgba(255,255,255,.85);background:rgba(0,0,0,.55);border:1px dashed rgba(255,255,255,.35);border-radius:999px;padding:5px 10px;white-space:nowrap">Illustrative image &middot; AI</span></sc-if><button onClick="{{ u3.close }}"'),
 ]
 
 OLD_START = "  <!-- CHAPTER 01 · NEWLY ADDED · procession -->"

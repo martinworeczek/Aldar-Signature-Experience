@@ -313,6 +313,14 @@ STORIES += [
     (OPEN_OLD, OPEN_OLD.replace('margin-left:auto">Open &#8594;', 'margin-left:auto"><span data-d2-otxt="1">Open </span>&#8594;')),
 ]
 
+# Benchmarks whose picture was generated as an illustration (window.SIG_GEN) say so in the reader.
+GEN_VM_OLD = "        d2.bench = { ready: !!x, loading: !x,"
+GEN_HTML_OLD = '{{ disc.d2.bench.industry }}</span><button sc-camel-on-click="{{ disc.d2.bench.close }}"'
+STORIES += [
+    (GEN_VM_OLD, "        d2.bench = { isGen: !!(((window.SIG_GEN || {}).benchmarks || {})[bid]), ready: !!x, loading: !x,"),
+    (GEN_HTML_OLD, '{{ disc.d2.bench.industry }}</span><sc-if value="{{ disc.d2.bench.isGen }}" hint-placeholder-val="{{ false }}"><span title="Generated with AI to illustrate the idea; not a photograph of the organisation" style="font-size:10px;font-weight:500;letter-spacing:.06em;color:rgba(255,255,255,.85);background:rgba(0,0,0,.55);border:1px dashed rgba(255,255,255,.35);border-radius:999px;padding:5px 10px;white-space:nowrap">Illustrative image &middot; AI</span></sc-if><button sc-camel-on-click="{{ disc.d2.bench.close }}"'),
+]
+
 # 01 Showreel: the defining moments only, eight of them (one tick each), opening on the week's
 REEL_OLD = "const rest = this._dShuffle(withImg.filter(e => !e.defining), this.state.dSeed + 7); return def.concat(rest); }"
 REEL_NEW = "return def.slice(0, 8); } /* v2: eight defining moments; was def + every other experience */"
@@ -324,7 +332,7 @@ if 'id="sec-reel"' in t:
     n0 = t
     # MARKS: text a step leaves behind even after a later step rewrites its output, so a rerun
     # doesn't apply it a second time
-    MARKS = {"const TABS = [['defining',": "const CSA = ((window.CS_DATA", "['welcome', 'This week: '": "['added', 'The newest experiences"}
+    MARKS = {"const TABS = [['defining',": "const CSA = ((window.CS_DATA", "['welcome', 'This week: '": "['added', 'The newest experiences", READER_VM: "d2.hasBench = !!bid"}
     for old, new in TABS2 + EXPAND + STORIES:
         if old in MARKS and MARKS[old] in t: continue
         if new not in t and old in t:  # absent both ways: a later step rewrote that text
