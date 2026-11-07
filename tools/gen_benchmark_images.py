@@ -58,24 +58,45 @@ def prompt_for(b):
             "Show the human moment of this idea, not a diagram. Leave calm space at the bottom of the frame for a caption.")
 
 
-def generate(prompt, model, quality, size):
-    body = json.dumps({"model": model, "prompt": prompt, "size": size, "quality": quality, "n": 1}).encode()
+def _call(url, body=None):
     key = os.environ.get("OPENAI_API_KEY") or "proxy-injected"  # the proxy replaces the header
-    req = urllib.request.Request("https://api.openai.com/v1/images/generations", data=body, method="POST",
+    req = urllib.request.Request(url, data=json.dumps(body).encode() if body is not None else None,
+                                 method="POST" if body is not None else "GET",
                                  headers={"Content-Type": "application/json", "Authorization": "Bearer " + key})
     for attempt in range(4):
         try:
-            with urllib.request.urlopen(req, timeout=300) as r:
-                j = json.loads(r.read())
-            return base64.b64decode(j["data"][0]["b64_json"])
+            with urllib.request.urlopen(req, timeout=28) as r:
+                return json.loads(r.read())
         except urllib.error.HTTPError as e:
             msg = e.read().decode("utf-8", "ignore")[:400]
             if "insufficient_quota" in msg or "billing" in msg:  # no credits: retrying can't help
                 raise SystemExit("OpenAI: the account has no API credits. Add credits at "
                                  "https://platform.openai.com/settings/organization/billing/ and run again.")
             if e.code in (429, 500, 502, 503) and attempt < 3:
-                time.sleep(10 * (attempt + 1)); continue
+                time.sleep(5 * (attempt + 1)); continue
             raise SystemExit(f"OpenAI error {e.code}: {msg}")
+        except (urllib.error.URLError, TimeoutError) as e:
+            if attempt < 3: time.sleep(5); continue
+            raise SystemExit(f"OpenAI unreachable: {e}")
+
+
+def generate(prompt, model, quality, size):
+    # Background mode (Responses API + image_generation tool): the job is queued and polled, so no
+    # single request runs long (the session's proxy ends requests after ~30s; high quality takes ~90s).
+    j = _call("https://api.openai.com/v1/responses", {
+        "model": "gpt-5.4-mini", "background": True, "store": True,
+        "input": "Generate exactly this image, using the prompt as written, without adding text:\n\n" + prompt,
+        "tools": [{"type": "image_generation", "model": model, "quality": quality, "size": size}],
+        "tool_choice": {"type": "image_generation"}})
+    rid, t0 = j["id"], time.time()
+    while j.get("status") in ("queued", "in_progress"):
+        if time.time() - t0 > 600: raise SystemExit(f"timed out waiting for {rid}")
+        time.sleep(5); j = _call("https://api.openai.com/v1/responses/" + rid)
+    if j.get("status") != "completed": raise SystemExit(f"generation {j.get('status')}: {j.get('error') or j.get('incomplete_details')}")
+    for o in j.get("output", []):
+        if o.get("type") == "image_generation_call" and o.get("result"):
+            return base64.b64decode(o["result"])
+    raise SystemExit("no image in the response")
 
 
 def main(argv):
