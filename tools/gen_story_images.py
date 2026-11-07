@@ -2,8 +2,10 @@
 
 Usage:
   python3 tools/gen_story_images.py --list
-  python3 tools/gen_story_images.py --out DIR cs-05 [cs-06 ...]    # or --all
-  options as tools/gen_benchmark_images.py (--model, --quality, --size, --dry)
+  python3 tools/gen_story_images.py --out DIR cs-05 [cs-06 ...]          # DRAFT, low quality (or --all)
+  python3 tools/gen_story_images.py --final --out DIR cs-05 [...]        # FINAL, medium quality
+  options and credit rules as tools/gen_benchmark_images.py (estimate first; --yes to go ahead).
+  Read docs/image-generation.md first.
 
 Customer stories are real events with real residents, children and colleagues, so the story text is
 NOT sent to the image model. Each story has a short scene written here by hand: no names, no brands,
@@ -13,7 +15,7 @@ person who is unwell or grieving. Apply approved images with tools/set_story_ima
 import json, os, re, sys, time
 
 sys.path.insert(0, os.path.dirname(__file__))
-from gen_benchmark_images import generate  # background-mode generation
+from gen_benchmark_images import generate, parse_args, budget_gate  # generation and credit rules
 
 # Matches the hub's existing customer-story photographs (cs-01, cs-10, cs-31 ...): warm premium
 # campaign look, close on the gesture and the reaction, staff in tailored navy/black uniforms.
@@ -87,11 +89,7 @@ def prompt_for(s):
 
 
 def main(argv):
-    args = list(argv); opt = {"--model": "gpt-image-2", "--quality": "high", "--size": "1536x1024", "--out": None}
-    flags = {a for a in args if a in ("--list", "--all", "--dry")}
-    for k in list(opt):
-        if k in args: i = args.index(k); opt[k] = args[i + 1]; del args[i:i + 2]
-    ids = [a for a in args if not a.startswith("--")]
+    opt, flags, ids = parse_args(argv)
     recs = stories()
     missing_scene = [s["id"] for s in recs if s["id"] not in SCENES]
     if "--list" in flags:
@@ -103,6 +101,7 @@ def main(argv):
     assert opt["--out"], "--out DIR is required"
     os.makedirs(opt["--out"], exist_ok=True)
     pj = os.path.join(opt["--out"], "prompts.json"); log = json.load(open(pj)) if os.path.exists(pj) else {}
+    budget_gate(sum(not os.path.exists(os.path.join(opt["--out"], s["id"] + ".png")) for s in pick), opt, flags)
     for s in pick:
         p = prompt_for(s); dest = os.path.join(opt["--out"], s["id"] + ".png")
         if "--dry" in flags: print("---", s["id"], "\n" + p); continue

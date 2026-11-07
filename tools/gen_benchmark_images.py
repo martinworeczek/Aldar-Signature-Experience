@@ -1,9 +1,12 @@
 """Generate illustrative images for benchmarks that have no photograph (OpenAI image API).
 
-Usage:
-  python3 tools/gen_benchmark_images.py --list                 # the benchmarks without an image
-  python3 tools/gen_benchmark_images.py --out DIR id [id ...]  # generate those (or --all)
-  options: --model gpt-image-2  --quality high|medium|low  --size 1536x1024  --dry (print prompts only)
+Usage (read docs/image-generation.md first; it sets the credit rules):
+  python3 tools/gen_benchmark_images.py --list                        # benchmarks without an image
+  python3 tools/gen_benchmark_images.py --out DIR id [id ...]         # DRAFT: low quality (or --all)
+  python3 tools/gen_benchmark_images.py --final --out DIR id [...]    # FINAL: medium quality
+  options: --quality low|medium|high (high only for large hero images)  --size 1536x1024
+           --model gpt-image-2  --dry (print prompts, no cost)  --yes (go ahead after the estimate)
+Every run prints how many images it will make and a rough cost, and stops there unless --yes is given.
 
 The API key is never read here: requests go to api.openai.com through the session's network proxy,
 which adds the key (saved on the Claude Code environment). Run outside that environment, set
@@ -128,12 +131,41 @@ def generate(prompt, model, quality, size):
     raise SystemExit("no image in the response")
 
 
-def main(argv):
-    args = list(argv); opt = {"--model": "gpt-image-2", "--quality": "high", "--size": "1536x1024", "--out": None}
-    flags = {a for a in args if a in ("--list", "--all", "--dry")}
+# ---- credit rules (docs/image-generation.md) ----
+# Drafts are low quality, for checking composition, variety and mistakes. Approved drafts are rendered
+# with --final at medium quality; high is only for large hero images. Every run prints an estimate and
+# does nothing without --yes, so the estimate is shown (and agreed) before any credit is spent.
+# Rough USD per 1536x1024 image, from OpenAI's published image pricing when this was written; it is
+# only an estimate (check platform.openai.com -> Usage for real spend).
+APPROX_USD = {"low": 0.02, "medium": 0.07, "high": 0.25}
+
+
+def parse_args(argv):
+    args = list(argv)
+    flags = {a for a in args if a in ("--list", "--all", "--dry", "--final", "--yes")}
+    args = [a for a in args if a not in flags]
+    opt = {"--model": "gpt-image-2", "--quality": None, "--size": "1536x1024", "--out": None}
     for k in list(opt):
         if k in args: i = args.index(k); opt[k] = args[i + 1]; del args[i:i + 2]
-    ids = [a for a in args if not a.startswith("--")]
+    if not opt["--quality"]: opt["--quality"] = "medium" if "--final" in flags else "low"
+    assert opt["--quality"] in APPROX_USD, "--quality must be low, medium or high"
+    return opt, flags, [a for a in args if not a.startswith("--")]
+
+
+def budget_gate(n, opt, flags):
+    """Print what the run will cost; stop unless --yes."""
+    if "--dry" in flags: return
+    q = opt["--quality"]
+    print(f"{'DRAFT' if q == 'low' else 'FINAL'}: {n} image(s) at {q} quality, {opt['--size']}, "
+          f"about ${n * APPROX_USD[q]:.2f} (rough estimate)")
+    if q == "high": print("  high quality is for large hero images only; cards look the same at medium")
+    if q == "low" and "--final" in flags: print("  note: --final with --quality low renders drafts")
+    if n and "--yes" not in flags:
+        raise SystemExit("Nothing generated. Share this estimate with the user, then run again with --yes.")
+
+
+def main(argv):
+    opt, flags, ids = parse_args(argv)
     recs = records()
     if "--list" in flags:
         for b in recs: print(b["id"], "|", b["brand"], "|", b["title"])
@@ -145,6 +177,7 @@ def main(argv):
     os.makedirs(opt["--out"], exist_ok=True)
     pj = os.path.join(opt["--out"], "prompts.json")
     log = json.load(open(pj)) if os.path.exists(pj) else {}
+    budget_gate(sum(not os.path.exists(os.path.join(opt["--out"], b["id"] + ".png")) for b in pick), opt, flags)
     for b in pick:
         p = prompt_for(b); dest = os.path.join(opt["--out"], b["id"] + ".png")
         if "--dry" in flags: print("---", b["id"], "\n" + p); continue
