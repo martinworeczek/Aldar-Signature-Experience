@@ -57,6 +57,20 @@ SETTING_BY_ID = {
     "bisad-expeditions": "outdoors on a school expedition: teenage students with backpacks and a teacher on a high mountain trail in the Alps, snow-capped peaks behind them",
     "dais-exchange": "abroad on a school exchange: a small group of teenage students and their teacher exploring a historic European city street with luggage",
     "aisr-week-without-walls": "outdoors, off timetable: students working together on a hands-on service project",
+    # varied scenes, so the admissions and digital benchmarks don't all show a family at a desk
+    "nais-application": "at home in the evening: a relaxed parent on a sofa finishing an online school application on a phone in a few minutes, a child playing on the rug nearby, warm lamp light",
+    "bisad-application": "a close-up, over-the-shoulder view of a parent's hands with a pen and a paper form on a kitchen counter in morning light, a coffee cup beside it; the form's text is soft and unreadable",
+    "nais-enquiry-page": "a mother in a sunlit cafe reading something warm and reassuring on a tablet, smiling to herself",
+    "nais-enquiry-form": "at home: a young girl proudly showing her painting to her parent at the dining table, a laptop pushed aside",
+    "aisr-reenrolment": "the first morning back at school: a returning family walking through the school gates, the child running ahead to greet a friend",
+    "eton-one-stop-enrolment": "the school drop-off zone on a sunny morning: a father tapping on his phone with one hand, his child with a backpack holding his other hand",
+    "aisr-parent-email": "a parent at their own office workplace glancing at a phone notification with a smile, colleagues blurred in the background",
+    "aisr-leaving-support": "an airport departure hall: a family moving abroad, the teenager holding a neat document folder, relaxed and confident",
+    "khan-study-groups": "a school library: three students around a table, one explaining a problem to the other two with a pencil and a paper model; no writing visible",
+    "linkedin-learning-paths": "a young professional on a modern commuter train with headphones, learning on a tablet, city light passing the window",
+    "upwork-expert-access": "a bright design studio: a professional on a video call with an expert on a large monitor whose content is blurred, taking notes",
+    "google-flexible-hours": "a school gate in the afternoon: a working parent with a laptop bag collecting their child early and hugging them",
+    "emaar-happiness-centre": "a spacious, elegant customer centre lobby with high ceilings: a resident being greeted at the entrance by a standing host, wide shot",
 }
 
 
